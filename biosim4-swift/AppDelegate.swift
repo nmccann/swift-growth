@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  biosim4-swift
-//
-//  Created by Noah McCann on 2021-12-02.
-//
-
-
 import Cocoa
 
 @main

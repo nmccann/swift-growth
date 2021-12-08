@@ -1,10 +1,3 @@
-//
-//  biosim4_swiftUITestsLaunchTests.swift
-//  biosim4-swiftUITests
-//
-//  Created by Noah McCann on 2021-12-02.
-//
-
 import XCTest
 
 class biosim4_swiftUITestsLaunchTests: XCTestCase {
