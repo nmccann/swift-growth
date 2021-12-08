@@ -14,9 +14,15 @@
 		4FD39BC12759BFCF006D5ED5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BC02759BFCF006D5ED5 /* ViewController.swift */; };
 		4FD39BC32759BFD0006D5ED5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BC22759BFD0006D5ED5 /* Assets.xcassets */; };
 		4FD39BC62759BFD0006D5ED5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BC42759BFD0006D5ED5 /* Main.storyboard */; };
-		4FD39BD12759BFD0006D5ED5 /* biosim4_swiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BD02759BFD0006D5ED5 /* biosim4_swiftTests.swift */; };
 		4FD39BDB2759BFD0006D5ED5 /* biosim4_swiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BDA2759BFD0006D5ED5 /* biosim4_swiftUITests.swift */; };
 		4FD39BDD2759BFD0006D5ED5 /* biosim4_swiftUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BDC2759BFD0006D5ED5 /* biosim4_swiftUITestsLaunchTests.swift */; };
+		4FD39BEC2759C10A006D5ED5 /* Polar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BEB2759C10A006D5ED5 /* Polar.swift */; };
+		4FD39BEE2759C111006D5ED5 /* Compass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BED2759C111006D5ED5 /* Compass.swift */; };
+		4FD39BF02759C115006D5ED5 /* Coord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BEF2759C115006D5ED5 /* Coord.swift */; };
+		4FD39BF22759C5AE006D5ED5 /* Dir.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BF12759C5AE006D5ED5 /* Dir.swift */; };
+		4FD39BF42759CFCC006D5ED5 /* PolarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BF32759CFCC006D5ED5 /* PolarTests.swift */; };
+		4FD39BF62759CFD3006D5ED5 /* CoordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BF52759CFD3006D5ED5 /* CoordTests.swift */; };
+		4FD39BF82759CFDC006D5ED5 /* DirTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BF72759CFDC006D5ED5 /* DirTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,10 +53,16 @@
 		4FD39BC52759BFD0006D5ED5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4FD39BC72759BFD0006D5ED5 /* biosim4_swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = biosim4_swift.entitlements; sourceTree = "<group>"; };
 		4FD39BCC2759BFD0006D5ED5 /* biosim4-swiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "biosim4-swiftTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4FD39BD02759BFD0006D5ED5 /* biosim4_swiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = biosim4_swiftTests.swift; sourceTree = "<group>"; };
 		4FD39BD62759BFD0006D5ED5 /* biosim4-swiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "biosim4-swiftUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD39BDA2759BFD0006D5ED5 /* biosim4_swiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = biosim4_swiftUITests.swift; sourceTree = "<group>"; };
 		4FD39BDC2759BFD0006D5ED5 /* biosim4_swiftUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = biosim4_swiftUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4FD39BEB2759C10A006D5ED5 /* Polar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polar.swift; sourceTree = "<group>"; };
+		4FD39BED2759C111006D5ED5 /* Compass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Compass.swift; sourceTree = "<group>"; };
+		4FD39BEF2759C115006D5ED5 /* Coord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coord.swift; sourceTree = "<group>"; };
+		4FD39BF12759C5AE006D5ED5 /* Dir.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dir.swift; sourceTree = "<group>"; };
+		4FD39BF32759CFCC006D5ED5 /* PolarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolarTests.swift; sourceTree = "<group>"; };
+		4FD39BF52759CFD3006D5ED5 /* CoordTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordTests.swift; sourceTree = "<group>"; };
+		4FD39BF72759CFDC006D5ED5 /* DirTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +113,7 @@
 		4FD39BB72759BFCF006D5ED5 /* biosim4-swift */ = {
 			isa = PBXGroup;
 			children = (
+				4FD39BEA2759C0FD006D5ED5 /* Basic Types */,
 				4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */,
 				4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */,
 				4FD39BBC2759BFCF006D5ED5 /* Actions.sks */,
@@ -116,7 +129,9 @@
 		4FD39BCF2759BFD0006D5ED5 /* biosim4-swiftTests */ = {
 			isa = PBXGroup;
 			children = (
-				4FD39BD02759BFD0006D5ED5 /* biosim4_swiftTests.swift */,
+				4FD39BF32759CFCC006D5ED5 /* PolarTests.swift */,
+				4FD39BF52759CFD3006D5ED5 /* CoordTests.swift */,
+				4FD39BF72759CFDC006D5ED5 /* DirTests.swift */,
 			);
 			path = "biosim4-swiftTests";
 			sourceTree = "<group>";
@@ -128,6 +143,17 @@
 				4FD39BDC2759BFD0006D5ED5 /* biosim4_swiftUITestsLaunchTests.swift */,
 			);
 			path = "biosim4-swiftUITests";
+			sourceTree = "<group>";
+		};
+		4FD39BEA2759C0FD006D5ED5 /* Basic Types */ = {
+			isa = PBXGroup;
+			children = (
+				4FD39BEB2759C10A006D5ED5 /* Polar.swift */,
+				4FD39BED2759C111006D5ED5 /* Compass.swift */,
+				4FD39BEF2759C115006D5ED5 /* Coord.swift */,
+				4FD39BF12759C5AE006D5ED5 /* Dir.swift */,
+			);
+			name = "Basic Types";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,7 +288,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FD39BEE2759C111006D5ED5 /* Compass.swift in Sources */,
+				4FD39BEC2759C10A006D5ED5 /* Polar.swift in Sources */,
 				4FD39BC12759BFCF006D5ED5 /* ViewController.swift in Sources */,
+				4FD39BF02759C115006D5ED5 /* Coord.swift in Sources */,
+				4FD39BF22759C5AE006D5ED5 /* Dir.swift in Sources */,
 				4FD39BBF2759BFCF006D5ED5 /* GameScene.swift in Sources */,
 				4FD39BB92759BFCF006D5ED5 /* AppDelegate.swift in Sources */,
 			);
@@ -272,7 +302,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FD39BD12759BFD0006D5ED5 /* biosim4_swiftTests.swift in Sources */,
+				4FD39BF62759CFD3006D5ED5 /* CoordTests.swift in Sources */,
+				4FD39BF42759CFCC006D5ED5 /* PolarTests.swift in Sources */,
+				4FD39BF82759CFDC006D5ED5 /* DirTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
