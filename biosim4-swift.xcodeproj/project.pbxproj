@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F16F6E02761AEC3008C7F50 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F16F6DF2761AEC3008C7F50 /* Grid.swift */; };
+		4F16F6E22764D209008C7F50 /* SensorsActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F16F6E12764D209008C7F50 /* SensorsActions.swift */; };
 		4FD39BB92759BFCF006D5ED5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */; };
 		4FD39BBB2759BFCF006D5ED5 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */; };
 		4FD39BBD2759BFCF006D5ED5 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BBC2759BFCF006D5ED5 /* Actions.sks */; };
@@ -43,6 +45,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4F16F6DF2761AEC3008C7F50 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
+		4F16F6E12764D209008C7F50 /* SensorsActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorsActions.swift; sourceTree = "<group>"; };
 		4FD39BB52759BFCF006D5ED5 /* biosim4-swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "biosim4-swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -122,6 +126,8 @@
 				4FD39BC22759BFD0006D5ED5 /* Assets.xcassets */,
 				4FD39BC42759BFD0006D5ED5 /* Main.storyboard */,
 				4FD39BC72759BFD0006D5ED5 /* biosim4_swift.entitlements */,
+				4F16F6DF2761AEC3008C7F50 /* Grid.swift */,
+				4F16F6E12764D209008C7F50 /* SensorsActions.swift */,
 			);
 			path = "biosim4-swift";
 			sourceTree = "<group>";
@@ -291,6 +297,8 @@
 				4FD39BEE2759C111006D5ED5 /* Compass.swift in Sources */,
 				4FD39BEC2759C10A006D5ED5 /* Polar.swift in Sources */,
 				4FD39BC12759BFCF006D5ED5 /* ViewController.swift in Sources */,
+				4F16F6E02761AEC3008C7F50 /* Grid.swift in Sources */,
+				4F16F6E22764D209008C7F50 /* SensorsActions.swift in Sources */,
 				4FD39BF02759C115006D5ED5 /* Coord.swift in Sources */,
 				4FD39BF22759C5AE006D5ED5 /* Dir.swift in Sources */,
 				4FD39BBF2759BFCF006D5ED5 /* GameScene.swift in Sources */,
