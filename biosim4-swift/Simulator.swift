@@ -28,8 +28,8 @@ let CHALLENGE_LOCATION_SEQUENCE = 16
 let CHALLENGE_ALTRUISM = 17
 let CHALLENGE_ALTRUISM_SACRIFICE = 18
 
-let runMode = RunMode.STOP
+var runMode = RunMode.STOP
 let p = Params.defaults
 let grid = Grid(sizeX: p.sizeX, sizeY: p.sizeY) // 2D arena where the individuals live
 //let signals = Signals()  // pheromone layers
-//let peeps = Peeps() // container of all the individuals
+var peeps = Peeps() // container of all the individuals

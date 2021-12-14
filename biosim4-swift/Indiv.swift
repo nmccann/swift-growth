@@ -1,9 +1,9 @@
 import Foundation
 
 struct Indiv {
-  let alive: Bool
+  var alive: Bool
   let index: Int // index into peeps[] container
-  let loc: Coord // refers to a location in grid[][]
+  var loc: Coord // refers to a location in grid[][]
   let birthLoc: Coord
   let age: Int
   let genome: Genome
@@ -11,7 +11,7 @@ struct Indiv {
   let responsiveness: Double // 0.0..1.0 (0 is like asleep)
   let oscPeriod: Int // 2..4*p.stepsPerGeneration (TBD, see executeActions())
   let longProbeDist: Int // distance for long forward probe for obstructions
-  let lastMoveDir: Dir // direction of last movement
+  var lastMoveDir: Dir // direction of last movement
   let challengeBits: Int // modified when the indiv accomplishes some task
 
 
