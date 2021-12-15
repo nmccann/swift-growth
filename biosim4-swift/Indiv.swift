@@ -8,9 +8,9 @@ struct Indiv {
   let age: Int
   let genome: Genome
   let nnet: NeuralNet // derived from .genome
-  let responsiveness: Double // 0.0..1.0 (0 is like asleep)
-  let oscPeriod: Int // 2..4*p.stepsPerGeneration (TBD, see executeActions())
-  let longProbeDist: Int // distance for long forward probe for obstructions
+  var responsiveness: Double // 0.0..1.0 (0 is like asleep)
+  var oscPeriod: Int // 2..4*p.stepsPerGeneration (TBD, see executeActions())
+  var longProbeDist: Int // distance for long forward probe for obstructions
   var lastMoveDir: Dir // direction of last movement
   let challengeBits: Int // modified when the indiv accomplishes some task
 

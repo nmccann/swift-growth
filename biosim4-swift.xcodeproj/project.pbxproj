@@ -10,6 +10,7 @@
 		4F16F6E02761AEC3008C7F50 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F16F6DF2761AEC3008C7F50 /* Grid.swift */; };
 		4F16F6E22764D209008C7F50 /* SensorsActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F16F6E12764D209008C7F50 /* SensorsActions.swift */; };
 		4F1F8C0E2768D1A6003EC662 /* Peeps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1F8C0D2768D1A6003EC662 /* Peeps.swift */; };
+		4F945C5C276A2F5E00E1E4FF /* ExecuteActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F945C5B276A2F5E00E1E4FF /* ExecuteActions.swift */; };
 		4FB168282766F1B00048E6EB /* Genome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB168272766F1B00048E6EB /* Genome.swift */; };
 		4FB1682A276790760048E6EB /* Indiv.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB16829276790760048E6EB /* Indiv.swift */; };
 		4FB1682C276791E00048E6EB /* Simulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB1682B276791E00048E6EB /* Simulator.swift */; };
@@ -53,6 +54,7 @@
 		4F16F6DF2761AEC3008C7F50 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		4F16F6E12764D209008C7F50 /* SensorsActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorsActions.swift; sourceTree = "<group>"; };
 		4F1F8C0D2768D1A6003EC662 /* Peeps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peeps.swift; sourceTree = "<group>"; };
+		4F945C5B276A2F5E00E1E4FF /* ExecuteActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecuteActions.swift; sourceTree = "<group>"; };
 		4FB168272766F1B00048E6EB /* Genome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genome.swift; sourceTree = "<group>"; };
 		4FB16829276790760048E6EB /* Indiv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Indiv.swift; sourceTree = "<group>"; };
 		4FB1682B276791E00048E6EB /* Simulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simulator.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				4FB1682B276791E00048E6EB /* Simulator.swift */,
 				4FB1682D276794D30048E6EB /* Params.swift */,
 				4F1F8C0D2768D1A6003EC662 /* Peeps.swift */,
+				4F945C5B276A2F5E00E1E4FF /* ExecuteActions.swift */,
 			);
 			path = "biosim4-swift";
 			sourceTree = "<group>";
@@ -241,7 +244,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1310;
-				LastUpgradeCheck = 1310;
+				LastUpgradeCheck = 1320;
 				TargetAttributes = {
 					4FD39BB42759BFCF006D5ED5 = {
 						CreatedOnToolsVersion = 13.1;
@@ -315,6 +318,7 @@
 				4FB168282766F1B00048E6EB /* Genome.swift in Sources */,
 				4FD39BC12759BFCF006D5ED5 /* ViewController.swift in Sources */,
 				4F1F8C0E2768D1A6003EC662 /* Peeps.swift in Sources */,
+				4F945C5C276A2F5E00E1E4FF /* ExecuteActions.swift in Sources */,
 				4FB1682E276794D30048E6EB /* Params.swift in Sources */,
 				4F16F6E02761AEC3008C7F50 /* Grid.swift in Sources */,
 				4F16F6E22764D209008C7F50 /* SensorsActions.swift in Sources */,
@@ -493,6 +497,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "biosim4-swift/biosim4_swift.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -520,6 +525,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "biosim4-swift/biosim4_swift.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
