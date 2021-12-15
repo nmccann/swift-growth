@@ -26,13 +26,25 @@ struct Indiv {
     fatalError()
   }
 
-  init(index: Int, loc: Coord, genome: inout Genome) {
-    fatalError()
-  }
 
-  /// creates .nnet member from .genome member
-  func createWiringFromGenome() {
-    fatalError()
+  /// This is called when any individual is spawned.
+  /// The responsiveness parameter will be initialized here to maximum value
+  /// of 1.0, then depending on which action activation function is used,
+  /// the default undriven value may be changed to 1.0 or action midrange.
+  init(index: Int, loc: Coord, genome: inout Genome) {
+    self.index = index
+    self.loc = loc
+    self.birthLoc = loc //commented out in original implementation
+    grid.set(loc: loc, val: index) //TODO: Avoid mutating global state like this
+    self.age = 0
+    self.oscPeriod = 34 //TODO: Define a constant
+    self.alive = true
+    self.lastMoveDir = .random8()
+    self.responsiveness = 0.5 // range 0.0..1.0
+    self.longProbeDist = p.longProbeDistance //TODO: Avoid referencing global state
+    self.challengeBits = 0 // will be set true when some task gets accomplished
+    self.genome = genome
+    self.nnet = createWiringFromGenome(&genome)
   }
 
   func printNeuralNet() {
@@ -47,3 +59,4 @@ struct Indiv {
     fatalError()
   }
 }
+

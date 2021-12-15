@@ -66,8 +66,8 @@ typealias Genome = [Gene]
 // assigned sequentially starting at 0.
 
 struct NeuralNet {
-  let connections: [Gene] // connections are equivalent to genes
-  let neurons: [Neuron]
+  var connections: [Gene] // connections are equivalent to genes
+  var neurons: [Neuron]
 
   struct Neuron {
     let output: Double
@@ -94,7 +94,7 @@ func initialNeuronOutput() -> Double {
 // Finally, we'll renumber the remaining neurons sequentially starting
 // at zero using the .remappedNumber member.
 struct Node {
-  let remappedNumber: Int
+  var remappedNumber: Int
   var numOutputs: Int
   var numSelfInputs: Int
   var numInputsFromSensorsOrOtherNeurons: Int
@@ -235,4 +235,83 @@ func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMa
       nodeMap.removeValue(forKey: key)
     }
   }
+}
+
+/// This function is used when an agent is spawned. This function converts the
+/// agent's inherited genome into the agent's neural net brain. There is a close
+/// correspondence between the genome and the neural net, but a connection
+/// specified in the genome will not be represented in the neural net if the
+/// connection feeds a neuron that does not itself feed anything else.
+/// Neurons get renumbered in the process:
+/// 1. Create a set of referenced neuron numbers where each index is in the
+///    range 0..p.genomeMaxLength-1, keeping a count of outputs for each neuron.
+/// 2. Delete any referenced neuron index that has no outputs or only feeds itself.
+/// 3. Renumber the remaining neurons sequentially starting at 0.
+func createWiringFromGenome(_ genome: inout Genome) -> NeuralNet {
+  var nodeMap: NodeMap = [:]  // list of neurons and their number of inputs and outputs
+  var connectionList: ConnectionList = [] // synaptic connections
+  var nnet = NeuralNet(connections: [], neurons: [])
+
+  // Convert the indiv's genome to a renumbered connection list
+  makeRenumberedConnectionList(connectionList: &connectionList, genome: &genome);
+
+  // Make a node (neuron) list from the renumbered connection list
+  makeNodeList(nodeMap: &nodeMap, connectionList: &connectionList);
+
+  // Find and remove neurons that don't feed anything or only feed themself.
+  // This reiteratively removes all connections to the useless neurons.
+  cullUselessNeurons(connections: &connectionList, nodeMap: &nodeMap);
+
+  // The neurons map now has all the referenced neurons, their neuron numbers, and
+  // the number of outputs for each neuron. Now we'll renumber the neurons
+  // starting at zero.
+
+  assert(nodeMap.count <= p.maxNumberNeurons);
+  var newNumber = 0;
+
+  for var node in nodeMap {
+    assert(node.value.numOutputs != 0)
+    node.value.remappedNumber = newNumber
+    newNumber += 1
+  }
+
+  // Create the indiv's connection list in two passes:
+  // First the connections to neurons, then the connections to actions.
+  // This ordering optimizes the feed-forward function in feedForward.cpp.
+
+  nnet.connections.removeAll()
+
+  // First, the connections from sensor or neuron to a neuron
+  for conn in connectionList {
+    if conn.sinkType == NEURON {
+      var newConn = conn
+      // fix the destination neuron number
+      newConn.sinkNum = nodeMap[newConn.sinkNum]?.remappedNumber ?? newConn.sinkNum
+      // if the source is a neuron, fix its number too
+      if newConn.sourceType == NEURON {
+        newConn.sourceNum = nodeMap[newConn.sourceNum]?.remappedNumber ?? newConn.sourceNum
+      }
+      nnet.connections.append(newConn)
+    }
+  }
+
+  // Last, the connections from sensor or neuron to an action
+  for conn in connectionList {
+    if conn.sinkType == ACTION {
+      var newConn = conn
+      // if the source is a neuron, fix its number
+      if newConn.sourceType == NEURON {
+        newConn.sourceNum = nodeMap[newConn.sourceNum]?.remappedNumber ?? newConn.sourceNum
+      }
+      nnet.connections.append(newConn)
+    }
+  }
+
+  // Create the indiv's neural node list
+  nnet.neurons = (0..<nodeMap.count).map {
+    .init(output: initialNeuronOutput(),
+          driven: nodeMap[$0]?.numInputsFromSensorsOrOtherNeurons != 0)
+  }
+
+  return nnet
 }
