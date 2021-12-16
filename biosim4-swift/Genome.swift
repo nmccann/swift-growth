@@ -132,7 +132,7 @@ func makeRandomGenome() -> Genome {
 // to the range 0..p.maxNumberNeurons - 1 by using a modulo operator.
 // Sensors are renumbered 0..Sensor::NUM_SENSES - 1
 // Actions are renumbered 0..Action::NUM_ACTIONS - 1
-func makeRenumberedConnectionList(connectionList: inout ConnectionList, genome: inout Genome) {
+func makeRenumberedConnectionList(connectionList: inout ConnectionList, genome: Genome) {
   //TODO: Confirm that behaviour is the same as original
   connectionList.removeAll()
   for gene in genome {
@@ -150,7 +150,7 @@ func makeRenumberedConnectionList(connectionList: inout ConnectionList, genome: 
       conn.sinkNum %= Action.NUM_ACTIONS.rawValue
     }
 
-    connectionList.append(gene)
+    connectionList.append(conn)
   }
 }
 
@@ -247,13 +247,13 @@ func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMa
 ///    range 0..p.genomeMaxLength-1, keeping a count of outputs for each neuron.
 /// 2. Delete any referenced neuron index that has no outputs or only feeds itself.
 /// 3. Renumber the remaining neurons sequentially starting at 0.
-func createWiringFromGenome(_ genome: inout Genome) -> NeuralNet {
+func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
   var nodeMap: NodeMap = [:]  // list of neurons and their number of inputs and outputs
   var connectionList: ConnectionList = [] // synaptic connections
   var nnet = NeuralNet(connections: [], neurons: [])
 
   // Convert the indiv's genome to a renumbered connection list
-  makeRenumberedConnectionList(connectionList: &connectionList, genome: &genome);
+  makeRenumberedConnectionList(connectionList: &connectionList, genome: genome);
 
   // Make a node (neuron) list from the renumbered connection list
   makeNodeList(nodeMap: &nodeMap, connectionList: &connectionList);
