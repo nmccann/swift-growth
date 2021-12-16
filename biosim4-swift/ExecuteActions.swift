@@ -50,19 +50,11 @@ func responseCurve(_ r: Double) -> Double {
  simulator step by endOfSimStep() in a single thread after all individuals have been
  evaluated multithreadedly.
  **********************************************************************************/
-func executeActions(indiv: inout Indiv, actionLevels: inout [Double]) {
-  // Only a subset of all possible actions might be enabled (i.e., compiled in).
-  // This returns true if the specified action is enabled. See sensors-actions.h
-  // for how to enable sensors and actions during compilation.
-  func isEnabled(_ action: Action) -> Bool {
-    action.rawValue < Action.NUM_ACTIONS.rawValue
-  }
-
+func executeActions(indiv: inout Indiv, levels: [Action: Double]) {
   // Responsiveness action - convert neuron action level from arbitrary float range
   // to the range 0.0..1.0. If this action neuron is enabled but not driven, will
   // default to mid-level 0.5.
-  if (isEnabled(.SET_RESPONSIVENESS)) {
-    var level = actionLevels[Action.SET_RESPONSIVENESS.rawValue] // default 0.0
+  if var level = levels[.SET_RESPONSIVENESS] {
     level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
     indiv.responsiveness = level
   }
@@ -74,8 +66,7 @@ func executeActions(indiv: inout Indiv, actionLevels: inout [Double]) {
   // Oscillator period action - convert action level nonlinearly to
   // 2..4*p.stepsPerGeneration. If this action neuron is enabled but not driven,
   // will default to 1.5 + e^(3.5) = a period of 34 simSteps.
-  if (isEnabled(.SET_OSCILLATOR_PERIOD)) {
-    let periodf = actionLevels[Action.SET_OSCILLATOR_PERIOD.rawValue]
+  if let periodf = levels[.SET_OSCILLATOR_PERIOD] {
     let newPeriodf01 = (tanh(periodf) + 1.0) / 2.0 // convert to 0.0..1.0
     let newPeriod = 1 + Int(1.5 + exp(7.0 * newPeriodf01))
     assert(newPeriod >= 2 && newPeriod <= 2048)
@@ -85,9 +76,8 @@ func executeActions(indiv: inout Indiv, actionLevels: inout [Double]) {
   // Set longProbeDistance - convert action level to 1..maxLongProbeDistance.
   // If this action neuron is enabled but not driven, will default to
   // mid-level period of 17 simSteps.
-  if (isEnabled(.SET_LONGPROBE_DIST)) {
+  if var level = levels[.SET_LONGPROBE_DIST] {
     let maxLongProbeDistance = 32
-    var level = actionLevels[Action.SET_LONGPROBE_DIST.rawValue]
     level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
     level = 1 + level * Double(maxLongProbeDistance)
     indiv.longProbeDist = Int(UInt(level))
@@ -98,9 +88,8 @@ func executeActions(indiv: inout Indiv, actionLevels: inout [Double]) {
   // signal (pheromone).
   // Pheromones may be emitted immediately (see signals.cpp). If this action neuron
   // is enabled but not driven, nothing will be emitted.
-  if (isEnabled(.EMIT_SIGNAL0)) {
+  if var level = levels[.EMIT_SIGNAL0] {
     let emitThreshold = 0.5  // 0.0..1.0; 0.5 is midlevel
-    var level = actionLevels[Action.EMIT_SIGNAL0.rawValue];
     level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
     level *= responsivenessAdjusted
 
@@ -113,9 +102,8 @@ func executeActions(indiv: inout Indiv, actionLevels: inout [Double]) {
   // Kill forward -- if this action value is > threshold, value is converted to probability
   // of an attempted murder. Probabilities under the threshold are considered 0.0.
   // If this action neuron is enabled but not driven, the neighbors are safe.
-  if (isEnabled(.KILL_FORWARD) && p.killEnable) {
+  if var level = levels[.KILL_FORWARD], p.killEnable {
     let killThreshold = 0.5  // 0.0..1.0; 0.5 is midlevel
-    var level = actionLevels[Action.KILL_FORWARD.rawValue];
     level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
     level *= responsivenessAdjusted
 
@@ -157,61 +145,43 @@ func executeActions(indiv: inout Indiv, actionLevels: inout [Double]) {
 
   // moveX,moveY will be the accumulators that will hold the sum of all the
   // urges to move along each axis. (+- floating values of arbitrary range)
-  var moveX = isEnabled(.MOVE_X) ? actionLevels[Action.MOVE_X.rawValue] : 0.0
-  var moveY = isEnabled(.MOVE_Y) ? actionLevels[Action.MOVE_Y.rawValue] : 0.0
+  var moveX = levels[.MOVE_X] ?? 0.0
+  var moveY = levels[.MOVE_Y] ?? 0.0
 
-  if isEnabled(.MOVE_EAST) {
-    moveX += actionLevels[Action.MOVE_EAST.rawValue]
-  }
+  moveX += levels[.MOVE_EAST] ?? 0
+  moveX -= levels[.MOVE_WEST] ?? 0
+  moveY += levels[.MOVE_NORTH] ?? 0
+  moveY -= levels[.MOVE_SOUTH] ?? 0
 
-  if isEnabled(.MOVE_WEST) {
-    moveX -= actionLevels[Action.MOVE_WEST.rawValue]
-  }
-
-  if isEnabled(.MOVE_NORTH) {
-    moveY += actionLevels[Action.MOVE_NORTH.rawValue]
-  }
-
-  if isEnabled(.MOVE_SOUTH) {
-    moveY -= actionLevels[Action.MOVE_SOUTH.rawValue]
-  }
-
-
-  if (isEnabled(.MOVE_FORWARD)) {
-    level = actionLevels[Action.MOVE_FORWARD.rawValue]
+  if let level = levels[.MOVE_FORWARD] {
     moveX += Double(lastMoveOffset.x) * level
     moveY += Double(lastMoveOffset.y) * level
   }
 
-  if (isEnabled(.MOVE_REVERSE)) {
-    level = actionLevels[Action.MOVE_REVERSE.rawValue]
+  if let level = levels[.MOVE_REVERSE] {
     moveX -= Double(lastMoveOffset.x) * level
     moveY -= Double(lastMoveOffset.y) * level
   }
 
-  if (isEnabled(.MOVE_LEFT)) {
-    level = actionLevels[Action.MOVE_LEFT.rawValue]
+  if let level = levels[.MOVE_LEFT] {
     offset = indiv.lastMoveDir.rotate90DegCCW().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
 
-  if (isEnabled(.MOVE_RIGHT)) {
-    level = actionLevels[Action.MOVE_RIGHT.rawValue]
+  if let level = levels[.MOVE_RIGHT] {
     offset = indiv.lastMoveDir.rotate90DegCW().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
 
-  if (isEnabled(.MOVE_RL)) {
-    level = actionLevels[Action.MOVE_RL.rawValue]
+  if let level = levels[.MOVE_RL] {
     offset = indiv.lastMoveDir.rotate90DegCW().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
 
-  if (isEnabled(.MOVE_RANDOM)) {
-    level = actionLevels[Action.MOVE_RANDOM.rawValue]
+  if let level = levels[.MOVE_RANDOM] {
     offset = Dir.random8().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level

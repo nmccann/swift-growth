@@ -3,7 +3,7 @@ import XCTest
 @testable import biosim4_swift
 
 class PeepsTests: XCTestCase {
-  override class func setUp() {
+  override func setUp() {
     p = .defaults
     p.sizeX = 4
     p.sizeY = 4
