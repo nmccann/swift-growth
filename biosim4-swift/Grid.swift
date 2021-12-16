@@ -1,8 +1,6 @@
 import Foundation
 
-let EMPTY = 0
 let BARRIER = 0xffff
-let NOT_OCCUPIED = Set([EMPTY, BARRIER])
 
 class Grid {
   var data: [Column]
@@ -13,9 +11,9 @@ class Grid {
     data = .init(repeating: .init(numRows: sizeY), count: sizeX)
   }
 
-  func zeroFill() {
+  func nilFill() {
     for var column in data {
-      column.zeroFill()
+      column.nilFill()
     }
   }
 
@@ -32,7 +30,7 @@ class Grid {
   }
 
   func isEmptyAt(loc: Coord) -> Bool {
-    at(loc) == EMPTY
+    at(loc) == nil
   }
 
   func isBarrierAt(loc: Coord) -> Bool {
@@ -41,26 +39,27 @@ class Grid {
 
   /// Occupied means an agent is living there.
   func isOccupiedAt(loc: Coord) -> Bool {
-    !NOT_OCCUPIED.contains(at(loc))
+    let value = at(loc)
+    return value != nil && value != BARRIER
   }
 
   func isBorder(loc: Coord) -> Bool {
     loc.x == 0 || loc.x == sizeX() - 1 || loc.y == 0 || loc.y == sizeY() - 1
   }
 
-  func at(_ loc: Coord) -> Int {
+  func at(_ loc: Coord) -> Int? {
     data[loc.x][loc.y]
   }
 
-  func at(x: Int, y: Int) -> Int {
+  func at(x: Int, y: Int) -> Int? {
     data[x][y]
   }
 
-  func set(loc: Coord, val: Int) {
+  func set(loc: Coord, val: Int?) {
     data[loc.x][loc.y] = val
   }
 
-  func set(x: Int, y: Int, val: Int) {
+  func set(x: Int, y: Int, val: Int?) {
     data[x][y] = val
   }
 
@@ -119,17 +118,17 @@ class Grid {
 
 extension Grid {
   struct Column {
-    var data: [Int]
+    var data: [Int?]
 
     init(numRows: Int) {
-      data = .init(repeating: 0, count: numRows)
+      data = .init(repeating: nil, count: numRows)
     }
 
-    mutating func zeroFill() {
-      data = data.map { _ in 0 }
+    mutating func nilFill() {
+      data = data.map { _ in nil }
     }
 
-    subscript(rowNum: Int) -> Int {
+    subscript(rowNum: Int) -> Int? {
       get {
         data[rowNum]
       }
