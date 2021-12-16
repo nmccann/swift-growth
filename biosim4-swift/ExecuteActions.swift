@@ -127,7 +127,7 @@ func executeActions(indiv: inout Indiv, actionLevels: inout [Double]) {
         if indiv2.alive {
           let distance = (indiv.loc - indiv2.loc).length
           assert(distance == 1);
-          peeps.queueForDeath(&indiv2)
+          peeps.queueForDeath(indiv2)
         }
       }
     }

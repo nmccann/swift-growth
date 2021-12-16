@@ -27,7 +27,7 @@ class Peeps {
   /// Safe to call during multithread mode.
   /// Indiv will remain alive and in-world until end of sim step when
   /// drainDeathQueue() is called.
-  func queueForDeath(_ indiv: inout Indiv) {
+  func queueForDeath(_ indiv: Indiv) {
     deathQueue.append(indiv.index)
   }
 
@@ -39,7 +39,7 @@ class Peeps {
       // This matches original implementation, but is not ideal
       var indiv = peeps[index]
       indiv.alive = false
-      grid.set(loc: indiv.loc, val: 0)
+      grid.set(loc: indiv.loc, val: nil)
       peeps[index] = indiv
     }
     deathQueue.removeAll()
