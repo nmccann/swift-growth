@@ -239,6 +239,6 @@ func executeActions(indiv: inout Indiv, actionLevels: inout [Double]) {
   let newLoc = indiv.loc + movementOffset
 
   if grid.isInBounds(loc: newLoc) && grid.isEmptyAt(loc: newLoc) {
-    peeps.queueForMove(&indiv, newLoc: newLoc)
+    peeps.queueForMove(indiv, newLoc: newLoc)
   }
 }

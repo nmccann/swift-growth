@@ -37,8 +37,8 @@ struct Params {
   let replaceBarrierTypeGenerationNumber: Int // >= 0
 
   // These must not change after initialization
-  let sizeX: Int // 2..0x10000
-  let sizeY: Int // 2..0x10000
+  var sizeX: Int // 2..0x10000
+  var sizeY: Int // 2..0x10000
   let genomeInitialLengthMin: Int // > 0 and < genomeInitialLengthMax
   let genomeInitialLengthMax: Int // > 0 and > genomeInitialLengthMin
   let logDir: String

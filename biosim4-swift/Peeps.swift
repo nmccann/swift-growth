@@ -20,16 +20,9 @@ class Peeps {
   var deathQueue: [Int] = []
   var moveQueue: [(Int, Coord)] = []
 
-//  These don't seem relevant in Swift
-//  init() {
-//    fatalError()
-//  }
-//
-//  init(population: Int) {
-// Index 0 is reserved, so add one:
-//  individuals.resize(population + 1);
-//    fatalError()
-//  }
+  init(individuals: [Indiv]) {
+    self.individuals = individuals
+  }
 
   /// Safe to call during multithread mode.
   /// Indiv will remain alive and in-world until end of sim step when
@@ -55,7 +48,7 @@ class Peeps {
 
   /// Safe to call during multithread mode. Indiv won't move until end
   /// of sim step when drainMoveQueue() is called.
-  func queueForMove(_ indiv: inout Indiv, newLoc: Coord) {
+  func queueForMove(_ indiv: Indiv, newLoc: Coord) {
     moveQueue.append((indiv.index, newLoc))
   }
 
@@ -70,7 +63,7 @@ class Peeps {
       let newLoc = moveRecord.1
       let moveDir = (newLoc - indiv.loc).asDir()
       if grid.isEmptyAt(loc: newLoc) {
-        grid.set(loc: indiv.loc, val: 0)
+        grid.set(loc: indiv.loc, val: nil)
         grid.set(loc: newLoc, val: indiv.index)
         indiv.loc = newLoc
         indiv.lastMoveDir = moveDir
@@ -88,7 +81,11 @@ class Peeps {
 
   /// Does no error checking -- check first that loc is occupied
   func getIndiv(loc: Coord) -> Indiv {
-    individuals[grid.at(loc)]
+    guard let index = grid.at(loc) else {
+      fatalError("Location is not occupied")
+    }
+
+    return individuals[index]
   }
 
   subscript(index: Int) -> Indiv {

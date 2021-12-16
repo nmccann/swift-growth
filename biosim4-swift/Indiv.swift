@@ -31,7 +31,7 @@ struct Indiv {
   /// The responsiveness parameter will be initialized here to maximum value
   /// of 1.0, then depending on which action activation function is used,
   /// the default undriven value may be changed to 1.0 or action midrange.
-  init(index: Int, loc: Coord, genome: inout Genome) {
+  init(index: Int, loc: Coord, genome: Genome) {
     self.index = index
     self.loc = loc
     self.birthLoc = loc //commented out in original implementation
@@ -44,7 +44,7 @@ struct Indiv {
     self.longProbeDist = p.longProbeDistance //TODO: Avoid referencing global state
     self.challengeBits = 0 // will be set true when some task gets accomplished
     self.genome = genome
-    self.nnet = createWiringFromGenome(&genome)
+    self.nnet = createWiringFromGenome(genome)
   }
 
   func printNeuralNet() {
