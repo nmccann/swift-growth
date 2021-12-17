@@ -12,8 +12,18 @@ class Grid {
   }
 
   func nilFill() {
-    for var column in data {
-      column.nilFill()
+    data = data.map {
+      var temp = $0
+      temp.nilFill()
+      return temp
+    }
+  }
+
+  func randomFill() {
+    data = data.map {
+      var temp = $0
+      temp.randomFill()
+      return temp
     }
   }
 
@@ -126,6 +136,16 @@ extension Grid {
 
     mutating func nilFill() {
       data = data.map { _ in nil }
+    }
+
+    mutating func randomFill() {
+      data = data.map { _ in
+        if Bool.random() == false {
+          return nil
+        } else {
+          return Bool.random() == false ? BARRIER : 1
+        }
+      }
     }
 
     subscript(rowNum: Int) -> Int? {
