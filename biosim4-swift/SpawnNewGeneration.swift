@@ -1,7 +1,12 @@
 import Foundation
 
-func passedSurvivalCriterion(indiv: inout Indiv, challenge: Int) -> (Bool, Double) {
+func passedSurvivalCriterion(indiv: inout Indiv, challenge: Challenge?) -> (Bool, Double) {
   //TODO: Implement correctly
+  guard let challenge = challenge else {
+    //No challenge, all pass
+    return (true, 1.0)
+  }
+
   return (true, 1.0)
 }
 
@@ -60,7 +65,9 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
   // of all the survivors who will provide genomes for repopulation.
   var parents: [(Int, Double)] = [] // <indiv index, score>
 
-  if p.challenge != CHALLENGE_ALTRUISM {
+  if case .altruism = p.challenge {
+    //TODO: Implement altruism challenge
+  } else {
     // First, make a list of all the individuals who will become parents; save
     // their scores for later sorting. Indexes start at 1.
     for i in 0..<p.population {
@@ -74,8 +81,6 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
         parents.append((i, passed.1))
       }
     }
-  } else {
-    //TODO: Implement altruism challenge
   }
 
   // Sort the indexes of the parents by their fitness scores

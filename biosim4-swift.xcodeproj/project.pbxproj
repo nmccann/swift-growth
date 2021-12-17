@@ -11,6 +11,7 @@
 		4F05072F276CE1D4002D5536 /* EndOfGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05072E276CE1D4002D5536 /* EndOfGeneration.swift */; };
 		4F050731276CE200002D5536 /* EndOfSimStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F050730276CE200002D5536 /* EndOfSimStep.swift */; };
 		4F050733276CE300002D5536 /* FeedForward.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F050732276CE300002D5536 /* FeedForward.swift */; };
+		4F050735276D004C002D5536 /* Challenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F050734276D004C002D5536 /* Challenge.swift */; };
 		4F16F6E02761AEC3008C7F50 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F16F6DF2761AEC3008C7F50 /* Grid.swift */; };
 		4F16F6E22764D209008C7F50 /* SensorsActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F16F6E12764D209008C7F50 /* SensorsActions.swift */; };
 		4F1F8C0E2768D1A6003EC662 /* Peeps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1F8C0D2768D1A6003EC662 /* Peeps.swift */; };
@@ -62,6 +63,7 @@
 		4F05072E276CE1D4002D5536 /* EndOfGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndOfGeneration.swift; sourceTree = "<group>"; };
 		4F050730276CE200002D5536 /* EndOfSimStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndOfSimStep.swift; sourceTree = "<group>"; };
 		4F050732276CE300002D5536 /* FeedForward.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedForward.swift; sourceTree = "<group>"; };
+		4F050734276D004C002D5536 /* Challenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Challenge.swift; sourceTree = "<group>"; };
 		4F16F6DF2761AEC3008C7F50 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		4F16F6E12764D209008C7F50 /* SensorsActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorsActions.swift; sourceTree = "<group>"; };
 		4F1F8C0D2768D1A6003EC662 /* Peeps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peeps.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 				4F05072E276CE1D4002D5536 /* EndOfGeneration.swift */,
 				4F050730276CE200002D5536 /* EndOfSimStep.swift */,
 				4F050732276CE300002D5536 /* FeedForward.swift */,
+				4F050734276D004C002D5536 /* Challenge.swift */,
 			);
 			path = "biosim4-swift";
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 				4FB168282766F1B00048E6EB /* Genome.swift in Sources */,
 				4FD39BC12759BFCF006D5ED5 /* ViewController.swift in Sources */,
 				4F1F8C0E2768D1A6003EC662 /* Peeps.swift in Sources */,
+				4F050735276D004C002D5536 /* Challenge.swift in Sources */,
 				4F945C5C276A2F5E00E1E4FF /* ExecuteActions.swift in Sources */,
 				4FB1682E276794D30048E6EB /* Params.swift in Sources */,
 				4F16F6E02761AEC3008C7F50 /* Grid.swift in Sources */,
