@@ -6,16 +6,16 @@ class GameScene: SKScene {
   private var gridNode: SKNode!
   private var gridCells: [[SKShapeNode]] = []
   private var previousTime: TimeInterval = 0
-  private let delay: TimeInterval = 1
+  private let delay: TimeInterval = 0.1
 
   override func sceneDidLoad() {
     super.sceneDidLoad()
 
+    initializeSimulator()
+
     guard let scene = scene else {
       return
     }
-
-    grid.randomFill()
 
     let rect = CGRect(x: 0,
                       y: 0,
@@ -97,7 +97,7 @@ class GameScene: SKScene {
   override func update(_ currentTime: TimeInterval) {
     let delta = currentTime - previousTime
     if delta > delay {
-      grid.randomFill()
+      advanceSimulator()
       previousTime = currentTime
 
       for (column, columnContents) in gridCells.enumerated() {

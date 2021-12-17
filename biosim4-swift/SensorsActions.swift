@@ -42,7 +42,7 @@ enum Sensor: Int, CaseIterable {
   case SIGNAL0_LR        // W strength of signal0 in the left-right axis
   case NUM_SENSES        // <<------------------ END OF ACTIVE SENSES MARKER
 
-  func name() -> String {
+  var name: String {
     switch self {
     case .LOC_X: return "loc X"
     case .LOC_Y: return "loc Y"
@@ -68,6 +68,28 @@ enum Sensor: Int, CaseIterable {
     case .NUM_SENSES: fatalError("Unexpected sense")
     }
   }
+
+  static let enabled: [Sensor] = [.LOC_X,
+                                  .LOC_Y,
+                                  .BOUNDARY_DIST_X,
+                                  .BOUNDARY_DIST,
+                                  .BOUNDARY_DIST_Y,
+                                  .GENETIC_SIM_FWD,
+                                  .LAST_MOVE_DIR_X,
+                                  .LAST_MOVE_DIR_Y,
+                                  .LONGPROBE_POP_FWD,
+                                  .LONGPROBE_BAR_FWD,
+                                  .POPULATION,
+                                  .POPULATION_FWD,
+                                  .POPULATION_LR,
+                                  .OSC1,
+                                  .AGE,
+                                  .BARRIER_FWD,
+                                  .BARRIER_LR,
+                                  .RANDOM,
+                                  .SIGNAL0,
+                                  .SIGNAL0_FWD,
+                                  .SIGNAL0_LR]
 }
 
 // Place the action neuron you want enabled prior to NUM_ACTIONS. Any
@@ -96,7 +118,7 @@ enum Action: Int, CaseIterable {
   case NUM_ACTIONS       // <<----------------- END OF ACTIVE ACTIONS MARKER
   case KILL_FORWARD             // W
 
-  func name() -> String {
+  var name: String {
     switch self {
     case .MOVE_X: return "move X"
     case .MOVE_Y: return "move Y"
@@ -118,14 +140,31 @@ enum Action: Int, CaseIterable {
     case .KILL_FORWARD: return "kill fwd"
     }
   }
+
+  static let enabled: [Action] = [.MOVE_X,
+                                  .MOVE_Y,
+                                  .MOVE_FORWARD,
+                                  .MOVE_RL,
+                                  .MOVE_RANDOM,
+                                  .SET_OSCILLATOR_PERIOD,
+                                  .SET_LONGPROBE_DIST,
+                                  .SET_RESPONSIVENESS,
+                                  .EMIT_SIGNAL0,
+                                  .MOVE_EAST,
+                                  .MOVE_WEST,
+                                  .MOVE_NORTH,
+                                  .MOVE_SOUTH,
+                                  .MOVE_LEFT,
+                                  .MOVE_RIGHT,
+                                  .MOVE_REVERSE]
 }
 
 func printSensorsActions() {
-  var allSenses = Sensor.allCases
-  allSenses.removeAll { $0 == .NUM_SENSES }
-  allSenses.forEach { print($0.name) }
-
-  var allActions = Action.allCases
-  allActions.removeAll { $0 == .NUM_ACTIONS }
-  allActions.forEach { print($0.name) }
+  print("""
+Capabilities:
+--Sensors--
+  \(Sensor.enabled.map(\.name).joined(separator: "\n\t"))
+--Actions--
+  \(Action.enabled.map(\.name).joined(separator: "\n\t"))
+""")
 }

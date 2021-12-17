@@ -70,7 +70,7 @@ struct NeuralNet {
   var neurons: [Neuron]
 
   struct Neuron {
-    let output: Double
+    var output: Double
     let driven: Bool // undriven neurons have fixed output values
   }
 }
@@ -314,4 +314,13 @@ func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
   }
 
   return nnet
+}
+
+// This generates a child genome from one or two parent genomes.
+// If the parameter p.sexualReproduction is true, two parents contribute
+// genes to the offspring. The new genome may undergo mutation.
+// Must be called in single-thread mode between generations
+func generateChildGenome(parentGenomes: inout [Genome]) -> Genome {
+  //TODO: Implement correctly
+  makeRandomGenome()
 }
