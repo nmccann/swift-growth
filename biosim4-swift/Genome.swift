@@ -141,13 +141,13 @@ func makeRenumberedConnectionList(connectionList: inout ConnectionList, genome: 
     if conn.sourceType == NEURON {
       conn.sourceNum %= p.maxNumberNeurons
     } else {
-      conn.sourceNum %= Sensor.NUM_SENSES.rawValue
+      conn.sourceNum %= Sensor.enabled.count
     }
 
     if conn.sinkType == NEURON {
       conn.sinkNum %= p.maxNumberNeurons
     } else {
-      conn.sinkNum %= Action.NUM_ACTIONS.rawValue
+      conn.sinkNum %= Action.enabled.count
     }
 
     connectionList.append(conn)
