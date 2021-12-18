@@ -91,8 +91,10 @@ func advanceSimulator() {
 
   if numberSurvivors == 0 {
     generation = 0 // start over
+    print("No survivors, starting over")
   } else {
     generation += 1
+    print("Last Survival Percentage: \(Double(numberSurvivors) / Double(p.population)) Next Generation: \(generation)")
   }
 }
 

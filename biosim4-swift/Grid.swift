@@ -74,7 +74,6 @@ class Grid {
   }
 
   func findEmptyLocation() -> Coord {
-    //TODO: Original implementation pulls size from the simulator parameters, not sure why though
     let size = (x: sizeX(), y: sizeY())
 
     while true {

@@ -16,11 +16,11 @@ struct Gene: Equatable {
     case action, neuron
   }
 
-  let sourceType: Source
+  var sourceType: Source
   var sourceNum: Int
-  let sinkType: Sink
+  var sinkType: Sink
   var sinkNum: Int
-  let weight: Int
+  var weight: Int
 
   let f1 = 8.0
   let f2 = 64.0
@@ -319,6 +319,130 @@ func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
 // genes to the offspring. The new genome may undergo mutation.
 // Must be called in single-thread mode between generations
 func generateChildGenome(parentGenomes: inout [Genome]) -> Genome {
-  //TODO: Implement correctly
-  makeRandomGenome()
+  // random parent (or parents if sexual reproduction) with random
+  // mutations
+  var genome: Genome
+
+  var parent1Idx: Int
+  var parent2Idx: Int
+
+  // Choose two parents randomly from the candidates. If the parameter
+  // p.chooseParentsByFitness is false, then we choose at random from
+  // all the candidate parents with equal preference. If the parameter is
+  // true, then we give preference to candidate parents according to their
+  // score. Their score was computed by the survival/selection algorithm
+  // in survival-criteria.cpp.
+  if p.chooseParentsByFitness && parentGenomes.count > 1 {
+    parent1Idx = .random(in: 1..<parentGenomes.count)
+    parent2Idx = .random(in: 0..<parent1Idx)
+  } else {
+    parent1Idx = .random(in: 0..<parentGenomes.count)
+    parent2Idx = .random(in: 0..<parentGenomes.count)
+  }
+
+  let g1 = parentGenomes[parent1Idx]
+  let g2 = parentGenomes[parent2Idx]
+
+  if g1.isEmpty || g2.isEmpty {
+    preconditionFailure("Invalid genome")
+  }
+
+  func overlayWithSliceOf(gShorter: Genome) {
+    var index0 = Int.random(in: 0..<gShorter.count)
+    var index1 = Int.random(in: 0...gShorter.count)
+    if index0 > index1 {
+      swap(&index0, &index1)
+    }
+
+    genome.replaceSubrange(index0..<index1, with: gShorter[index0..<index1])
+  }
+
+  if p.sexualReproduction {
+    if g1.count > g2.count {
+      genome = g1
+      overlayWithSliceOf(gShorter: g2)
+      assert(!genome.isEmpty)
+    } else {
+      genome = g2
+      overlayWithSliceOf(gShorter: g1)
+      assert(!genome.isEmpty)
+    }
+  } else {
+    genome = g2
+    assert(!genome.isEmpty)
+  }
+
+  randomInsertDeletion(genome: &genome)
+  assert(!genome.isEmpty)
+  applyPointMutations(genome: &genome)
+  assert(!genome.isEmpty)
+  assert(genome.count <= p.genomeMaxLength)
+
+  return genome
+}
+
+// This applies a point mutation at a random bit in a genome.
+func randomBitFlip(genome: inout Genome) {
+  let method = 1
+
+  let byteIndex = Int.random(in: 0..<genome.count)
+  let elementIndex = Int.random(in: 0..<genome.count)
+  let bitIndex8 = 1 << Int.random(in: 0...7)
+
+  switch method {
+  case 0: fatalError()
+    //TODO: Not sure how to do method 0 in Swift
+  case 1:
+    //TODO: Update source/sink type to work as expected - currently it isn't a single bit flip
+    //and it's possible to randomly select the original source/sink (ex. no change), which the
+    //original implementation wouldn't allow
+    let chance = Double.random(in: 0...1)
+    switch chance {
+    case 0.0..<0.2: genome[elementIndex].sourceType = Gene.Source.allCases.randomElement() ?? .neuron
+    case 0.2..<0.4: genome[elementIndex].sinkType = Gene.Sink.allCases.randomElement() ?? .neuron
+    case 0.4..<0.6: genome[elementIndex].sourceNum ^= bitIndex8
+    case 0.6..<0.8: genome[elementIndex].sinkNum ^= bitIndex8
+    default: genome[elementIndex].weight ^= 1 << Int.random(in: 1...15)
+    }
+    //TODO: Implement
+  default: assert(false)
+  }
+}
+
+// If the genome is longer than the prescribed length, and if it's longer
+// than one gene, then we remove genes from the front or back. This is
+// used only when the simulator is configured to allow genomes of
+// unequal lengths during a simulation.
+func cropLength(genome: inout Genome, length: Int) {
+  //TODO
+}
+
+// Inserts or removes a single gene from the genome. This is
+// used only when the simulator is configured to allow genomes of
+// unequal lengths during a simulation.
+func randomInsertDeletion(genome: inout Genome) {
+  guard Double.random(in: 0...1) < p.geneInsertionDeletionRate else {
+    return
+  }
+
+  if Double.random(in: 0...1) < p.deletionRatio {
+    // deletion
+    if genome.count > 1 {
+      genome.remove(at: .random(in: 0..<genome.count))
+    }
+  } else if genome.count < p.genomeMaxLength {
+    // insertion
+    //genome.insert(genome.begin() + randomUint(0, genome.size() - 1), makeRandomGene()); //In original implementation
+    genome.append(makeRandomGene())
+  }
+}
+
+// This function causes point mutations in a genome with a probability defined
+// by the parameter p.pointMutationRate.
+func applyPointMutations(genome: inout Genome) {
+  for _ in 0..<genome.count {
+    if Double.random(in: 0...1) < p.pointMutationRate {
+      randomBitFlip(genome: &genome)
+    }
+  }
 }
