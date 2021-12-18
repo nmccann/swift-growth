@@ -19,76 +19,76 @@ let ACTION_RANGE = ACTION_MAX - ACTION_MIN
 // I means data about the individual, mainly stored in Indiv
 // W means data about the environment, mainly stored in Peeps or Grid
 enum Sensor: Int, CaseIterable {
-  case LOC_X             // I distance from left edge
-  case LOC_Y             // I distance from bottom
-  case BOUNDARY_DIST_X   // I X distance to nearest edge of world
-  case BOUNDARY_DIST     // I distance to nearest edge of world
-  case BOUNDARY_DIST_Y   // I Y distance to nearest edge of world
-  case GENETIC_SIM_FWD   // I genetic similarity forward
-  case LAST_MOVE_DIR_X   // I +- amount of X movement in last movement
-  case LAST_MOVE_DIR_Y   // I +- amount of Y movement in last movement
-  case LONGPROBE_POP_FWD // W long look for population forward
-  case LONGPROBE_BAR_FWD // W long look for barriers forward
-  case POPULATION        // W population density in neighborhood
-  case POPULATION_FWD    // W population density in the forward-reverse axis
-  case POPULATION_LR     // W population density in the left-right axis
-  case OSC1              // I oscillator +-value
-  case AGE               // I
-  case BARRIER_FWD       // W neighborhood barrier distance forward-reverse axis
-  case BARRIER_LR        // W neighborhood barrier distance left-right axis
-  case RANDOM            //   random sensor value, uniform distribution
-  case SIGNAL0           // W strength of signal0 in neighborhood
-  case SIGNAL0_FWD       // W strength of signal0 in the forward-reverse axis
-  case SIGNAL0_LR        // W strength of signal0 in the left-right axis
+  case locationX,             // I distance from left edge
+       locationY,             // I distance from bottom
+       boundaryDistanceX,   // I X distance to nearest edge of world
+       boundaryDistance,     // I distance to nearest edge of world
+       boundaryDistanceY,   // I Y distance to nearest edge of world
+       geneticSimilarityForward,   // I genetic similarity forward
+       lastMoveDirectionX,   // I +- amount of X movement in last movement
+       lastMoveDirectionY,   // I +- amount of Y movement in last movement
+       longProbePopulationForward, // W long look for population forward
+       longProbeBarrierForward, // W long look for barriers forward
+       population,        // W population density in neighborhood
+       populationForward,    // W population density in the forward-reverse axis
+       populationLeftRight,     // W population density in the left-right axis
+       oscillator1,              // I oscillator +-value
+       age,               // I
+       barrierForward,       // W neighborhood barrier distance forward-reverse axis
+       barrierLeftRight,        // W neighborhood barrier distance left-right axis
+       random,            //   random sensor value, uniform distribution
+       signal0,           // W strength of signal0 in neighborhood
+       signal0Forward,       // W strength of signal0 in the forward-reverse axis
+       signal0LeftRight        // W strength of signal0 in the left-right axis
 
   var name: String {
     switch self {
-    case .LOC_X: return "loc X"
-    case .LOC_Y: return "loc Y"
-    case .BOUNDARY_DIST_X: return "boundary dist X"
-    case .BOUNDARY_DIST: return "boundary dist"
-    case .BOUNDARY_DIST_Y: return "boundary dist Y"
-    case .GENETIC_SIM_FWD: return "genetic similarity fwd"
-    case .LAST_MOVE_DIR_X: return "last move dir X"
-    case .LAST_MOVE_DIR_Y: return "last move dir Y"
-    case .LONGPROBE_POP_FWD: return "long probe population fwd"
-    case .LONGPROBE_BAR_FWD: return "long probe barrier fwd"
-    case .POPULATION: return "population"
-    case .POPULATION_FWD: return "population fwd"
-    case .POPULATION_LR: return "population LR"
-    case .OSC1: return "osc1"
-    case .AGE: return "age"
-    case .BARRIER_FWD: return "short probe barrier fwd-rev"
-    case .BARRIER_LR: return "show probe barrier left-right"
-    case .RANDOM: return "random"
-    case .SIGNAL0: return "signal 0"
-    case .SIGNAL0_FWD: return "signal 0 fwd"
-    case .SIGNAL0_LR: return "signal 0 LR"
+    case .locationX: return "loc X"
+    case .locationY: return "loc Y"
+    case .boundaryDistanceX: return "boundary dist X"
+    case .boundaryDistance: return "boundary dist"
+    case .boundaryDistanceY: return "boundary dist Y"
+    case .geneticSimilarityForward: return "genetic similarity fwd"
+    case .lastMoveDirectionX: return "last move dir X"
+    case .lastMoveDirectionY: return "last move dir Y"
+    case .longProbePopulationForward: return "long probe population fwd"
+    case .longProbeBarrierForward: return "long probe barrier fwd"
+    case .population: return "population"
+    case .populationForward: return "population fwd"
+    case .populationLeftRight: return "population LR"
+    case .oscillator1: return "osc1"
+    case .age: return "age"
+    case .barrierForward: return "short probe barrier fwd-rev"
+    case .barrierLeftRight: return "show probe barrier left-right"
+    case .random: return "random"
+    case .signal0: return "signal 0"
+    case .signal0Forward: return "signal 0 fwd"
+    case .signal0LeftRight: return "signal 0 LR"
     }
   }
 
   // TODO: Support arbitrary disabling - because of neuron renumbering, that might cause issues
-  static let enabled: [Sensor] = [.LOC_X,
-                                  .LOC_Y,
-                                  .BOUNDARY_DIST_X,
-                                  .BOUNDARY_DIST,
-                                  .BOUNDARY_DIST_Y,
-                                  .GENETIC_SIM_FWD,
-                                  .LAST_MOVE_DIR_X,
-                                  .LAST_MOVE_DIR_Y,
-                                  .LONGPROBE_POP_FWD,
-                                  .LONGPROBE_BAR_FWD,
-                                  .POPULATION,
-                                  .POPULATION_FWD,
-                                  .POPULATION_LR,
-                                  .OSC1,
-                                  .AGE,
-                                  .BARRIER_FWD,
-                                  .BARRIER_LR,
-                                  .RANDOM,
-                                  .SIGNAL0,
-                                  .SIGNAL0_FWD,
-                                  .SIGNAL0_LR]
+  static let enabled: [Sensor] = [.locationX,
+                                  .locationY,
+                                  .boundaryDistanceX,
+                                  .boundaryDistance,
+                                  .boundaryDistanceY,
+                                  .geneticSimilarityForward,
+                                  .lastMoveDirectionX,
+                                  .lastMoveDirectionY,
+                                  .longProbePopulationForward,
+                                  .longProbeBarrierForward,
+                                  .population,
+                                  .populationForward,
+                                  .populationLeftRight,
+                                  .oscillator1,
+                                  .age,
+                                  .barrierForward,
+                                  .barrierLeftRight,
+                                  .random,
+                                  .signal0,
+                                  .signal0Forward,
+                                  .signal0LeftRight]
 }
 
 // Place the action neuron you want enabled prior to NUM_ACTIONS. Any
