@@ -87,8 +87,32 @@ class Grid {
     }
   }
 
-  func createBarrier(barrierType: Int) {
+  // This generates barrier points, which are grid locations with value
+  // BARRIER. A list of barrier locations is saved in private member
+  // Grid::barrierLocations and, for some scenarios, Grid::barrierCenters.
+  // Those members are available read-only with Grid::getBarrierLocations().
+  // This function assumes an empty grid. This is typically called by
+  // the main simulator thread after Grid::init() or Grid::zeroFill().
+
+  // This file typically is under constant development and change for
+  // specific scenarios.
+  func applyBarrier(_ type: BarrierType?) {
+    barrierLocations.removeAll()
+    barrierCenters.removeAll() // used only for some barrier types
+
+    guard let type = type else {
+      return
+    }
+
     //TODO: Implement from createBarrier.cpp
+    switch type {
+    case .verticalBarConstant: return
+    case .verticalBarRandom: return
+    case .fiveBlocks: return
+    case .horizontalBarConstant: return
+    case .threeIslandsRandom: return
+    case .spots: return
+    }
   }
 
   func getBarrierLocations() -> [Coord] {

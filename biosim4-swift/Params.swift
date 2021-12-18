@@ -32,8 +32,8 @@ struct Params {
   let updateGraphLog: Bool
   let updateGraphLogStride: Int // > 0
   let challenge: Challenge?
-  let barrierType: Int // >= 0
-  let replaceBarrierType: Int // >= 0
+  let barrierType: BarrierType?
+  let replaceBarrierType: BarrierType?
   let replaceBarrierTypeGenerationNumber: Int // >= 0
 
   // These must not change after initialization
@@ -76,8 +76,8 @@ struct Params {
                                updateGraphLog: false,
                                updateGraphLogStride: 16,
                                challenge: .circle,
-                               barrierType: 0,
-                               replaceBarrierType: 0,
+                               barrierType: nil,
+                               replaceBarrierType: nil,
                                replaceBarrierTypeGenerationNumber: -1,
                                sizeX: 60,
                                sizeY: 60,

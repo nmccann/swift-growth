@@ -16,7 +16,7 @@ func passedSurvivalCriterion(indiv: inout Indiv, challenge: Challenge?) -> (Bool
 func initializeGeneration0() {
   // The grid has already been allocated, just clear and reuse it
   grid.nilFill()
-  grid.createBarrier(barrierType: p.replaceBarrierTypeGenerationNumber == 0 ? p.replaceBarrierType : p.barrierType)
+  grid.applyBarrier(p.replaceBarrierTypeGenerationNumber == 0 ? p.replaceBarrierType : p.barrierType)
 
   //TODO: Signals when they are supported
   // The signal layers have already been allocated, so just reuse them
@@ -39,7 +39,7 @@ func initializeNewGeneration(parentGenomes: inout [Genome], generation: Int) {
   // The grid, signals, and peeps containers have already been allocated, just
   // clear them if needed and reuse the elements
   grid.nilFill();
-  grid.createBarrier(barrierType: generation >= p.replaceBarrierTypeGenerationNumber ? p.replaceBarrierType : p.barrierType);
+  grid.applyBarrier(generation >= p.replaceBarrierTypeGenerationNumber ? p.replaceBarrierType : p.barrierType);
   //TODO: Signals when they are supported
 //  signals.zeroFill();
 
