@@ -7,14 +7,18 @@ import Foundation
 // value. The signed integer weight is scaled to a small range, then cubed
 // to provide fine resolution near zero.
 
-let SENSOR = 1 // always a source
-let ACTION = 1 // always a sink
-let NEURON = 0 // can be either a source or sink
-
 struct Gene: Equatable {
-  let sourceType: Int
+  enum Source: CaseIterable {
+    case sensor, neuron
+  }
+
+  enum Sink: CaseIterable {
+    case action, neuron
+  }
+
+  let sourceType: Source
   var sourceNum: Int
-  let sinkType: Int
+  let sinkType: Sink
   var sinkNum: Int
   let weight: Int
 
@@ -113,9 +117,9 @@ typealias ConnectionList = [Gene]
 // See genome.h for the width of the members.
 // ToDo: don't assume the width of the members in gene.
 func makeRandomGene() -> Gene {
-  .init(sourceType: Bool.random() ? SENSOR : NEURON,
+  .init(sourceType: .allCases.randomElement() ?? .neuron,
         sourceNum: .random(in: 0...0x7fff),
-        sinkType: Bool.random() ? NEURON : ACTION,
+        sinkType: .allCases.randomElement() ?? .neuron,
         sinkNum: .random(in: 0...0x7fff),
         weight: Gene.makeRandomWeight())
 }
@@ -132,25 +136,21 @@ func makeRandomGenome() -> Genome {
 // to the range 0..p.maxNumberNeurons - 1 by using a modulo operator.
 // Sensors are renumbered 0..Sensor::NUM_SENSES - 1
 // Actions are renumbered 0..Action::NUM_ACTIONS - 1
-func makeRenumberedConnectionList(connectionList: inout ConnectionList, genome: Genome) {
-  //TODO: Confirm that behaviour is the same as original
-  connectionList.removeAll()
-  for gene in genome {
-    var conn = gene
+func makeRenumberedConnectionList(genome: Genome) -> ConnectionList {
+  genome.map { gene in
+    var gene = gene
 
-    if conn.sourceType == NEURON {
-      conn.sourceNum %= p.maxNumberNeurons
-    } else {
-      conn.sourceNum %= Sensor.enabled.count
+    switch gene.sourceType {
+    case .neuron: gene.sourceNum %= p.maxNumberNeurons
+    case .sensor: gene.sourceNum %= Sensor.enabled.count
     }
 
-    if conn.sinkType == NEURON {
-      conn.sinkNum %= p.maxNumberNeurons
-    } else {
-      conn.sinkNum %= Action.enabled.count
+    switch gene.sinkType {
+    case .neuron: gene.sinkNum %= p.maxNumberNeurons
+    case .action: gene.sinkNum %= Action.enabled.count
     }
-
-    connectionList.append(conn)
+    
+    return gene
   }
 }
 
@@ -160,15 +160,14 @@ func makeRenumberedConnectionList(connectionList: inout ConnectionList, genome: 
 func makeNodeList(nodeMap: inout NodeMap, connectionList: inout ConnectionList) {
   nodeMap.removeAll()
   for conn in connectionList {
-    if conn.sinkType == NEURON {
+    if case .neuron = conn.sinkType {
       assert(conn.sinkNum < p.maxNumberNeurons)
       var it = nodeMap[conn.sinkNum] ?? .init(remappedNumber: 0,
                                               numOutputs: 0,
                                               numSelfInputs: 0,
                                               numInputsFromSensorsOrOtherNeurons: 0)
 
-      if conn.sourceType == NEURON && conn.sourceNum == conn.sinkNum
-      {
+      if case .neuron = conn.sourceType, conn.sourceNum == conn.sinkNum {
         it.numSelfInputs += 1
       } else {
         it.numInputsFromSensorsOrOtherNeurons += 1
@@ -177,7 +176,7 @@ func makeNodeList(nodeMap: inout NodeMap, connectionList: inout ConnectionList) 
       nodeMap[conn.sinkNum] = it
     }
 
-    if conn.sourceType == NEURON {
+    if case .neuron = conn.sourceType {
       assert(conn.sourceNum < p.maxNumberNeurons)
       var it = nodeMap[conn.sourceNum] ?? .init(remappedNumber: 0,
                                                 numOutputs: 0,
@@ -196,10 +195,10 @@ func makeNodeList(nodeMap: inout NodeMap, connectionList: inout ConnectionList) 
 //TODO: Verify that this behaves as expected - changed quite a bit from original implementation
 func removeConnectionsToNeuron(connections: inout ConnectionList, nodeMap: inout NodeMap, neuronNumber: Int) {
   connections.removeAll {
-    if $0.sinkType == NEURON && $0.sinkNum == neuronNumber {
+    if case .neuron = $0.sinkType, $0.sinkNum == neuronNumber {
       // Remove the connection. If the connection source is from another
       // neuron, also decrement the other neuron's numOutputs:
-      if $0.sourceType == NEURON {
+      if case .neuron = $0.sourceType {
         nodeMap[$0.sourceNum]?.numOutputs -= 1
       }
       return true
@@ -249,24 +248,23 @@ func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMa
 /// 3. Renumber the remaining neurons sequentially starting at 0.
 func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
   var nodeMap: NodeMap = [:]  // list of neurons and their number of inputs and outputs
-  var connectionList: ConnectionList = [] // synaptic connections
   var nnet = NeuralNet(connections: [], neurons: [])
 
   // Convert the indiv's genome to a renumbered connection list
-  makeRenumberedConnectionList(connectionList: &connectionList, genome: genome);
+  var connectionList = makeRenumberedConnectionList(genome: genome) // synaptic connections
 
   // Make a node (neuron) list from the renumbered connection list
-  makeNodeList(nodeMap: &nodeMap, connectionList: &connectionList);
+  makeNodeList(nodeMap: &nodeMap, connectionList: &connectionList)
 
   // Find and remove neurons that don't feed anything or only feed themself.
   // This reiteratively removes all connections to the useless neurons.
-  cullUselessNeurons(connections: &connectionList, nodeMap: &nodeMap);
+  cullUselessNeurons(connections: &connectionList, nodeMap: &nodeMap)
 
   // The neurons map now has all the referenced neurons, their neuron numbers, and
   // the number of outputs for each neuron. Now we'll renumber the neurons
   // starting at zero.
 
-  assert(nodeMap.count <= p.maxNumberNeurons);
+  assert(nodeMap.count <= p.maxNumberNeurons)
   var newNumber = 0;
 
   for var node in nodeMap {
@@ -283,12 +281,12 @@ func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
 
   // First, the connections from sensor or neuron to a neuron
   for conn in connectionList {
-    if conn.sinkType == NEURON {
+    if case .neuron = conn.sinkType {
       var newConn = conn
       // fix the destination neuron number
       newConn.sinkNum = nodeMap[newConn.sinkNum]?.remappedNumber ?? newConn.sinkNum
       // if the source is a neuron, fix its number too
-      if newConn.sourceType == NEURON {
+      if case .neuron = newConn.sourceType {
         newConn.sourceNum = nodeMap[newConn.sourceNum]?.remappedNumber ?? newConn.sourceNum
       }
       nnet.connections.append(newConn)
@@ -297,10 +295,10 @@ func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
 
   // Last, the connections from sensor or neuron to an action
   for conn in connectionList {
-    if conn.sinkType == ACTION {
+    if case .action = conn.sinkType {
       var newConn = conn
       // if the source is a neuron, fix its number
-      if newConn.sourceType == NEURON {
+      if case .neuron = newConn.sourceType {
         newConn.sourceNum = nodeMap[newConn.sourceNum]?.remappedNumber ?? newConn.sourceNum
       }
       nnet.connections.append(newConn)

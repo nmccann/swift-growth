@@ -51,7 +51,7 @@ extension Indiv {
     // transfer function will leave each neuron's output in the range -1.0..1.0.
     var neuronOutputsComputed = false
     for conn in nnet.connections {
-      if conn.sinkType == ACTION && !neuronOutputsComputed {
+      if case .action = conn.sinkType, !neuronOutputsComputed {
         // We've handled all the connections from sensors and now we are about to
         // start on the connections to the action outputs, so now it's time to
         // update and latch all the neuron outputs to their proper range (-1.0..1.0)
@@ -66,7 +66,7 @@ extension Indiv {
       // Obtain the connection's input value from a sensor neuron or other neuron
       // The values are summed for now, later passed through a transfer function
       var inputVal: Double
-      if conn.sourceType == SENSOR {
+      if case .sensor = conn.sourceType {
         inputVal = getSensor(.init(rawValue: conn.sourceNum)!, simStep: simStep);
       } else {
         inputVal = nnet.neurons[conn.sourceNum].output;
@@ -75,7 +75,7 @@ extension Indiv {
       // Weight the connection's value and add to neuron accumulator or action accumulator.
       // The action and neuron accumulators will therefore contain +- float values in
       // an arbitrary range.
-      if conn.sinkType == ACTION {
+      if case .action = conn.sinkType {
         let action = Action(rawValue: conn.sinkNum)!
         if var value = levels[action] {
           value += inputVal * conn.weightAsDouble()
