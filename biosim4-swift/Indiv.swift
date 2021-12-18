@@ -16,8 +16,70 @@ struct Indiv {
 
   /// Returned sensor values range SENSOR_MIN..SENSOR_MAX
   func getSensor(_ sensor: Sensor, simStep: Int) -> Double {
-    //TODO: Implement correctly
-    .random(in: SENSOR_MIN...SENSOR_MAX)
+    var sensorVal = 0.0
+
+    switch sensor {
+    case .age:
+      // Converts age (units of simSteps compared to life expectancy)
+      // linearly to normalized sensor range 0.0..1.0
+      sensorVal = Double(age) / Double(p.stepsPerGeneration)
+    case .boundaryDistance:
+      // Finds closest boundary, compares that to the max possible dist
+      // to a boundary from the center, and converts that linearly to the
+      // sensor range 0.0..1.0
+      let distanceX = min(loc.x, (p.sizeX - loc.x) - 1)
+      let distanceY = min(loc.y, (p.sizeY - loc.y) - 1)
+      let closest = min(distanceX, distanceY)
+      let maxPossible = max(p.sizeX / 2 - 1, p.sizeY / 2 - 1)
+      sensorVal = Double(closest) / Double(maxPossible)
+    case .boundaryDistanceX:
+      // Measures the distance to nearest boundary in the east-west axis,
+      // max distance is half the grid width; scaled to sensor range 0.0..1.0.
+      let minDistanceX = min(loc.x, (p.sizeX - loc.x) - 1)
+      sensorVal = Double(minDistanceX) / (Double(p.sizeX) / 2.0)
+    case .boundaryDistanceY:
+      // Measures the distance to nearest boundary in the south-north axis,
+      // max distance is half the grid height; scaled to sensor range 0.0..1.0.
+      let minDistanceY = min(loc.y, (p.sizeY - loc.y) - 1)
+      sensorVal = Double(minDistanceY) / (Double(p.sizeY) / 2.0)
+    case .lastMoveDirectionX:
+      // X component -1,0,1 maps to sensor values 0.0, 0.5, 1.0
+      let lastX = lastMoveDir.asNormalizedCoord().x
+      sensorVal = lastX == 0 ? 0.5 : (lastX == -1 ? 0.0 : 1.0)
+    case .lastMoveDirectionY:
+      // Y component -1,0,1 maps to sensor values 0.0, 0.5, 1.0
+      let lastY = lastMoveDir.asNormalizedCoord().y
+      sensorVal = lastY == 0 ? 0.5 : (lastY == -1 ? 0.0 : 1.0)
+    case .locationX:
+      // Maps current X location 0..p.sizeX-1 to sensor range 0.0..1.0
+      sensorVal = Double(loc.x) / Double(p.sizeX - 1)
+    case .locationY:
+      // Maps current Y location 0..p.sizeY-1 to sensor range 0.0..1.0
+      sensorVal = Double(loc.y) / Double(p.sizeY - 1)
+    case .oscillator1:
+      // Maps the oscillator sine wave to sensor range 0.0..1.0;
+      // cycles starts at simStep 0 for everbody.
+      let phase = Double(simStep % oscPeriod) / Double(oscPeriod) // 0.0..1.0
+      var factor = -cos(phase * 2.0 * Double.pi)
+      assert(factor >= -1.0 && factor <= 1.0)
+      factor += 1.0 // convert to 0.0..2.0
+      factor /= 2.0 // convert to 0.0..1.0
+      // Clip any round-off error
+      sensorVal = factor;
+      sensorVal = min(1.0, max(0.0, sensorVal))
+    default:
+      //TODO: Implement remaining sensors
+      sensorVal = .random(in: SENSOR_MIN...SENSOR_MAX)
+    }
+
+    if sensorVal.isNaN || sensorVal < -0.01 || sensorVal > 1.01 {
+      print("Clipping sensorVal of \(sensorVal) for \(sensor.name)")
+      sensorVal = max(0.0, min(sensorVal, 1.0))
+    }
+
+    assert(!sensorVal.isNaN && sensorVal >= -0.01 && sensorVal <= 1.01)
+
+    return sensorVal
   }
 
 
