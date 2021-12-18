@@ -1,10 +1,10 @@
 import Foundation
 
 enum RunMode: Int {
-  case STOP, RUN, PAUSE, ABORT
+  case stop, run, pause, abort
 }
 
-var runMode = RunMode.STOP
+var runMode = RunMode.run
 var p = Params.defaults
 var grid = Grid(sizeX: p.sizeX, sizeY: p.sizeY) // 2D arena where the individuals live
 //let signals = Signals()  // pheromone layers

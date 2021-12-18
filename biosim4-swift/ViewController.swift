@@ -2,8 +2,7 @@ import Cocoa
 import SpriteKit
 import GameplayKit
 
-class ViewController: NSViewController {
-
+class ViewController: NSViewController, NSWindowDelegate {
     @IBOutlet var skView: SKView!
     
     override func viewDidLoad() {
@@ -13,7 +12,7 @@ class ViewController: NSViewController {
             // Load the SKScene from 'GameScene.sks'
             if let scene = SKScene(fileNamed: "GameScene") {
                 // Set the scale mode to scale to fit the window
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .resizeFill
                 
                 // Present the scene
                 view.presentScene(scene)
@@ -25,5 +24,13 @@ class ViewController: NSViewController {
             view.showsNodeCount = true
         }
     }
+
+  override func viewWillAppear() {
+    super.viewWillAppear()
+
+    if let sceneSize = skView.scene?.size {
+      view.window?.setContentSize(sceneSize)
+    }
+  }
 }
 

@@ -3,43 +3,17 @@ import GameplayKit
 
 class GameScene: SKScene {
   private var spinnyNode : SKShapeNode?
-  private var gridNode: SKNode!
+  private var gridNode = SKNode()
   private var gridCells: [[SKShapeNode]] = []
   private var previousTime: TimeInterval = 0
   private let delay: TimeInterval = 0.1
+  private let padding: Double = 40
 
   override func sceneDidLoad() {
     super.sceneDidLoad()
 
     initializeSimulator()
-
-    guard let scene = scene else {
-      return
-    }
-
-    let rect = CGRect(x: 0,
-                      y: 0,
-                      width: scene.size.width / Double(p.sizeX),
-                      height: scene.size.height / Double(p.sizeY))
-    let size = rect.integral.size
-    gridNode = SKNode()
-
-    for (column, columnContents) in grid.data.enumerated() {
-      var cellRow: [SKShapeNode] = []
-      for (row, rowContent) in columnContents.data.enumerated() {
-        let cell = SKShapeNode(rect: .init(x: Double(column) * size.width,
-                                            y: Double(row) * size.height,
-                                            width: size.width,
-                                            height: size.height))
-        updateCell(cell, value: rowContent)
-        gridNode.addChild(cell)
-        cellRow.append(cell)
-      }
-      gridCells.append(cellRow)
-    }
-
-    gridNode.position = .init(x: -floor(scene.size.width/2), y: -floor(scene.size.height/2))
-    scene.addChild(gridNode)
+    generateGrid()
   }
 
   override func didMove(to view: SKView) {
@@ -115,5 +89,40 @@ class GameScene: SKScene {
     }
 
     cell.fillColor = value == BARRIER ? .red : .green
+  }
+
+  override func didChangeSize(_ oldSize: CGSize) {
+    generateGrid()
+  }
+
+  func generateGrid() {
+    gridNode.removeFromParent()
+    gridNode.removeAllChildren()
+    gridCells = []
+
+    guard let scene = scene else {
+      return
+    }
+
+    let exactFit = CGSize(width: (scene.size.width - padding) / Double(p.sizeX),
+                          height: (scene.size.height - padding) / Double(p.sizeY))
+    let squareWidth = floor(min(exactFit.width, exactFit.height))
+    let size = CGSize(width: squareWidth, height: squareWidth)
+
+    for (column, columnContents) in grid.data.enumerated() {
+      var cellRow: [SKShapeNode] = []
+      for (row, rowContent) in columnContents.data.enumerated() {
+        let cell = SKShapeNode(rect: .init(x: Double(column - (p.sizeX/2)) * size.width,
+                                           y: Double(row - (p.sizeY/2)) * size.height,
+                                           width: size.width,
+                                           height: size.height))
+        updateCell(cell, value: rowContent)
+        gridNode.addChild(cell)
+        cellRow.append(cell)
+      }
+      gridCells.append(cellRow)
+    }
+
+    scene.addChild(gridNode)
   }
 }
