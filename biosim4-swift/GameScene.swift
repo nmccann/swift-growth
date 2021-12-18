@@ -68,10 +68,45 @@ class GameScene: SKScene {
     self.touchUp(atPoint: event.location(in: self))
   }
 
+  override func keyUp(with event: NSEvent) {
+    handleKeyEvent(event, keyDown: false)
+  }
+
+  override func keyDown(with event: NSEvent) {
+    handleKeyEvent(event, keyDown: true)
+  }
+
+  public func handleKeyEvent(_ event: NSEvent, keyDown: Bool) {
+    guard let characters = event.charactersIgnoringModifiers,
+          let keyChar = characters.unicodeScalars.first?.value,
+          event.modifierFlags.contains(.numericPad) else {
+            return
+          }
+
+    switch Int(keyChar) {
+    case NSDownArrowFunctionKey:
+      if case .run = runMode {
+        runMode = .stop
+      } else {
+        runMode = .run
+      }
+    case NSRightArrowFunctionKey:
+      if case .run = runMode {
+        runMode = .stop
+      } else {
+        advanceSimulator()
+      }
+    default: break
+    }
+  }
+
   override func update(_ currentTime: TimeInterval) {
+    if case .run = runMode {
+      advanceSimulator()
+    }
+
     let delta = currentTime - previousTime
     if delta > delay {
-      advanceSimulator()
       previousTime = currentTime
 
       for (column, columnContents) in gridCells.enumerated() {
