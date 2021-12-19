@@ -8,7 +8,7 @@ struct Dir: Equatable {
   }
 
   static func random8() -> Dir {
-    Dir(dir: .allCases.randomElement() ?? .N)
+    .init(dir: .N).rotate(n: .random(in: 0...7))
   }
 
   func asInt() -> Int {
