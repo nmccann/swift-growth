@@ -1,5 +1,11 @@
 import Foundation
 
+enum GenomeComparison {
+  case jaroWinkler
+  case hammingBits
+  case hammingBytes
+}
+
 struct Params {
   let population: Int // >= 0
   let stepsPerGeneration: Int // > 0
@@ -28,7 +34,7 @@ struct Params {
   let agentSize: Int
   let genomeAnalysisStride: Int // > 0
   let displaySampleGenomes: Int // >= 0
-  let genomeComparisonMethod: Int // 0 = Jaro-Winkler; 1 = Hamming
+  let genomeComparisonMethod: GenomeComparison
   let updateGraphLog: Bool
   let updateGraphLogStride: Int // > 0
   let challenge: Challenge?
@@ -72,7 +78,7 @@ struct Params {
                                agentSize: 2,
                                genomeAnalysisStride: 1,
                                displaySampleGenomes: 0,
-                               genomeComparisonMethod: 1,
+                               genomeComparisonMethod: .hammingBits,
                                updateGraphLog: false,
                                updateGraphLogStride: 16,
                                challenge: .circle,

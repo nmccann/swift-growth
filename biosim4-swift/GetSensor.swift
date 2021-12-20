@@ -182,9 +182,3 @@ func getSignalDensityAlongAxis(loc: Coord, dir: Dir, layer: Int) -> Double {
 
   return sensorVal
 }
-
-// Returns 0.0..1.0
-func genomeSimilarity(_ lhs: Genome, _ rhs: Genome) -> Double {
-  //TODO: Implement correctly
-  .random(in: 0.0...1.0)
-}

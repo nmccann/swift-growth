@@ -107,6 +107,7 @@ private extension GameScene {
           }
 
     switch (runMode, Int(keyChar)) {
+    case (_, NSUpArrowFunctionKey) where !keyDown: print("Genetic Diversity: \(geneticDiversity())")
     case (.run, NSDownArrowFunctionKey) where !keyDown:   runMode = .stop
     case (.stop, NSDownArrowFunctionKey) where !keyDown:  runMode = .run
     case (.run, NSRightArrowFunctionKey) where !keyDown:  adjustStepsPerRefresh(by: 1)
