@@ -6,7 +6,8 @@ class GameScene: SKScene {
   private var cellNodes: [SKShapeNode] = []
   private var cellSize: CGSize = .init(width: 1, height: 1)
   private var previousTime: TimeInterval = 0
-  private let simulatorStepRate: TimeInterval = 1.0 / 60.0
+  private let simulatorRefreshRate: TimeInterval = 1.0 / 60.0
+  private var simulatorStepsPerRefresh = 1
   private let padding: Double = 40
 
   override func sceneDidLoad() {
@@ -50,15 +51,13 @@ class GameScene: SKScene {
 
   override func update(_ currentTime: TimeInterval) {
     let delta = currentTime - previousTime
-    
-    if case .run = runMode, delta >= simulatorStepRate {
-      previousTime = currentTime
-      advanceSimulator()
+
+    guard case .run = runMode, delta >= simulatorRefreshRate else {
+      return
     }
 
-    zip(cellNodes, peeps.individuals).forEach { cell, indiv in
-      updateCell(cell, indiv: indiv, size: cellSize)
-    }
+    previousTime = currentTime
+    advanceAndUpdateBySteps(simulatorStepsPerRefresh)
   }
 
   override func didChangeSize(_ oldSize: CGSize) {
@@ -86,6 +85,13 @@ private extension GameScene {
     scene.addChild(gridNode)
   }
 
+  func advanceAndUpdateBySteps(_ steps: Int) {
+    (0..<steps).forEach { _ in advanceSimulator() }
+    zip(cellNodes, peeps.individuals).forEach { cell, indiv in
+      updateCell(cell, indiv: indiv, size: cellSize)
+    }
+  }
+
   func updateCell(_ cell: SKShapeNode, indiv: Indiv, size: CGSize) {
     cell.fillColor = .green
     cell.isHidden = !indiv.alive
@@ -100,20 +106,18 @@ private extension GameScene {
             return
           }
 
-    switch Int(keyChar) {
-    case NSDownArrowFunctionKey where keyDown == false:
-      if case .run = runMode {
-        runMode = .stop
-      } else {
-        runMode = .run
-      }
-    case NSRightArrowFunctionKey:
-      if case .run = runMode {
-        runMode = .stop
-      } else {
-        advanceSimulator()
-      }
+    switch (runMode, Int(keyChar)) {
+    case (.run, NSDownArrowFunctionKey) where !keyDown:   runMode = .stop
+    case (.stop, NSDownArrowFunctionKey) where !keyDown:  runMode = .run
+    case (.run, NSRightArrowFunctionKey) where !keyDown:  adjustStepsPerRefresh(by: 1)
+    case (.stop, NSRightArrowFunctionKey) where keyDown:  advanceAndUpdateBySteps(1)
+    case (.run, NSLeftArrowFunctionKey) where !keyDown:   adjustStepsPerRefresh(by: -1)
     default: break
     }
+  }
+
+  func adjustStepsPerRefresh(by amount: Int) {
+    simulatorStepsPerRefresh = max(1, simulatorStepsPerRefresh + amount)
+    print("Steps per refresh: \(simulatorStepsPerRefresh)")
   }
 }
