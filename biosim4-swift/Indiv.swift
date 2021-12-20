@@ -128,9 +128,17 @@ struct Indiv {
     case .signal0LeftRight:
       // Sense signal0 density along an axis perpendicular to last movement direction
       sensorVal = getSignalDensityAlongAxis(loc: loc, dir: lastMoveDir.rotate90DegCW(), layer: 0)
-    default:
-      //TODO: Implement remaining sensors
-      sensorVal = .random(in: SENSOR_MIN...SENSOR_MAX)
+    case .geneticSimilarityForward:
+      // Return minimum sensor value if nobody is alive in the forward adjacent location,
+      // else returns a similarity match in the sensor range 0.0..1.0
+      let loc2 = loc + lastMoveDir;
+      if (grid.isInBounds(loc: loc2) && grid.isOccupiedAt(loc: loc2)) {
+        let indiv2 = peeps.getIndiv(loc: loc2)
+        if indiv2.alive {
+          sensorVal = genomeSimilarity(genome, indiv2.genome) // 0.0..1.0
+        }
+      }
+      //TODO
     }
     
     if sensorVal.isNaN || sensorVal < -0.01 || sensorVal > 1.01 {

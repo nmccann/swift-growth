@@ -94,8 +94,7 @@ func executeActions(indiv: inout Indiv, levels: [Action: Double]) {
     level *= responsivenessAdjusted
     
     if level > emitThreshold && prob2bool(level) {
-      //TODO: Enable after porting signals
-      //      signals.increment(0, indiv.loc);
+      signals.increment(layer: 0, loc: indiv.loc);
     }
   }
   

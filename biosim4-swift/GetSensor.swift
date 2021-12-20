@@ -20,12 +20,14 @@ func getPopulationDensityAlongAxis(loc: Coord, dir: Dir) -> Double {
   let dirVecY = Double(dirVec.y) / len // Unit vector components along dir
   
   func checkOccupancy(tloc: Coord) {
-    if tloc != loc && grid.isOccupiedAt(loc: tloc) {
-      let offset = tloc - loc
-      let projection = dirVecX * Double(offset.x) + dirVecY * Double(offset.y) // Magnitude of projection along dir
-      let contribution = projection / Double(offset.x * offset.x + offset.y * offset.y)
-      sum += contribution
+    guard tloc != loc, grid.isOccupiedAt(loc: tloc) else {
+      return
     }
+
+    let offset = tloc - loc
+    let projection = dirVecX * Double(offset.x) + dirVecY * Double(offset.y) // Magnitude of projection along dir
+    let contribution = projection / Double(offset.x * offset.x + offset.y * offset.y)
+    sum += contribution
   }
   
   grid.visitNeighborhood(loc: loc, radius: p.populationSensorRadius, f: checkOccupancy(tloc:))
@@ -148,25 +150,41 @@ func getSignalDensity(loc: Coord, layer: Int) -> Double {
 /// so signal densities along borders and in corners are commonly sparser than
 /// away from borders.
 func getSignalDensityAlongAxis(loc: Coord, dir: Dir, layer: Int) -> Double {
-  //TODO
-  .random(in: 0...1)
+  assert(dir.dir9 != .center) // require a defined axis
+
+  var sum = 0.0
+  let dirVec = dir.asNormalizedCoord()
+  let len = dirVec.floatingLength
+  //TODO: Check if this division is redundant - seems like it should be given that we're already dealing with a normalized vector
+  let dirVecX = Double(dirVec.x) / len
+  let dirVecY = Double(dirVec.y) / len // Unit vector components along dir
+
+  func signalCheck(tloc: Coord) {
+    guard tloc != loc else {
+      return
+    }
+
+    let offset = tloc - loc
+    let projection = dirVecX * Double(offset.x) + dirVecY * Double(offset.y) // Magnitude of projection along dir
+    let contribution = (projection * Double(signals.getMagnitude(layer: layer, loc: loc))) / Double(offset.x * offset.x + offset.y * offset.y)
+    sum += contribution
+  }
+
+  grid.visitNeighborhood(loc: loc,
+                         radius: Double(p.signalSensorRadius),
+                         f: signalCheck(tloc:))
+
+  let maxSumMagnitude = 6.0 * Double(p.signalSensorRadius * SIGNAL_MAX)
+  assert(sum >= -maxSumMagnitude && sum <= maxSumMagnitude)
+
+  var sensorVal = sum / maxSumMagnitude // convert to -1.0...1.0
+  sensorVal = (sensorVal + 1.0) / 2.0 // convert to 0.0...1.0
+
+  return sensorVal
 }
 
-//float getSignalDensity(unsigned layerNum, Coord loc)
-//{
-//
-//  unsigned countLocs = 0;
-//  unsigned long sum = 0;
-//  Coord center = loc;
-//
-//  auto f = [&](Coord tloc) {
-//    ++countLocs;
-//    sum += signals.getMagnitude(layerNum, tloc);
-//  };
-//
-//  visitNeighborhood(center, p.signalSensorRadius, f);
-//  double maxSum = (float)countLocs * SIGNAL_MAX;
-//  double sensorVal = sum / maxSum; // convert to 0.0..1.0
-//
-//  return sensorVal;
-//}
+// Returns 0.0..1.0
+func genomeSimilarity(_ lhs: Genome, _ rhs: Genome) -> Double {
+  //TODO: Implement correctly
+  .random(in: 0.0...1.0)
+}

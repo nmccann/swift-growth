@@ -32,10 +32,9 @@ func initializeGeneration0() {
   // The grid has already been allocated, just clear and reuse it
   grid.nilFill()
   grid.applyBarrier(p.replaceBarrierTypeGenerationNumber == 0 ? p.replaceBarrierType : p.barrierType)
-  
-  //TODO: Signals when they are supported
+
   // The signal layers have already been allocated, so just reuse them
-  //  signals.zeroFill();
+  signals.zeroFill()
   
   // Spawn the population. The peeps container has already been allocated,
   // just clear and reuse it
@@ -55,8 +54,7 @@ func initializeNewGeneration(parentGenomes: inout [Genome], generation: Int) {
   // clear them if needed and reuse the elements
   grid.nilFill();
   grid.applyBarrier(generation >= p.replaceBarrierTypeGenerationNumber ? p.replaceBarrierType : p.barrierType);
-  //TODO: Signals when they are supported
-  //  signals.zeroFill();
+  signals.zeroFill();
   
   // Spawn the population. This overwrites all the elements of peeps[]
   let individuals: [Indiv] = (0..<p.population).map { .init(index: $0,

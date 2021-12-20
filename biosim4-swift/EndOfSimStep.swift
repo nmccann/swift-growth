@@ -18,7 +18,7 @@ func endOfSimStep(_ simStep: Int, generation: Int) {
   
   peeps.drainDeathQueue()
   peeps.drainMoveQueue()
-  //signals.fade(0) // takes layerNum //TODO: Support signals
+  signals.fade(layer: 0) // takes layerNum
   
   //TODO: Support saving video?
 }
