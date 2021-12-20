@@ -7,7 +7,7 @@ enum RunMode: Int {
 var runMode = RunMode.run
 var p = Params.defaults
 var grid = Grid(sizeX: p.sizeX, sizeY: p.sizeY) // 2D arena where the individuals live
-//let signals = Signals()  // pheromone layers
+let signals = Signals(layers: p.signalLayers, sizeX: p.sizeX, sizeY: p.sizeY)  // pheromone layers
 var peeps = Peeps(individuals: []) // container of all the individuals
 var generation = 0
 var murderCount = 0

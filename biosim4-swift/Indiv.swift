@@ -67,6 +67,67 @@ struct Indiv {
       // Clip any round-off error
       sensorVal = factor;
       sensorVal = min(1.0, max(0.0, sensorVal))
+    case .longProbePopulationForward:
+      // Measures the distance to the nearest other individual in the
+      // forward direction. If non found, returns the maximum sensor value.
+      // Maps the result to the sensor range 0.0..1.0.
+      sensorVal = Double(longProbePopulationForward(loc: loc,
+                                                    dir: lastMoveDir,
+                                                    distance: longProbeDist)) / Double(longProbeDist)
+    case .longProbeBarrierForward:
+      // Measures the distance to the nearest barrier in the forward
+      // direction. If non found, returns the maximum sensor value.
+      // Maps the result to the sensor range 0.0..1.0.
+      sensorVal = Double(longProbeBarrierForward(loc: loc,
+                                                    dir: lastMoveDir,
+                                                 distance: longProbeDist)) / Double(longProbeDist)
+    case .population:
+      // Returns population density in neighborhood converted linearly from
+      // 0..100% to sensor range
+      //TODO: Verify that this counts population correctly
+      var countLocs = 0
+      var countOccupied = 0
+      func checkOccupancy(tloc: Coord) {
+        countLocs += 1
+        if grid.isOccupiedAt(loc: tloc) {
+          countOccupied += 1
+        }
+      }
+
+      grid.visitNeighborhood(loc: loc, radius: p.populationSensorRadius, f: checkOccupancy)
+      sensorVal = Double(countOccupied) / Double(countLocs)
+    case .populationForward:
+      // Sense population density along axis of last movement direction, mapped
+      // to sensor range 0.0..1.0
+      sensorVal = getPopulationDensityAlongAxis(loc: loc, dir: lastMoveDir)
+    case .populationLeftRight:
+      // Sense population density along an axis 90 degrees from last movement direction
+      sensorVal = getPopulationDensityAlongAxis(loc: loc, dir: lastMoveDir.rotate90DegCW())
+    case .barrierForward:
+      // Sense the nearest barrier along axis of last movement direction, mapped
+      // to sensor range 0.0..1.0
+      sensorVal = getShortProbeBarrierDistance(loc: loc,
+                                               dir: lastMoveDir,
+                                               distance: p.shortProbeBarrierDistance)
+    case .barrierLeftRight:
+      // Sense the nearest barrier along axis perpendicular to last movement direction, mapped
+      // to sensor range 0.0..1.0
+      sensorVal = getShortProbeBarrierDistance(loc: loc,
+                                               dir: lastMoveDir.rotate90DegCW(),
+                                               distance: p.shortProbeBarrierDistance)
+    case .random:
+      // Returns a random sensor value in the range 0.0..1.0.
+      sensorVal = Double.random(in: 0...1)
+    case .signal0:
+      // Returns magnitude of signal0 in the local neighborhood, with
+      // 0.0..maxSignalSum converted to sensorRange 0.0..1.0
+      sensorVal = getSignalDensity(loc: loc, layer: 0)
+    case .signal0Forward:
+      // Sense signal0 density along axis of last movement direction
+      sensorVal = getSignalDensityAlongAxis(loc: loc, dir: lastMoveDir, layer: 0)
+    case .signal0LeftRight:
+      // Sense signal0 density along an axis perpendicular to last movement direction
+      sensorVal = getSignalDensityAlongAxis(loc: loc, dir: lastMoveDir.rotate90DegCW(), layer: 0)
     default:
       //TODO: Implement remaining sensors
       sensorVal = .random(in: SENSOR_MIN...SENSOR_MAX)
