@@ -35,7 +35,7 @@ struct Gene: Equatable {
   }
   
   static func makeRandomWeight() -> Int {
-    .random(in: 0...0xefff) - 0x8000
+    .random(in: 0...0xffff) - 0x8000
   }
 }
 
