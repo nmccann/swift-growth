@@ -19,7 +19,7 @@ class ExecuteActionsTests: XCTestCase {
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
       executeActions(indiv: &indiv,
-                   levels: [.MOVE_EAST: .greatestFiniteMagnitude])
+                     levels: [.MOVE_EAST: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
     XCTAssertTrue(grid.isOccupiedAt(loc: .init(x: 3, y: 2)))

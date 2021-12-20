@@ -11,29 +11,29 @@ struct Gene: Equatable {
   enum Source: CaseIterable {
     case sensor, neuron
   }
-
+  
   enum Sink: CaseIterable {
     case action, neuron
   }
-
+  
   var sourceType: Source
   var sourceNum: Int
   var sinkType: Sink
   var sinkNum: Int
   var weight: Int
-
+  
   let f1 = 8.0
   let f2 = 64.0
-
+  
   //Alternative implementation
   //  func weightAsDouble() -> Double {
   //    pow(Double(weight) / f1, 3.0) / f2
   //  }
-
+  
   func weightAsDouble() -> Double {
     Double(weight) / 8192.0
   }
-
+  
   static func makeRandomWeight() -> Int {
     .random(in: 0...0xefff) - 0x8000
   }
@@ -72,7 +72,7 @@ typealias Genome = [Gene]
 struct NeuralNet {
   var connections: [Gene] // connections are equivalent to genes
   var neurons: [Neuron]
-
+  
   struct Neuron {
     var output: Double
     let driven: Bool // undriven neurons have fixed output values
@@ -139,12 +139,12 @@ func makeRandomGenome() -> Genome {
 func makeRenumberedConnectionList(genome: Genome) -> ConnectionList {
   genome.map { gene in
     var gene = gene
-
+    
     switch gene.sourceType {
     case .neuron: gene.sourceNum %= p.maxNumberNeurons
     case .sensor: gene.sourceNum %= Sensor.enabled.count
     }
-
+    
     switch gene.sinkType {
     case .neuron: gene.sinkNum %= p.maxNumberNeurons
     case .action: gene.sinkNum %= Action.enabled.count
@@ -166,24 +166,24 @@ func makeNodeList(nodeMap: inout NodeMap, connectionList: inout ConnectionList) 
                                               numOutputs: 0,
                                               numSelfInputs: 0,
                                               numInputsFromSensorsOrOtherNeurons: 0)
-
+      
       if case .neuron = conn.sourceType, conn.sourceNum == conn.sinkNum {
         it.numSelfInputs += 1
       } else {
         it.numInputsFromSensorsOrOtherNeurons += 1
       }
-
+      
       nodeMap[conn.sinkNum] = it
     }
-
+    
     if case .neuron = conn.sourceType {
       assert(conn.sourceNum < p.maxNumberNeurons)
       var it = nodeMap[conn.sourceNum] ?? .init(remappedNumber: 0,
                                                 numOutputs: 0,
                                                 numSelfInputs: 0,
                                                 numInputsFromSensorsOrOtherNeurons: 0)
-
-
+      
+      
       it.numOutputs += 1
       nodeMap[conn.sourceNum] = it
     }
@@ -228,7 +228,7 @@ func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMa
         keysToRemove.append(itNeuron.key)
       }
     }
-
+    
     //TODO: Determine a better way to iterate and remove keys in-place
     for key in keysToRemove {
       nodeMap.removeValue(forKey: key)
@@ -249,36 +249,36 @@ func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMa
 func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
   var nodeMap: NodeMap = [:]  // list of neurons and their number of inputs and outputs
   var nnet = NeuralNet(connections: [], neurons: [])
-
+  
   // Convert the indiv's genome to a renumbered connection list
   var connectionList = makeRenumberedConnectionList(genome: genome) // synaptic connections
-
+  
   // Make a node (neuron) list from the renumbered connection list
   makeNodeList(nodeMap: &nodeMap, connectionList: &connectionList)
-
+  
   // Find and remove neurons that don't feed anything or only feed themself.
   // This reiteratively removes all connections to the useless neurons.
   cullUselessNeurons(connections: &connectionList, nodeMap: &nodeMap)
-
+  
   // The neurons map now has all the referenced neurons, their neuron numbers, and
   // the number of outputs for each neuron. Now we'll renumber the neurons
   // starting at zero.
-
+  
   assert(nodeMap.count <= p.maxNumberNeurons)
   var newNumber = 0;
-
+  
   for var node in nodeMap {
     assert(node.value.numOutputs != 0)
     node.value.remappedNumber = newNumber
     newNumber += 1
   }
-
+  
   // Create the indiv's connection list in two passes:
   // First the connections to neurons, then the connections to actions.
   // This ordering optimizes the feed-forward function in feedForward.cpp.
-
+  
   nnet.connections.removeAll()
-
+  
   // First, the connections from sensor or neuron to a neuron
   for conn in connectionList {
     if case .neuron = conn.sinkType {
@@ -292,7 +292,7 @@ func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
       nnet.connections.append(newConn)
     }
   }
-
+  
   // Last, the connections from sensor or neuron to an action
   for conn in connectionList {
     if case .action = conn.sinkType {
@@ -304,13 +304,13 @@ func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
       nnet.connections.append(newConn)
     }
   }
-
+  
   // Create the indiv's neural node list
   nnet.neurons = (0..<nodeMap.count).map {
     .init(output: initialNeuronOutput(),
           driven: nodeMap[$0]?.numInputsFromSensorsOrOtherNeurons != 0)
   }
-
+  
   return nnet
 }
 
@@ -322,10 +322,10 @@ func generateChildGenome(parentGenomes: inout [Genome]) -> Genome {
   // random parent (or parents if sexual reproduction) with random
   // mutations
   var genome: Genome
-
+  
   var parent1Idx: Int
   var parent2Idx: Int
-
+  
   // Choose two parents randomly from the candidates. If the parameter
   // p.chooseParentsByFitness is false, then we choose at random from
   // all the candidate parents with equal preference. If the parameter is
@@ -339,24 +339,24 @@ func generateChildGenome(parentGenomes: inout [Genome]) -> Genome {
     parent1Idx = .random(in: 0..<parentGenomes.count)
     parent2Idx = .random(in: 0..<parentGenomes.count)
   }
-
+  
   let g1 = parentGenomes[parent1Idx]
   let g2 = parentGenomes[parent2Idx]
-
+  
   if g1.isEmpty || g2.isEmpty {
     preconditionFailure("Invalid genome")
   }
-
+  
   func overlayWithSliceOf(gShorter: Genome) {
     var index0 = Int.random(in: 0..<gShorter.count)
     var index1 = Int.random(in: 0...gShorter.count)
     if index0 > index1 {
       swap(&index0, &index1)
     }
-
+    
     genome.replaceSubrange(index0..<index1, with: gShorter[index0..<index1])
   }
-
+  
   if p.sexualReproduction {
     if g1.count > g2.count {
       genome = g1
@@ -371,24 +371,24 @@ func generateChildGenome(parentGenomes: inout [Genome]) -> Genome {
     genome = g2
     assert(!genome.isEmpty)
   }
-
+  
   randomInsertDeletion(genome: &genome)
   assert(!genome.isEmpty)
   applyPointMutations(genome: &genome)
   assert(!genome.isEmpty)
   assert(genome.count <= p.genomeMaxLength)
-
+  
   return genome
 }
 
 // This applies a point mutation at a random bit in a genome.
 func randomBitFlip(genome: inout Genome) {
   let method = 1
-
+  
   let byteIndex = Int.random(in: 0..<genome.count)
   let elementIndex = Int.random(in: 0..<genome.count)
   let bitIndex8 = 1 << Int.random(in: 0...7)
-
+  
   switch method {
   case 0: fatalError()
     //TODO: Not sure how to do method 0 in Swift
@@ -424,7 +424,7 @@ func randomInsertDeletion(genome: inout Genome) {
   guard Double.random(in: 0...1) < p.geneInsertionDeletionRate else {
     return
   }
-
+  
   if Double.random(in: 0...1) < p.deletionRatio {
     // deletion
     if genome.count > 1 {

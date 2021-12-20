@@ -19,18 +19,18 @@ class Peeps {
   var individuals: [Indiv] = []
   var deathQueue: [Int] = []
   var moveQueue: [(Int, Coord)] = []
-
+  
   init(individuals: [Indiv]) {
     self.individuals = individuals
   }
-
+  
   /// Safe to call during multithread mode.
   /// Indiv will remain alive and in-world until end of sim step when
   /// drainDeathQueue() is called.
   func queueForDeath(_ indiv: Indiv) {
     deathQueue.append(indiv.index)
   }
-
+  
   /// Called in single-thread mode at end of sim step. This executes all the
   /// queued deaths, removing the dead agents from the grid.
   func drainDeathQueue() {
@@ -44,14 +44,14 @@ class Peeps {
     }
     deathQueue.removeAll()
   }
-
-
+  
+  
   /// Safe to call during multithread mode. Indiv won't move until end
   /// of sim step when drainMoveQueue() is called.
   func queueForMove(_ indiv: Indiv, newLoc: Coord) {
     moveQueue.append((indiv.index, newLoc))
   }
-
+  
   /// Called in single-thread mode at end of sim step. This executes all the
   /// queued movements. Each movement is typically one 8-neighbor cell distance
   /// but this function can move an individual any arbitrary distance.
@@ -70,29 +70,29 @@ class Peeps {
         peeps[moveRecord.0] = indiv
       }
     }
-
+    
     moveQueue.removeAll()
   }
-
-
+  
+  
   func deathQueueSize() -> Int {
     deathQueue.count
   }
-
+  
   /// Does no error checking -- check first that loc is occupied
   func getIndiv(loc: Coord) -> Indiv {
     guard let index = grid.at(loc) else {
       fatalError("Location is not occupied")
     }
-
+    
     return individuals[index]
   }
-
+  
   subscript(index: Int) -> Indiv {
     get {
       individuals[index]
     }
-
+    
     set {
       individuals[index] = newValue
     }

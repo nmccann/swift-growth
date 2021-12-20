@@ -40,7 +40,7 @@ enum Sensor: Int, CaseIterable {
        signal0,           // W strength of signal0 in neighborhood
        signal0Forward,       // W strength of signal0 in the forward-reverse axis
        signal0LeftRight        // W strength of signal0 in the left-right axis
-
+  
   var name: String {
     switch self {
     case .locationX: return "loc X"
@@ -66,7 +66,7 @@ enum Sensor: Int, CaseIterable {
     case .signal0LeftRight: return "signal 0 LR"
     }
   }
-
+  
   // TODO: Support arbitrary disabling - because of neuron renumbering, that might cause issues
   static let enabled: [Sensor] = [.locationX,
                                   .locationY,
@@ -115,7 +115,7 @@ enum Action: Int, CaseIterable {
   case MOVE_RIGHT               // W
   case MOVE_REVERSE             // W
   case KILL_FORWARD             // W
-
+  
   var name: String {
     switch self {
     case .MOVE_X: return "move X"
@@ -137,7 +137,7 @@ enum Action: Int, CaseIterable {
     case .KILL_FORWARD: return "kill fwd"
     }
   }
-
+  
   // TODO: Support arbitrary disabling - because of neuron renumbering, that might cause issues
   static let enabled: [Action] = [.MOVE_X,
                                   .MOVE_Y,

@@ -1,22 +1,22 @@
 import Foundation
 
 func passedSurvivalCriterion(indiv: inout Indiv, challenge: Challenge?) -> (Bool, Double) {
-
+  
   //TODO: Implement correctly
-//  guard let challenge = challenge else {
-//    //No challenge, all pass
-//    return (true, 1.0)
-//  }
-//
-//  return (true, 1.0)
-
+  //  guard let challenge = challenge else {
+  //    //No challenge, all pass
+  //    return (true, 1.0)
+  //  }
+  //
+  //  return (true, 1.0)
+  
   //Should result in individuals that try to get to the eastern side
-//  if indiv.loc.x > p.sizeX / 2 {
-//    return (true, Double(p.sizeX - (p.sizeX - indiv.loc.x)))
-//  } else {
-//    return (false, Double(p.sizeX - (p.sizeX - indiv.loc.x)))
-//  }
-
+  //  if indiv.loc.x > p.sizeX / 2 {
+  //    return (true, Double(p.sizeX - (p.sizeX - indiv.loc.x)))
+  //  } else {
+  //    return (false, Double(p.sizeX - (p.sizeX - indiv.loc.x)))
+  //  }
+  
   //Should result in individuals that try to get to the western side
   if indiv.loc.x < p.sizeX / 2 {
     return (true, Double(p.sizeX - indiv.loc.x))
@@ -32,11 +32,11 @@ func initializeGeneration0() {
   // The grid has already been allocated, just clear and reuse it
   grid.nilFill()
   grid.applyBarrier(p.replaceBarrierTypeGenerationNumber == 0 ? p.replaceBarrierType : p.barrierType)
-
+  
   //TODO: Signals when they are supported
   // The signal layers have already been allocated, so just reuse them
   //  signals.zeroFill();
-
+  
   // Spawn the population. The peeps container has already been allocated,
   // just clear and reuse it
   let individuals: [Indiv] = (0..<p.population).map { .init(index: $0,
@@ -56,8 +56,8 @@ func initializeNewGeneration(parentGenomes: inout [Genome], generation: Int) {
   grid.nilFill();
   grid.applyBarrier(generation >= p.replaceBarrierTypeGenerationNumber ? p.replaceBarrierType : p.barrierType);
   //TODO: Signals when they are supported
-//  signals.zeroFill();
-
+  //  signals.zeroFill();
+  
   // Spawn the population. This overwrites all the elements of peeps[]
   let individuals: [Indiv] = (0..<p.population).map { .init(index: $0,
                                                             loc: grid.findEmptyLocation(),
@@ -79,7 +79,7 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
   // This container will hold the indexes and survival scores (0.0..1.0)
   // of all the survivors who will provide genomes for repopulation.
   var parents: [(Int, Double)] = [] // <indiv index, score>
-
+  
   if case .altruism = p.challenge {
     //TODO: Implement altruism challenge
   } else {
@@ -87,7 +87,7 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
     // their scores for later sorting. Indexes start at 1.
     for i in 0..<p.population {
       let passed = passedSurvivalCriterion(indiv: &peeps[i], challenge: p.challenge)
-
+      
       // Save the parent genome if it results in valid neural connections
       // ToDo: if the parents no longer need their genome record, we could
       // possibly do a move here instead of copy, although it's doubtful that
@@ -97,14 +97,14 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
       }
     }
   }
-
+  
   // Sort the indexes of the parents by their fitness scores
   parents.sort { $0.1 > $1.1 }
-
+  
   // Assemble a list of all the parent genomes. These will be ordered by their
   // scores if the parents[] container was sorted by score
   var parentGenomes = parents.map { peeps[$0.0].genome }
-
+  
   // Now we have a container of zero or more parents' genomes
   if !parentGenomes.isEmpty {
     // Spawn a new generation
@@ -114,6 +114,6 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
     // from scratch with randomly-generated genomes
     initializeGeneration0()
   }
-
+  
   return parentGenomes.count
 }

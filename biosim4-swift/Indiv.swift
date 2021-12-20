@@ -13,11 +13,11 @@ struct Indiv {
   var longProbeDist: Int // distance for long forward probe for obstructions
   var lastMoveDir: Dir // direction of last movement
   let challengeBits: Int // modified when the indiv accomplishes some task
-
+  
   /// Returned sensor values range SENSOR_MIN..SENSOR_MAX
   func getSensor(_ sensor: Sensor, simStep: Int) -> Double {
     var sensorVal = 0.0
-
+    
     switch sensor {
     case .age:
       // Converts age (units of simSteps compared to life expectancy)
@@ -79,7 +79,7 @@ struct Indiv {
       // direction. If non found, returns the maximum sensor value.
       // Maps the result to the sensor range 0.0..1.0.
       sensorVal = Double(longProbeBarrierForward(loc: loc,
-                                                    dir: lastMoveDir,
+                                                 dir: lastMoveDir,
                                                  distance: longProbeDist)) / Double(longProbeDist)
     case .population:
       // Returns population density in neighborhood converted linearly from
@@ -93,7 +93,7 @@ struct Indiv {
           countOccupied += 1
         }
       }
-
+      
       grid.visitNeighborhood(loc: loc, radius: p.populationSensorRadius, f: checkOccupancy)
       sensorVal = Double(countOccupied) / Double(countLocs)
     case .populationForward:
@@ -132,18 +132,18 @@ struct Indiv {
       //TODO: Implement remaining sensors
       sensorVal = .random(in: SENSOR_MIN...SENSOR_MAX)
     }
-
+    
     if sensorVal.isNaN || sensorVal < -0.01 || sensorVal > 1.01 {
       print("Clipping sensorVal of \(sensorVal) for \(sensor.name)")
       sensorVal = max(0.0, min(sensorVal, 1.0))
     }
-
+    
     assert(!sensorVal.isNaN && sensorVal >= -0.01 && sensorVal <= 1.01)
-
+    
     return sensorVal
   }
-
-
+  
+  
   /// This is called when any individual is spawned.
   /// The responsiveness parameter will be initialized here to maximum value
   /// of 1.0, then depending on which action activation function is used,
@@ -163,15 +163,15 @@ struct Indiv {
     self.genome = genome
     self.nnet = createWiringFromGenome(genome)
   }
-
+  
   func printNeuralNet() {
     fatalError()
   }
-
+  
   func printIGraphEdgeList() {
     fatalError()
   }
-
+  
   func printGenome() {
     fatalError()
   }

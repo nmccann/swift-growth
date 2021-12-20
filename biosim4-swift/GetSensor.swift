@@ -11,14 +11,14 @@ func getPopulationDensityAlongAxis(loc: Coord, dir: Dir) -> Double {
   // midrange if the population density is greatest in the reverse direction,
   // above midrange if density is greatest in forward direction.
   assert(dir.dir9 != .center) // require a defined axis
-
+  
   var sum = 0.0
   let dirVec = dir.asNormalizedCoord()
   let len = dirVec.floatingLength
   //TODO: Check if this division is redundant - seems like it should be given that we're already dealing with a normalized vector
   let dirVecX = Double(dirVec.x) / len
   let dirVecY = Double(dirVec.y) / len // Unit vector components along dir
-
+  
   func checkOccupancy(tloc: Coord) {
     if tloc != loc && grid.isOccupiedAt(loc: tloc) {
       let offset = tloc - loc
@@ -27,15 +27,15 @@ func getPopulationDensityAlongAxis(loc: Coord, dir: Dir) -> Double {
       sum += contribution
     }
   }
-
+  
   grid.visitNeighborhood(loc: loc, radius: p.populationSensorRadius, f: checkOccupancy(tloc:))
-
+  
   let maxSumMagnitude = 6.0 * p.populationSensorRadius
   assert(sum >= -maxSumMagnitude && sum <= maxSumMagnitude)
-
+  
   var sensorVal = sum / maxSumMagnitude // convert to -1.0...1.0
   sensorVal = (sensorVal + 1.0) / 2.0 // convert to 0.0...1.0
-
+  
   return sensorVal
 }
 
@@ -54,7 +54,7 @@ func longProbePopulationForward(loc: Coord, dir: Dir, distance: Int) -> Int {
     loc = loc + dir
     numLocsToTest -= 1
   }
-
+  
   if numLocsToTest > 0 && (!grid.isInBounds(loc: loc) || grid.isBarrierAt(loc: loc)) {
     return distance
   } else {
@@ -78,7 +78,7 @@ func longProbeBarrierForward(loc: Coord, dir: Dir, distance: Int) -> Int {
     loc = loc + dir
     numLocsToTest -= 1
   }
-
+  
   if numLocsToTest > 0 && !grid.isInBounds(loc: loc) {
     return distance
   } else {
@@ -94,18 +94,18 @@ func getShortProbeBarrierDistance(loc loc0: Coord, dir: Dir, distance: Int) -> D
   var countReverse = 0
   var loc = loc0 + dir
   var numLocsToTest = distance
-
+  
   // Scan positive direction
   while numLocsToTest > 0 && grid.isInBounds(loc: loc) && !grid.isBarrierAt(loc: loc) {
     countForward += 1
     loc = loc + dir
     numLocsToTest -= 1
   }
-
+  
   if numLocsToTest > 0 && !grid.isInBounds(loc: loc) {
     countForward = distance
   }
-
+  
   // Scan negative direction
   numLocsToTest = distance
   loc = loc0 - dir
@@ -114,11 +114,11 @@ func getShortProbeBarrierDistance(loc loc0: Coord, dir: Dir, distance: Int) -> D
     loc = loc - dir
     numLocsToTest -= 1
   }
-
+  
   if numLocsToTest > 0 && !grid.isInBounds(loc: loc) {
     countReverse = distance
   }
-
+  
   var sensorVal = Double((countForward - countReverse) + distance) // convert to 0...2*distance
   sensorVal = (sensorVal / 2.0) / Double(distance) // convert to 0.0...1.0
   return sensorVal
@@ -129,12 +129,12 @@ func getShortProbeBarrierDistance(loc loc0: Coord, dir: Dir, distance: Int) -> D
 func getSignalDensity(loc: Coord, layer: Int) -> Double {
   var countLocs = 0
   var sum = 0.0
-
+  
   func signalCheck(tloc: Coord) {
     countLocs += 1
     sum += Double(signals.getMagnitude(layer: layer, loc: tloc))
   }
-
+  
   grid.visitNeighborhood(loc: loc, radius: Double(p.signalSensorRadius), f: signalCheck(tloc:))
   let maxSum = Double(countLocs * SIGNAL_MAX)
   return sum / maxSum // convert to 0.0...1.0

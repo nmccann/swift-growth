@@ -35,7 +35,7 @@ struct Params {
   let barrierType: BarrierType?
   let replaceBarrierType: BarrierType?
   let replaceBarrierTypeGenerationNumber: Int // >= 0
-
+  
   // These must not change after initialization
   var sizeX: Int // 2..0x10000
   var sizeY: Int // 2..0x10000
@@ -44,7 +44,7 @@ struct Params {
   let logDir: String
   let imageDir: String
   let graphLogUpdateCommand: String
-
+  
   static let defaults = Params(population: 100,
                                stepsPerGeneration: 100,
                                maxGenerations: 100,
