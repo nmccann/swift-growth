@@ -6,7 +6,12 @@ import Foundation
 func initializeGeneration0() {
   // The grid has already been allocated, just clear and reuse it
   grid.nilFill()
-  grid.applyBarrier(p.replaceBarrierTypeGenerationNumber == 0 ? p.replaceBarrierType : p.barrierType)
+
+  if let replaceBarrier = p.replaceBarrier, replaceBarrier.generation == 0 {
+    grid.applyBarrier(replaceBarrier.type)
+  } else {
+    grid.applyBarrier(p.barrierType)
+  }
 
   // The signal layers have already been allocated, so just reuse them
   signals.zeroFill()
@@ -27,9 +32,15 @@ func initializeGeneration0() {
 func initializeNewGeneration(parentGenomes: [Genome], generation: Int) {
   // The grid, signals, and peeps containers have already been allocated, just
   // clear them if needed and reuse the elements
-  grid.nilFill();
-  grid.applyBarrier(generation >= p.replaceBarrierTypeGenerationNumber ? p.replaceBarrierType : p.barrierType);
-  signals.zeroFill();
+  grid.nilFill()
+
+  if let replaceBarrier = p.replaceBarrier, generation > replaceBarrier.generation {
+    grid.applyBarrier(replaceBarrier.type)
+  } else {
+    grid.applyBarrier(p.barrierType)
+  }
+
+  signals.zeroFill()
   
   // Spawn the population. This overwrites all the elements of peeps[]
   let individuals: [Indiv] = (0..<p.population).map { .init(index: $0,

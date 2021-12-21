@@ -4,6 +4,7 @@ import GameplayKit
 class GameScene: SKScene {
   private var gridNode = SKNode()
   private var cellNodes: [SKShapeNode] = []
+  private var barrierNodes: [SKShapeNode] = []
   private var cellSize: CGSize = .init(width: 1, height: 1)
   private var previousTime: TimeInterval = 0
   private let simulatorRefreshRate: TimeInterval = 1.0 / 60.0
@@ -80,15 +81,32 @@ private extension GameScene {
     cellSize = CGSize(width: squareWidth, height: squareWidth)
 
     cellNodes = peeps.individuals.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
-
     cellNodes.forEach { gridNode.addChild($0) }
+
+    generateBarriers()
+
     scene.addChild(gridNode)
+  }
+
+  func generateBarriers() {
+    gridNode.removeChildren(in: barrierNodes)
+    barrierNodes = grid.barrierLocations.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
+    barrierNodes.forEach { gridNode.addChild($0) }
   }
 
   func advanceAndUpdateBySteps(_ steps: Int) {
     (0..<steps).forEach { _ in advanceSimulator() }
+
+    if grid.barrierLocations.count != barrierNodes.count {
+      generateGrid()
+    }
+
     zip(cellNodes, peeps.individuals).forEach { cell, indiv in
       updateCell(cell, indiv: indiv, size: cellSize)
+    }
+
+    zip(barrierNodes, grid.barrierLocations).forEach { barrier, location in
+      updateBarrier(barrier, location: location, size: cellSize)
     }
   }
 
@@ -97,6 +115,12 @@ private extension GameScene {
     cell.isHidden = !indiv.alive
     cell.position = .init(x: Double(indiv.loc.x - (p.sizeX/2)) * size.width,
                           y: Double(indiv.loc.y - (p.sizeY/2)) * size.height)
+  }
+
+  func updateBarrier(_ barrier: SKShapeNode, location: Coord, size: CGSize) {
+    barrier.fillColor = .red
+    barrier.position = .init(x: Double(location.x - (p.sizeX/2)) * size.width,
+                          y: Double(location.y - (p.sizeY/2)) * size.height)
   }
 
   func handleKeyEvent(_ event: NSEvent, keyDown: Bool) {

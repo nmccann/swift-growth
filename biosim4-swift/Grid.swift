@@ -95,14 +95,29 @@ class Grid {
       return
     }
 
-    //TODO: Implement from createBarrier.cpp
+    func drawBox(min: (x: Int, y: Int), max: (x: Int, y: Int)) {
+      for x in min.x...max.x {
+        for y in min.y...max.y {
+          grid.set(x: x, y: y, val: BARRIER)
+          barrierLocations.append(.init(x: x, y: y))
+        }
+      }
+    }
+
     switch type {
-    case .verticalBarConstant: return
-    case .verticalBarRandom: return
-    case .fiveBlocks: return
-    case .horizontalBarConstant: return
-    case .threeIslandsRandom: return
-    case .spots: return
+    case .verticalBarConstant:
+      let min = (x: size.x / 2, y: size.y / 4)
+      let max = (x: min.x + 1, y: min.y + size.y / 2)
+      drawBox(min: min, max: max)
+    case .verticalBarRandom:
+      //TODO: Make less sensitive to grid size (fails if height / 2 - 20 is less than 20)
+      let min = (x: Int.random(in: 20...(size.x - 20)), y: Int.random(in: 20...(size.y / 2 - 20)))
+      let max = (x: min.x + 1, y: min.y + size.y / 2)
+      drawBox(min: min, max: max)
+    case .fiveBlocks: return //TODO
+    case .horizontalBarConstant: return //TODO
+    case .threeIslandsRandom: return // TODO
+    case .spots: return // TODO
     }
   }
 

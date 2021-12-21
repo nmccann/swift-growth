@@ -39,9 +39,8 @@ struct Params {
   let updateGraphLogStride: Int // > 0
   let challenge: Challenge?
   let barrierType: BarrierType?
-  let replaceBarrierType: BarrierType?
-  let replaceBarrierTypeGenerationNumber: Int // >= 0
-  
+  let replaceBarrier: (type: BarrierType, generation: Int)?
+
   // These must not change after initialization
   var sizeX: Int // 2..0x10000
   var sizeY: Int // 2..0x10000
@@ -81,12 +80,11 @@ struct Params {
                                genomeComparisonMethod: .hammingBits,
                                updateGraphLog: false,
                                updateGraphLogStride: 16,
-                               challenge: .circle,
-                               barrierType: nil,
-                               replaceBarrierType: nil,
-                               replaceBarrierTypeGenerationNumber: -1,
-                               sizeX: 60,
-                               sizeY: 60,
+                               challenge: .rightQuarter,
+                               barrierType: .verticalBarRandom,
+                               replaceBarrier: nil,
+                               sizeX: 120,
+                               sizeY: 120,
                                genomeInitialLengthMin: 16,
                                genomeInitialLengthMax: 16,
                                logDir: "./logs/",
