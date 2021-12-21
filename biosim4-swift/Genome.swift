@@ -266,13 +266,15 @@ func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
   
   assert(nodeMap.count <= p.maxNumberNeurons)
   var newNumber = 0;
-  
-  for var node in nodeMap {
-    assert(node.value.numOutputs != 0)
-    node.value.remappedNumber = newNumber
+
+  nodeMap = nodeMap.mapValues { node in
+    var node = node
+    assert(node.numOutputs != 0)
+    node.remappedNumber = newNumber
     newNumber += 1
+    return node
   }
-  
+
   // Create the indiv's connection list in two passes:
   // First the connections to neurons, then the connections to actions.
   // This ordering optimizes the feed-forward function in feedForward.cpp.
