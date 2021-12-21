@@ -50,7 +50,8 @@ func responseCurve(_ r: Double) -> Double {
  simulator step by endOfSimStep() in a single thread after all individuals have been
  evaluated multithreadedly.
  **********************************************************************************/
-func executeActions(indiv: inout Indiv, levels: [Action: Double]) {
+func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
+  var indiv = indiv
   // Responsiveness action - convert neuron action level from arbitrary float range
   // to the range 0.0..1.0. If this action neuron is enabled but not driven, will
   // default to mid-level 0.5.
@@ -208,4 +209,6 @@ func executeActions(indiv: inout Indiv, levels: [Action: Double]) {
   if grid.isInBounds(loc: newLoc) && grid.isEmptyAt(loc: newLoc) {
     peeps.queueForMove(indiv, newLoc: newLoc)
   }
+
+  return indiv
 }

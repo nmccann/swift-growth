@@ -24,7 +24,7 @@ func initializeGeneration0() {
 // peeps containers have been allocated. This will erase the grid and signal
 // layers, then create a new population in the peeps container with random
 // locations and genomes derived from the container of parent genomes.
-func initializeNewGeneration(parentGenomes: inout [Genome], generation: Int) {
+func initializeNewGeneration(parentGenomes: [Genome], generation: Int) {
   // The grid, signals, and peeps containers have already been allocated, just
   // clear them if needed and reuse the elements
   grid.nilFill();
@@ -34,7 +34,7 @@ func initializeNewGeneration(parentGenomes: inout [Genome], generation: Int) {
   // Spawn the population. This overwrites all the elements of peeps[]
   let individuals: [Indiv] = (0..<p.population).map { .init(index: $0,
                                                             loc: grid.findEmptyLocation(),
-                                                            genome: generateChildGenome(parentGenomes: &parentGenomes)) }
+                                                            genome: generateChildGenome(parentGenomes: parentGenomes)) }
   peeps = .init(individuals: individuals)
 }
 
@@ -76,12 +76,12 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
   
   // Assemble a list of all the parent genomes. These will be ordered by their
   // scores if the parents[] container was sorted by score
-  var parentGenomes = parents.map { peeps[$0.0].genome }
+  let parentGenomes = parents.map { peeps[$0.0].genome }
   
   // Now we have a container of zero or more parents' genomes
   if !parentGenomes.isEmpty {
     // Spawn a new generation
-    initializeNewGeneration(parentGenomes: &parentGenomes, generation: generation + 1);
+    initializeNewGeneration(parentGenomes: parentGenomes, generation: generation + 1);
   } else {
     // Special case: there are no surviving parents: start the simulation over
     // from scratch with randomly-generated genomes

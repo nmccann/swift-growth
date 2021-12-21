@@ -130,8 +130,7 @@ func simStepOneIndiv(indiv: Indiv, simStep: Int) -> Indiv {
   var indiv = indiv
   indiv.age += 1 // for this implementation, tracks simStep
   let actionLevels = indiv.feedForward(simStep: simStep)
-  executeActions(indiv: &indiv, levels: actionLevels)
-  return indiv
+  return executeActions(indiv: indiv, levels: actionLevels)
 }
 
 
