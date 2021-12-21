@@ -12,7 +12,7 @@ struct Indiv {
   var oscPeriod: Int // 2..4*p.stepsPerGeneration (TBD, see executeActions())
   var longProbeDist: Int // distance for long forward probe for obstructions
   var lastMoveDir: Dir // direction of last movement
-  let challengeBits: Int // modified when the indiv accomplishes some task
+  var challengeBits: Int // modified when the indiv accomplishes some task
   
   /// Returned sensor values range SENSOR_MIN..SENSOR_MAX
   func getSensor(_ sensor: Sensor, simStep: Int) -> Double {

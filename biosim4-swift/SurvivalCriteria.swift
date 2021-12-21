@@ -219,7 +219,7 @@ private func corner(indiv: Indiv,
   return (false, scoring(false, radius, topLeftDistance))
 }
 
-private func isOnEdge(indiv: Indiv, of grid: Grid) -> Bool {
+func isOnEdge(indiv: Indiv, of grid: Grid) -> Bool {
   let onEdgeX = indiv.loc.x == 0 || indiv.loc.x == grid.size.x - 1
   let onEdgeY = indiv.loc.y == 0 || indiv.loc.y == grid.size.y - 1
   return onEdgeX || onEdgeY
