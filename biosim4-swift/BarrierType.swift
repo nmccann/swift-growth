@@ -16,6 +16,6 @@ enum BarrierType {
   /// Three floating islands -- different locations every generation
   case threeIslandsRandom
 
-  /// Spots, specified number, radius, locations
-  case spots
+  /// Spots, specified number, radius, locations  -- different locations every generation
+  case spotsRandom
 }

@@ -117,7 +117,18 @@ class Grid {
     case .fiveBlocks: return //TODO
     case .horizontalBarConstant: return //TODO
     case .threeIslandsRandom: return // TODO
-    case .spots: return // TODO
+    case .spotsRandom:
+      let numberOfLocations = 5
+      let radius = 3.0
+
+      for i in 1...numberOfLocations {
+        let loc = Coord(x: .random(in: 0...size.x), y: .random(in: 0...size.y))
+        visitNeighborhood(loc: loc, radius: radius) {
+          grid.set(loc: $0, val: BARRIER)
+          barrierLocations.append($0)
+        }
+      }
+      return // TODO
     }
   }
 
@@ -129,6 +140,7 @@ class Grid {
     barrierCenters
   }
 
+  //TODO: Investigate why this seems to produce oblong shapes rather than perfect circles
   func visitNeighborhood(loc: Coord, radius: Double, f: (Coord) -> Void) {
     for dx in (-min(Int(radius), loc.x)...min(Int(radius), (size.x - loc.x) - 1)) {
       let x = loc.x + dx
