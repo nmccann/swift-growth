@@ -1,30 +1,5 @@
 import Foundation
 
-func passedSurvivalCriterion(indiv: inout Indiv, challenge: Challenge?) -> (Bool, Double) {
-  
-  //TODO: Implement correctly
-  //  guard let challenge = challenge else {
-  //    //No challenge, all pass
-  //    return (true, 1.0)
-  //  }
-  //
-  //  return (true, 1.0)
-  
-  //Should result in individuals that try to get to the eastern side
-  //  if indiv.loc.x > p.sizeX / 2 {
-  //    return (true, Double(p.sizeX - (p.sizeX - indiv.loc.x)))
-  //  } else {
-  //    return (false, Double(p.sizeX - (p.sizeX - indiv.loc.x)))
-  //  }
-  
-  //Should result in individuals that try to get to the western side
-  if indiv.loc.x < p.sizeX / 2 {
-    return (true, Double(p.sizeX - indiv.loc.x))
-  } else {
-    return (false, Double(p.sizeX - indiv.loc.x))
-  }
-}
-
 // Requires that the grid, signals, and peeps containers have been allocated.
 // This will erase the grid and signal layers, then create a new population in
 // the peeps container at random locations with random genomes.

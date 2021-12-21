@@ -20,6 +20,7 @@
 		4F1F8C0E2768D1A6003EC662 /* Peeps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1F8C0D2768D1A6003EC662 /* Peeps.swift */; };
 		4F20A0602771183A000153D9 /* GenomeCompare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F20A05F2771183A000153D9 /* GenomeCompare.swift */; };
 		4F297BBB276BFD7600B37A64 /* ExecuteActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F297BBA276BFD7600B37A64 /* ExecuteActionsTests.swift */; };
+		4F8B9E5A2771F19200E90732 /* SurvivalCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B9E592771F19200E90732 /* SurvivalCriteria.swift */; };
 		4F945C5C276A2F5E00E1E4FF /* ExecuteActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F945C5B276A2F5E00E1E4FF /* ExecuteActions.swift */; };
 		4F945C5E276B72A000E1E4FF /* PeepsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F945C5D276B72A000E1E4FF /* PeepsTests.swift */; };
 		4FB168282766F1B00048E6EB /* Genome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB168272766F1B00048E6EB /* Genome.swift */; };
@@ -76,6 +77,7 @@
 		4F1F8C0D2768D1A6003EC662 /* Peeps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peeps.swift; sourceTree = "<group>"; };
 		4F20A05F2771183A000153D9 /* GenomeCompare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenomeCompare.swift; sourceTree = "<group>"; };
 		4F297BBA276BFD7600B37A64 /* ExecuteActionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecuteActionsTests.swift; sourceTree = "<group>"; };
+		4F8B9E592771F19200E90732 /* SurvivalCriteria.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurvivalCriteria.swift; sourceTree = "<group>"; };
 		4F945C5B276A2F5E00E1E4FF /* ExecuteActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecuteActions.swift; sourceTree = "<group>"; };
 		4F945C5D276B72A000E1E4FF /* PeepsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeepsTests.swift; sourceTree = "<group>"; };
 		4FB168272766F1B00048E6EB /* Genome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genome.swift; sourceTree = "<group>"; };
@@ -212,6 +214,7 @@
 				4FD39BED2759C111006D5ED5 /* Compass.swift */,
 				4FD39BEF2759C115006D5ED5 /* Coord.swift */,
 				4FD39BF12759C5AE006D5ED5 /* Dir.swift */,
+				4F8B9E592771F19200E90732 /* SurvivalCriteria.swift */,
 			);
 			name = "Basic Types";
 			sourceTree = "<group>";
@@ -369,6 +372,7 @@
 				4F050737276D95CC002D5536 /* BarrierType.swift in Sources */,
 				4F050733276CE300002D5536 /* FeedForward.swift in Sources */,
 				4FD39BBF2759BFCF006D5ED5 /* GameScene.swift in Sources */,
+				4F8B9E5A2771F19200E90732 /* SurvivalCriteria.swift in Sources */,
 				4FB1682A276790760048E6EB /* Indiv.swift in Sources */,
 				4F050739276EAF7B002D5536 /* GetSensor.swift in Sources */,
 				4FD39BB92759BFCF006D5ED5 /* AppDelegate.swift in Sources */,
