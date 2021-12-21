@@ -65,8 +65,12 @@ func initializeSimulator() {
 }
 
 func advanceSimulator() {
-  for var indiv in peeps.individuals where indiv.alive {
-    simStepOneIndiv(indiv: &indiv, simStep: simStep)
+  peeps.individuals = peeps.individuals.map {
+    guard $0.alive else {
+      return $0
+    }
+
+    return simStepOneIndiv(indiv: $0, simStep: simStep)
   }
   
   // In single-thread mode: this executes deferred, queued deaths and movements,
@@ -122,10 +126,12 @@ func advanceSimulator() {
  For many simulation scenarios, this matches our indiv.age member.
  randomUint - global random number generator, a private instance is given to each thread
  **********************************************************************************************/
-func simStepOneIndiv(indiv: inout Indiv, simStep: Int) {
+func simStepOneIndiv(indiv: Indiv, simStep: Int) -> Indiv {
+  var indiv = indiv
   indiv.age += 1 // for this implementation, tracks simStep
   let actionLevels = indiv.feedForward(simStep: simStep)
   executeActions(indiv: &indiv, levels: actionLevels)
+  return indiv
 }
 
 
