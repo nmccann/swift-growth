@@ -119,7 +119,7 @@ class Grid {
     case .threeIslandsRandom: return // TODO
     case .spotsRandom:
       let numberOfLocations = 5
-      let radius = 3.0
+      let radius = 5.0
 
       for i in 1...numberOfLocations {
         let loc = Coord(x: .random(in: 0...size.x), y: .random(in: 0...size.y))
@@ -140,12 +140,11 @@ class Grid {
     barrierCenters
   }
 
-  //TODO: Investigate why this seems to produce oblong shapes rather than perfect circles
   func visitNeighborhood(loc: Coord, radius: Double, f: (Coord) -> Void) {
     for dx in (-min(Int(radius), loc.x)...min(Int(radius), (size.x - loc.x) - 1)) {
       let x = loc.x + dx
       assert(x >= 0 && x < size.x)
-      let extentY = Int((pow(radius, 2) - pow(Double(dx), 2).squareRoot()))
+      let extentY = Int((pow(radius, 2) - pow(Double(dx), 2)).squareRoot())
 
       for dy in (-min(extentY, loc.y)...min(extentY, (size.y - loc.y) - 1)) {
         let y = loc.y + dy
