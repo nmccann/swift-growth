@@ -1,6 +1,6 @@
 import Foundation
 
-func passedSurvivalCriterion(indiv: inout Indiv, challenge: Challenge?) -> (Bool, Double) {
+func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?) -> (Bool, Double) {
   guard indiv.alive else {
     return (false, 0)
   }
@@ -105,11 +105,7 @@ func passedSurvivalCriterion(indiv: inout Indiv, challenge: Challenge?) -> (Bool
     return (true, 1)
   case .againstAnyWall:
     // Survivors are those touching any wall at the end of the generation
-    let onEdgeX = indiv.loc.x == 0 || indiv.loc.x == p.sizeX - 1
-    let onEdgeY = indiv.loc.y == 0 || indiv.loc.y == p.sizeY - 1
-    let onEdge = onEdgeX || onEdgeY
-
-    return onEdge ? (true, 1) : (false, 0)
+    return isOnEdge(indiv: indiv, of: grid) ? (true, 1) : (false, 0)
   case .touchAnyWall:
     // This challenge is partially handled in endOfSimStep(), where individuals
     // that are touching a wall are flagged in their Indiv record. They are
@@ -120,34 +116,84 @@ func passedSurvivalCriterion(indiv: inout Indiv, challenge: Challenge?) -> (Bool
   case .migrateDistance:
     // Everybody survives and are candidate parents, but scored by how far
     // they migrated from their birth location.
-    let distance = (indiv.loc - indiv.birthLoc).floatingLength
+    let distance = Double((indiv.loc - indiv.birthLoc).length)
     return (true, distance / Double(max(p.sizeX, p.sizeY)))
   case .eastWestEighths:
     // Survivors are all those on the left or right eighths of the arena
     return indiv.loc.x < p.sizeX / 8 || indiv.loc.x >= (p.sizeX - p.sizeX / 8) ? (true, 1) : (false, 0)
   case .nearBarrier:
     // Survivors are those within radius of any barrier center. Weighted by distance.
-    //TODO
-    return(false, 0)
+    let radius = Double(p.sizeX / 2)
+
+    let distance =
+    grid.getBarrierCenters().lazy
+      .map { indiv.loc - $0 }
+      .map(\.length)
+      .map(Double.init)
+      .min()
+
+    guard let distance = distance else {
+      return (false, 0)
+    }
+
+    return distance <= radius ? (true, 1.0 - (distance / radius)) : (false, 0)
   case .pairs:
     // Survivors are those not touching a border and with exactly one neighbor which has no other neighbor
-    //TODO
-    return (false, 0)
+    guard !isOnEdge(indiv: indiv, of: grid) else {
+      return (false, 0)
+    }
+
+    var count = 0
+    //TODO: Simplify - similar to the visitNeighborhood logic, but checks one neighborhood then another, and
+    //only operates on integers
+    for x in ((indiv.loc.x - 1)..<(indiv.loc.x + 1)) {
+      for y in ((indiv.loc.y - 1)..<(indiv.loc.y + 1)) {
+        let tloc = Coord(x: x, y: y)
+        if tloc != indiv.loc && grid.isInBounds(loc: tloc) && grid.isOccupiedAt(loc: tloc) {
+          count += 1
+          if count == 1 {
+            for x1 in ((tloc.x - 1)..<(tloc.x + 1)) {
+              for y1 in ((tloc.y - 1)..<(tloc.y + 1)) {
+                let tloc1 = Coord(x: x1, y: y1)
+                if tloc1 != tloc && tloc1 != indiv.loc && grid.isInBounds(loc: tloc1) && grid.isOccupiedAt(loc: tloc1) {
+                  return (false, 0)
+                }
+              }
+            }
+          } else {
+            return (false, 0)
+          }
+        }
+      }
+    }
+
+    return count == 1 ? (true, 1) : (false, 0)
   case .locationSequence:
     // Survivors are those that contacted one or more specified locations in a sequence,
     // ranked by the number of locations contacted. There will be a bit set in their
     // challengeBits member for each location contacted.
-    //TODO
-    return (false, 0)
+    let bits = indiv.challengeBits
+    let count = bits.nonzeroBitCount
+    let maxNumberOfBits = MemoryLayout.size(ofValue: bits) * 8
+
+    return count > 0 ? (true, Double(count) / Double(maxNumberOfBits)) : (false, 0)
   case .altruismSacrifice:
     // Survivors are all those within the specified radius of the NE corner
-    //TODO
-    return (false, 0)
+    let size = CGSize(width: p.sizeX, height: p.sizeY)
+    let radius = size.width / 4.0 // in 128^2 world, holds 804 agents
+
+    let distance = Double((Coord(x: Int(size.width - size.width / 4.0),
+                                 y: Int(size.height - size.height / 4.0)) - indiv.loc).length)
+    return distance <= radius ? (true, (radius - distance) / radius) : (false, 0)
   case .altruism:
     // Survivors are those inside the circular area defined by
     // safeCenter and radius
-    //TODO
-    return (false, 0)
+    let size = CGSize(width: p.sizeX, height: p.sizeY)
+    let safeCenter = Coord(x: Int(size.width / 4.0), y: Int(size.height / 4.0))
+    let radius = size.width / 4.0 // in a 128^2 world, holds 3216
+    let offset = safeCenter - indiv.loc
+    let distance = Double(offset.length)
+    return distance <= radius ? (true, (radius - distance) / radius) : (false, 0)
   case .none:
     return (true, 1)
   }
@@ -189,4 +235,10 @@ private func corner(indiv: Indiv, scoring: (_ pass: Bool, _ radius: Double, _ di
   }
 
   return (false, scoring(false, radius, topLeftDistance))
+}
+
+private func isOnEdge(indiv: Indiv, of grid: Grid) -> Bool {
+  let onEdgeX = indiv.loc.x == 0 || indiv.loc.x == grid.size.x - 1
+  let onEdgeY = indiv.loc.y == 0 || indiv.loc.y == grid.size.y - 1
+  return onEdgeX || onEdgeY
 }

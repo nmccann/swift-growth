@@ -59,7 +59,7 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
     // First, make a list of all the individuals who will become parents; save
     // their scores for later sorting. Indexes start at 1.
     for i in 0..<p.population {
-      let passed = passedSurvivalCriterion(indiv: &peeps[i], challenge: p.challenge)
+      let passed = passedSurvivalCriterion(indiv: peeps[i], challenge: p.challenge)
       
       // Save the parent genome if it results in valid neural connections
       // ToDo: if the parents no longer need their genome record, we could
