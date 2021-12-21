@@ -59,7 +59,7 @@ struct Params {
                                genomeMaxLength: 20,
                                maxNumberNeurons: 20 / 2,
                                pointMutationRate: 0.0001,
-                               geneInsertionDeletionRate: 0.0001,
+                               geneInsertionDeletionRate: 0, //Originally 0.0001, but currently can't support unequal length genes
                                deletionRatio: 0.7,
                                killEnable: false,
                                sexualReproduction: true,
