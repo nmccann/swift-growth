@@ -138,7 +138,6 @@ struct Indiv {
           sensorVal = genomeSimilarity(genome, indiv2.genome) // 0.0..1.0
         }
       }
-      //TODO
     }
     
     if sensorVal.isNaN || sensorVal < -0.01 || sensorVal > 1.01 {

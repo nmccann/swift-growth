@@ -111,11 +111,9 @@ func executeActions(indiv: inout Indiv, levels: [Action: Double]) {
       
       if grid.isInBounds(loc: otherLoc) && grid.isOccupiedAt(loc: otherLoc) {
         let indiv2 = peeps.getIndiv(loc: otherLoc)
-        if indiv2.alive {
-          let distance = (indiv.loc - indiv2.loc).length
-          assert(distance == 1);
-          peeps.queueForDeath(indiv2)
-        }
+        let distance = (indiv.loc - indiv2.loc).length
+        assert(distance == 1);
+        peeps.queueForDeath(indiv2)
       }
     }
   }

@@ -65,7 +65,7 @@ func initializeSimulator() {
 }
 
 func advanceSimulator() {
-  for var indiv in peeps.individuals {
+  for var indiv in peeps.individuals where indiv.alive {
     simStepOneIndiv(indiv: &indiv, simStep: simStep)
   }
   

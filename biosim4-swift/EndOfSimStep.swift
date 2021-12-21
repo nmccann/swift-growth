@@ -22,13 +22,11 @@ func endOfSimStep(_ simStep: Int, generation: Int) {
     // falloff of the danger, falling off to zero at the arena half line.
     let radioactiveX = (simStep < p.stepsPerGeneration / 2) ? 0 : p.sizeX - 1
 
-    for i in 0..<p.population {
-      let indiv = peeps[i]
+    for indiv in peeps.individuals where indiv.alive {
       let distanceFromRadioactiveWall = Double(abs(indiv.loc.x - radioactiveX))
       if distanceFromRadioactiveWall < Double(p.sizeX / 2) {
         let chanceOfDeath = 1.0 / distanceFromRadioactiveWall
         if Double.random(in: 0...1) < chanceOfDeath {
-          //TODO: This is causing assertions to be hit
           peeps.queueForDeath(indiv)
         }
       }

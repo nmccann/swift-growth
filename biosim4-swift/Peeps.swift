@@ -26,8 +26,11 @@ class Peeps {
   
   /// Safe to call during multithread mode.
   /// Indiv will remain alive and in-world until end of sim step when
-  /// drainDeathQueue() is called.
+  /// drainDeathQueue() is called. It's ok if the same agent gets
+  /// queued for death multiple times. It does not make sense to
+  /// call this function for agents already dead.
   func queueForDeath(_ indiv: Indiv) {
+    assert(indiv.alive)
     deathQueue.append(indiv.index)
   }
   
@@ -47,19 +50,28 @@ class Peeps {
   
   
   /// Safe to call during multithread mode. Indiv won't move until end
-  /// of sim step when drainMoveQueue() is called.
+  /// of sim step when drainMoveQueue() is called. Should only be called
+  /// for living agents. It's ok if multiple agents are queued to move
+  /// to the same location; only the first one will actually get moved.
   func queueForMove(_ indiv: Indiv, newLoc: Coord) {
+    assert(indiv.alive)
     moveQueue.append((indiv.index, newLoc))
   }
   
   /// Called in single-thread mode at end of sim step. This executes all the
   /// queued movements. Each movement is typically one 8-neighbor cell distance
-  /// but this function can move an individual any arbitrary distance.
+  /// but this function can move an individual any arbitrary distance. It is
+  // possible that an agent queued for movement was recently killed when the
+  // death queue was drained, so we'll ignore already-dead agents.
   func drainMoveQueue() {
     for moveRecord in moveQueue {
       // TODO: Don't rely on static instance for `peeps` or `grid` from Simulator
       // This matches original implementation, but is not ideal
       var indiv = peeps[moveRecord.0]
+      guard indiv.alive else {
+        continue
+      }
+
       let newLoc = moveRecord.1
       let moveDir = (newLoc - indiv.loc).asDir()
       if grid.isEmptyAt(loc: newLoc) {
