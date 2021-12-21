@@ -6,9 +6,11 @@ class Grid {
   var data: [Column]
   var barrierLocations: [Coord] = []
   var barrierCenters: [Coord] = []
+  let size: (x: Int, y: Int)
 
   init(sizeX: Int, sizeY: Int) {
     data = .init(repeating: .init(numRows: sizeY), count: sizeX)
+    self.size = (x: sizeX, y: sizeY)
   }
 
   func nilFill() {
@@ -27,16 +29,8 @@ class Grid {
     }
   }
 
-  func sizeX() -> Int {
-    data.count
-  }
-
-  func sizeY() -> Int {
-    data[0].size()
-  }
-
   func isInBounds(loc: Coord) -> Bool {
-    loc.x >= 0 && loc.x < sizeX() && loc.y >= 0 && loc.y < sizeY()
+    loc.x >= 0 && loc.x < size.x && loc.y >= 0 && loc.y < size.y
   }
 
   func isEmptyAt(loc: Coord) -> Bool {
@@ -54,7 +48,7 @@ class Grid {
   }
 
   func isBorder(loc: Coord) -> Bool {
-    loc.x == 0 || loc.x == sizeX() - 1 || loc.y == 0 || loc.y == sizeY() - 1
+    loc.x == 0 || loc.x == size.x - 1 || loc.y == 0 || loc.y == size.y - 1
   }
 
   func at(_ loc: Coord) -> Int? {
@@ -74,8 +68,6 @@ class Grid {
   }
 
   func findEmptyLocation() -> Coord {
-    let size = (x: sizeX(), y: sizeY())
-
     while true {
       let loc = Coord(x: .random(in: 0..<size.x),
                       y: .random(in: 0..<size.y))
@@ -123,8 +115,6 @@ class Grid {
   }
 
   func visitNeighborhood(loc: Coord, radius: Double, f: (Coord) -> Void) {
-    let size = (x: sizeX(), y: sizeY())
-
     for dx in (-min(Int(radius), loc.x)...min(Int(radius), (size.x - loc.x) - 1)) {
       let x = loc.x + dx
       assert(x >= 0 && x < size.x)
