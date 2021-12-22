@@ -51,20 +51,19 @@ func responseCurve(_ r: Double, factor: Int) -> Double {
  evaluated multithreadedly.
  **********************************************************************************/
 func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with parameters: Params) -> ActionResult {
-  var killed: Indiv?
-  var newLocation: Coord?
-  var indiv = indiv
+  var result = ActionResult(indiv: indiv)
+
   // Responsiveness action - convert neuron action level from arbitrary float range
   // to the range 0.0..1.0. If this action neuron is enabled but not driven, will
   // default to mid-level 0.5.
   if var level = levels[.SET_RESPONSIVENESS] {
     level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
-    indiv.responsiveness = level
+    result.indiv.responsiveness = level
   }
   
   // For the rest of the action outputs, we'll apply an adjusted responsiveness
   // factor (see responseCurve() for more info). Range 0.0..1.0.
-  let responsivenessAdjusted = responseCurve(indiv.responsiveness,
+  let responsivenessAdjusted = responseCurve(result.indiv.responsiveness,
                                              factor: parameters.responsivenessCurveKFactor)
   
   // Oscillator period action - convert action level nonlinearly to
@@ -74,7 +73,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
     let newPeriodf01 = (tanh(periodf) + 1.0) / 2.0 // convert to 0.0..1.0
     let newPeriod = 1 + Int(1.5 + exp(7.0 * newPeriodf01))
     assert(newPeriod >= 2 && newPeriod <= 2048)
-    indiv.oscPeriod = newPeriod
+    result.indiv.oscPeriod = newPeriod
   }
   
   // Set longProbeDistance - convert action level to 1..maxLongProbeDistance.
@@ -84,7 +83,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
     let maxLongProbeDistance = 32
     level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
     level = 1 + level * Double(maxLongProbeDistance)
-    indiv.longProbeDist = Int(UInt(level))
+    result.indiv.longProbeDist = Int(UInt(level))
   }
   
   // Emit signal0 - if this action value is below a threshold, nothing emitted.
@@ -98,7 +97,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
     level *= responsivenessAdjusted
     
     if level > emitThreshold && prob2bool(level) {
-      signals.increment(layer: 0, loc: indiv.loc);
+      result.signalEmission = (layer: 0, location: result.indiv.loc)
     }
   }
   
@@ -111,13 +110,13 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
     level *= responsivenessAdjusted
     
     if level > killThreshold && prob2bool((level - ACTION_MIN) / ACTION_RANGE) {
-      let otherLoc = indiv.loc + indiv.lastDirection;
+      let otherLoc = result.indiv.loc + result.indiv.lastDirection
       
       if grid.isInBounds(loc: otherLoc) && grid.isOccupiedAt(loc: otherLoc) {
         let indiv2 = peeps.getIndiv(loc: otherLoc)
-        let distance = (indiv.loc - indiv2.loc).length
-        assert(distance == 1);
-        killed = indiv2
+        let distance = (result.indiv.loc - indiv2.loc).length
+        assert(distance == 1)
+        result.killed = indiv2
       }
     }
   }
@@ -141,7 +140,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
   //     The agent will then be moved West (an offset of -1, 0) if it's a legal move.
 
   var offset: Coord
-  let lastMoveOffset = indiv.lastDirection.asNormalizedCoord()
+  let lastMoveOffset = result.indiv.lastDirection.asNormalizedCoord()
   
   // moveX,moveY will be the accumulators that will hold the sum of all the
   // urges to move along each axis. (+- floating values of arbitrary range)
@@ -164,19 +163,19 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
   }
   
   if let level = levels[.MOVE_LEFT] {
-    offset = indiv.lastDirection.rotate90DegreesCounterClockwise().asNormalizedCoord()
+    offset = result.indiv.lastDirection.rotate90DegreesCounterClockwise().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
   
   if let level = levels[.MOVE_RIGHT] {
-    offset = indiv.lastDirection.rotate90DegreesClockwise().asNormalizedCoord()
+    offset = result.indiv.lastDirection.rotate90DegreesClockwise().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
   
   if let level = levels[.MOVE_RL] {
-    offset = indiv.lastDirection.rotate90DegreesClockwise().asNormalizedCoord()
+    offset = result.indiv.lastDirection.rotate90DegreesClockwise().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
@@ -206,17 +205,18 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
   let movementOffset = Coord(x: Int(probX * signumX), y: Int(probY * signumY))
   
   // Move there if it's a valid location
-  let proposedLocation = indiv.loc + movementOffset
+  let proposedLocation = result.indiv.loc + movementOffset
   
   if grid.isInBounds(loc: proposedLocation) && grid.isEmptyAt(loc: proposedLocation) {
-    newLocation = proposedLocation
+    result.newLocation = proposedLocation
   }
 
-  return .init(indiv: indiv, newLocation: newLocation, killed: killed)
+  return result
 }
 
 struct ActionResult {
-  let indiv: Indiv
-  let newLocation: Coord?
-  let killed: Indiv?
+  var indiv: Indiv
+  var newLocation: Coord?
+  var signalEmission: (layer: Int, location: Coord)?
+  var killed: Indiv?
 }

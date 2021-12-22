@@ -1,4 +1,5 @@
 import Foundation
+import CollectionConcurrencyKit
 
 enum RunMode {
   case stop, run, pause, abort
@@ -64,8 +65,8 @@ func initializeSimulator() {
   initializeGeneration0(on: grid, with: p); // starting population
 }
 
-func advanceSimulator() {
-  let results: [ActionResult] = peeps.individuals.map {
+func advanceSimulator() async {
+  let results: [ActionResult] = await peeps.individuals.concurrentMap {
     guard $0.alive else {
       return .init(indiv: $0, newLocation: nil, killed: nil)
     }
@@ -85,15 +86,11 @@ func advanceSimulator() {
     if let killed = result.killed {
       peeps.queueForDeath(killed)
     }
-  }
 
-//  peeps.individuals = peeps.individuals.map {
-//    guard $0.alive else {
-//      return $0
-//    }
-//
-//    return simStepOneIndiv(indiv: $0, simStep: simStep)
-//  }
+    if let signal = result.signalEmission {
+      signals.increment(layer: signal.layer, loc: signal.location)
+    }
+  }
   
   // In single-thread mode: this executes deferred, queued deaths and movements,
   // updates signal layers (pheromone), etc.

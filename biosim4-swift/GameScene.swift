@@ -9,6 +9,7 @@ class GameScene: SKScene {
   private var previousTime: TimeInterval = 0
   private let simulatorRefreshRate: TimeInterval = 1.0 / 60.0
   private var simulatorStepsPerRefresh = 1
+  private var isAdvancing = false
   private let padding: Double = 40
 
   override func sceneDidLoad() {
@@ -95,8 +96,6 @@ private extension GameScene {
   }
 
   func advanceAndUpdateBySteps(_ steps: Int) {
-    (0..<steps).forEach { _ in advanceSimulator() }
-
     if grid.barrierLocations.count != barrierNodes.count {
       generateGrid()
     }
@@ -107,6 +106,20 @@ private extension GameScene {
 
     zip(barrierNodes, grid.barrierLocations).forEach { barrier, location in
       updateBarrier(barrier, location: location, size: cellSize)
+    }
+
+    guard !isAdvancing else {
+      return
+    }
+
+    didStartAdvancing()
+
+    Task.detached {
+      for _ in 0..<steps {
+        await advanceSimulator()
+      }
+      
+      await self.didFinishAdvancing()
     }
   }
 
@@ -139,6 +152,14 @@ private extension GameScene {
     case (.run, NSLeftArrowFunctionKey) where !keyDown:   adjustStepsPerRefresh(by: -1)
     default: break
     }
+  }
+
+  func didStartAdvancing() {
+    isAdvancing = true
+  }
+
+  func didFinishAdvancing() {
+    isAdvancing = false
   }
 
   func adjustStepsPerRefresh(by amount: Int) {
