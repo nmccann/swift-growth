@@ -12,11 +12,6 @@ func getPopulationDensityAlongAxis(loc: Coord, direction: Direction) -> Double {
   // above midrange if density is greatest in forward direction.
   var sum = 0.0
   let directionVector = direction.asNormalizedCoord()
-  let len = Double(directionVector.length)
-  print("Population Length: \(len)")
-  //TODO: Check if this division is redundant - seems like it should be given that we're already dealing with a normalized vector
-  let dirVecX = Double(directionVector.x) / len
-  let dirVecY = Double(directionVector.y) / len // Unit vector components along dir
   
   func checkOccupancy(tloc: Coord) {
     guard tloc != loc, grid.isOccupiedAt(loc: tloc) else {
@@ -24,8 +19,8 @@ func getPopulationDensityAlongAxis(loc: Coord, direction: Direction) -> Double {
     }
 
     let offset = tloc - loc
-    let projection = dirVecX * Double(offset.x) + dirVecY * Double(offset.y) // Magnitude of projection along dir
-    let contribution = projection / Double(offset.x * offset.x + offset.y * offset.y)
+    let projectionOnDirection = directionVector.x * offset.x + directionVector.y * offset.y
+    let contribution = Double(projectionOnDirection) / Double(offset.x * offset.x + offset.y * offset.y)
     sum += contribution
   }
   
@@ -151,11 +146,6 @@ func getSignalDensity(loc: Coord, layer: Int) -> Double {
 func getSignalDensityAlongAxis(loc: Coord, direction: Direction, layer: Int) -> Double {
   var sum = 0.0
   let directionVector = direction.asNormalizedCoord()
-  let len = Double(directionVector.length)
-  print("Signal Length: \(len)")
-  //TODO: Check if this division is redundant - seems like it should be given that we're already dealing with a normalized vector
-  let dirVecX = Double(directionVector.x) / len
-  let dirVecY = Double(directionVector.y) / len // Unit vector components along dir
 
   func signalCheck(tloc: Coord) {
     guard tloc != loc else {
@@ -163,8 +153,8 @@ func getSignalDensityAlongAxis(loc: Coord, direction: Direction, layer: Int) -> 
     }
 
     let offset = tloc - loc
-    let projection = dirVecX * Double(offset.x) + dirVecY * Double(offset.y) // Magnitude of projection along dir
-    let contribution = (projection * Double(signals.getMagnitude(layer: layer, loc: loc))) / Double(offset.x * offset.x + offset.y * offset.y)
+    let projectionOnDirection = directionVector.x * offset.x + directionVector.y * offset.y
+    let contribution = Double(projectionOnDirection * signals.getMagnitude(layer: layer, loc: loc)) / Double(offset.x * offset.x + offset.y * offset.y)
     sum += contribution
   }
 
