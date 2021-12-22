@@ -1,4 +1,5 @@
 import Foundation
+import Algorithms
 
 /// The jaro_winkler_distance() function is adapted from the C version at
 /// https://github.com/miguelvps/c/blob/master/jarowinkler.c
@@ -66,9 +67,8 @@ func geneticDiversity() -> Double {
   let count = min(1000, p.population) // todo: !!! p.analysisSampleSize;
 
   let similaritySum = (0..<count).reduce(into: 0.0) { partialResult, _ in
-    let index0 = Int.random(in: 1..<p.population-1) // skip first and last elements
-    let index1 = index0 + 1
-    partialResult += genomeSimilarity(peeps[index0].genome, peeps[index1].genome)
+    let individuals = peeps.individuals.randomSample(count: 2)
+    partialResult += genomeSimilarity(individuals[0].genome, individuals[1].genome)
   }
 
   return 1.0 - (similaritySum / Double(count))

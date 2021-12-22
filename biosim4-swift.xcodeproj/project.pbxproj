@@ -27,6 +27,7 @@
 		4FB1682A276790760048E6EB /* Indiv.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB16829276790760048E6EB /* Indiv.swift */; };
 		4FB1682C276791E00048E6EB /* Simulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB1682B276791E00048E6EB /* Simulator.swift */; };
 		4FB1682E276794D30048E6EB /* Params.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB1682D276794D30048E6EB /* Params.swift */; };
+		4FC83FA12772D95F00F4F3C7 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4FC83FA02772D95F00F4F3C7 /* Algorithms */; };
 		4FD39BB92759BFCF006D5ED5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */; };
 		4FD39BBB2759BFCF006D5ED5 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */; };
 		4FD39BBD2759BFCF006D5ED5 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BBC2759BFCF006D5ED5 /* Actions.sks */; };
@@ -112,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FC83FA12772D95F00F4F3C7 /* Algorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +237,9 @@
 			dependencies = (
 			);
 			name = "biosim4-swift";
+			packageProductDependencies = (
+				4FC83FA02772D95F00F4F3C7 /* Algorithms */,
+			);
 			productName = "biosim4-swift";
 			productReference = 4FD39BB52759BFCF006D5ED5 /* biosim4-swift.app */;
 			productType = "com.apple.product-type.application";
@@ -307,6 +312,9 @@
 				Base,
 			);
 			mainGroup = 4FD39BAC2759BFCF006D5ED5;
+			packageReferences = (
+				4FC83F9F2772D95F00F4F3C7 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+			);
 			productRefGroup = 4FD39BB62759BFCF006D5ED5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -737,6 +745,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4FC83F9F2772D95F00F4F3C7 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4FC83FA02772D95F00F4F3C7 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FC83F9F2772D95F00F4F3C7 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4FD39BAD2759BFCF006D5ED5 /* Project object */;
 }
