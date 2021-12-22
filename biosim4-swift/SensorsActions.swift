@@ -154,7 +154,8 @@ enum Action: Int, CaseIterable {
                                   .MOVE_SOUTH,
                                   .MOVE_LEFT,
                                   .MOVE_RIGHT,
-                                  .MOVE_REVERSE]
+                                  .MOVE_REVERSE,
+                                  .KILL_FORWARD]
 }
 
 func printSensorsActions() {
