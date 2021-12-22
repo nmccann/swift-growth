@@ -3,7 +3,7 @@ import Foundation
 /// Some of the survival challenges to try. Some are interesting, some
 /// not so much. Fine-tune the challenges by tweaking the corresponding code
 /// in survival-criteria
-enum Challenge: Int {
+enum Challenge {
   /// Survivors are those inside the circular area defined by
   /// safeCenter and radius
   case circle
@@ -47,15 +47,8 @@ enum Challenge: Int {
   /// end of a generation. All remaining alive become parents.
   case radioactiveWalls
 
-
-
-
-
-
-
   /// Survivors are those touching any wall at the end of the generation
   case touchAnyWall
-
 
   /// This challenge is partially handled in endOfSimStep(), where individuals
   /// that are touching a wall are flagged in their Indiv record. They are

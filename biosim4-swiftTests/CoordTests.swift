@@ -39,47 +39,47 @@ class CoordTests: XCTestCase {
     
     sut = .init(x: 0, y: 0).normalize()
     XCTAssertTrue(sut.x == 0 && sut.y == 0)
-    XCTAssertEqual(sut.asDir(), .init(dir: .center))
+    XCTAssertNil(sut.asDir())
     
     sut = .init(x: 0, y: 1).normalize()
     XCTAssertTrue(sut.x == 0 && sut.y == 1)
-    XCTAssertEqual(sut.asDir(), .init(dir: .N))
+    XCTAssertEqual(sut.asDir(), .north)
     
     sut = .init(x: -1, y: 1).normalize()
     XCTAssertTrue(sut.x == -1 && sut.y == 1)
-    XCTAssertEqual(sut.asDir(), .init(dir: .NW))
+    XCTAssertEqual(sut.asDir(), .northWest)
     
     sut = .init(x: 100, y: 5).normalize()
     XCTAssertTrue(sut.x == 1 && sut.y == 0)
-    XCTAssertEqual(sut.asDir(), .init(dir: .E))
+    XCTAssertEqual(sut.asDir(), .east)
     
     sut = .init(x: 100, y: 105).normalize()
     XCTAssertTrue(sut.x == 1 && sut.y == 1)
-    XCTAssertEqual(sut.asDir(), .init(dir: .NE))
+    XCTAssertEqual(sut.asDir(), .northEast)
     
     sut = .init(x: -5, y: 101).normalize()
     XCTAssertTrue(sut.x == 0 && sut.y == 1)
-    XCTAssertEqual(sut.asDir(), .init(dir: .N))
+    XCTAssertEqual(sut.asDir(), .north)
     
     sut = .init(x: -500, y: 10).normalize()
     XCTAssertTrue(sut.x == -1 && sut.y == 0)
-    XCTAssertEqual(sut.asDir(), .init(dir: .W))
+    XCTAssertEqual(sut.asDir(), .west)
     
     sut = .init(x: -500, y: -490).normalize()
     XCTAssertTrue(sut.x == -1 && sut.y == -1)
-    XCTAssertEqual(sut.asDir(), .init(dir: .SW))
+    XCTAssertEqual(sut.asDir(), .southWest)
     
     sut = .init(x: -1, y: -490).normalize()
     XCTAssertTrue(sut.x == 0 && sut.y == -1)
-    XCTAssertEqual(sut.asDir(), .init(dir: .S))
+    XCTAssertEqual(sut.asDir(), .south)
     
     sut = .init(x: 1101, y: -1090).normalize()
     XCTAssertTrue(sut.x == 1 && sut.y == -1)
-    XCTAssertEqual(sut.asDir(), .init(dir: .SE))
+    XCTAssertEqual(sut.asDir(), .southEast)
     
     sut = .init(x: 1101, y: -3).normalize()
     XCTAssertTrue(sut.x == 1 && sut.y == 0)
-    XCTAssertEqual(sut.asDir(), .init(dir: .E))
+    XCTAssertEqual(sut.asDir(), .east)
   }
   
   func testLength() {
@@ -114,16 +114,16 @@ class CoordTests: XCTestCase {
     var sut: Polar
     
     sut = Coord(x: 0, y: 0).asPolar()
-    XCTAssertTrue(sut.mag == 0 && sut.dir == .center)
+    XCTAssertTrue(sut.magnitude == 0 && sut.direction == nil)
     
     sut = Coord(x: 0, y: 1).asPolar()
-    XCTAssertTrue(sut.mag == 1 && sut.dir == .N)
+    XCTAssertTrue(sut.magnitude == 1 && sut.direction == .north)
     
     sut = Coord(x: -10, y: -10).asPolar()
-    XCTAssertTrue(sut.mag == 14 && sut.dir == .SW) // round down mag
+    XCTAssertTrue(sut.magnitude == 14 && sut.direction == .southWest) // round down magnitude
     
     sut = Coord(x: 100, y: 1).asPolar()
-    XCTAssertTrue(sut.mag == 100 && sut.dir == .E) // round down mag
+    XCTAssertTrue(sut.magnitude == 100 && sut.direction == .east) // round down magnitude
   }
   
   func testAddition() {
@@ -159,32 +159,26 @@ class CoordTests: XCTestCase {
   func testDirAddition() {
     var result: Coord
     
-    result = .init(x: 0, y: 0) + Dir(dir: .center)
-    XCTAssertTrue(result.x == 0 && result.y == 0)
-    
-    result = .init(x: 0, y: 0) + Dir(dir: .E)
+    result = .init(x: 0, y: 0) + .east
     XCTAssertTrue(result.x == 1 && result.y == 0)
     
-    result = .init(x: 0, y: 0) + Dir(dir: .W)
+    result = .init(x: 0, y: 0) + .west
     XCTAssertTrue(result.x == -1 && result.y == 0)
     
-    result = .init(x: 0, y: 0) + Dir(dir: .SW)
+    result = .init(x: 0, y: 0) + .southWest
     XCTAssertTrue(result.x == -1 && result.y == -1)
   }
   
   func testDirSubtraction() {
     var result: Coord
     
-    result = .init(x: 0, y: 0) - Dir(dir: .center)
-    XCTAssertTrue(result.x == 0 && result.y == 0)
-    
-    result = .init(x: 0, y: 0) - Dir(dir: .E)
+    result = .init(x: 0, y: 0) - .east
     XCTAssertTrue(result.x == -1 && result.y == 0)
     
-    result = .init(x: 0, y: 0) - Dir(dir: .W)
+    result = .init(x: 0, y: 0) - .west
     XCTAssertTrue(result.x == 1 && result.y == 0)
     
-    result = .init(x: 0, y: 0) - Dir(dir: .SW)
+    result = .init(x: 0, y: 0) - .southWest
     XCTAssertTrue(result.x == 1 && result.y == 1)
   }
   
@@ -196,7 +190,6 @@ class CoordTests: XCTestCase {
     second = .init(x: 10, y: 11)
     XCTAssertEqual(first.raySameness(other: second), 1.0) // special case - zero vector
     XCTAssertEqual(second.raySameness(other: first), 1.0) // special case - zero vector
-    XCTAssertEqual(second.raySameness(other: .init(dir: .center)), 1.0) // special case - zero vector
     
     first = second
     XCTAssertEqual(first.raySameness(other: second), 1.0, accuracy: 0.0001)

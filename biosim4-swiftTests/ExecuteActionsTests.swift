@@ -13,12 +13,12 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveEast() {
     let initial = Coord(x: 2, y: 2)
-    var indiv = Indiv.stub(index: 0, loc: initial)
+    let indiv = Indiv.stub(index: 0, loc: initial)
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_EAST: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -27,12 +27,12 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveWest() {
     let initial = Coord(x: 2, y: 2)
-    var indiv = Indiv.stub(index: 0, loc: initial)
+    let indiv = Indiv.stub(index: 0, loc: initial)
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_WEST: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -41,12 +41,12 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveSouth() {
     let initial = Coord(x: 2, y: 2)
-    var indiv = Indiv.stub(index: 0, loc: initial)
+    let indiv = Indiv.stub(index: 0, loc: initial)
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_SOUTH: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -55,12 +55,12 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveNorth() {
     let initial = Coord(x: 2, y: 2)
-    var indiv = Indiv.stub(index: 0, loc: initial)
+    let indiv = Indiv.stub(index: 0, loc: initial)
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_NORTH: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -70,12 +70,12 @@ class ExecuteActionsTests: XCTestCase {
   func testMoveForward() {
     let initial = Coord(x: 2, y: 2)
     var indiv = Indiv.stub(index: 0, loc: initial)
-    indiv.lastMoveDir = .init(dir: .E)
+    indiv.lastDirection = .east
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_FORWARD: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -85,12 +85,12 @@ class ExecuteActionsTests: XCTestCase {
   func testMoveReverse() {
     let initial = Coord(x: 2, y: 2)
     var indiv = Indiv.stub(index: 0, loc: initial)
-    indiv.lastMoveDir = .init(dir: .E)
+    indiv.lastDirection = .east
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_REVERSE: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -100,12 +100,12 @@ class ExecuteActionsTests: XCTestCase {
   func testMoveRight() {
     let initial = Coord(x: 2, y: 2)
     var indiv = Indiv.stub(index: 0, loc: initial)
-    indiv.lastMoveDir = .init(dir: .E)
+    indiv.lastDirection = .east
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_RIGHT: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -115,12 +115,12 @@ class ExecuteActionsTests: XCTestCase {
   func testMoveLeft() {
     let initial = Coord(x: 2, y: 2)
     var indiv = Indiv.stub(index: 0, loc: initial)
-    indiv.lastMoveDir = .init(dir: .E)
+    indiv.lastDirection = .east
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_LEFT: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -130,12 +130,12 @@ class ExecuteActionsTests: XCTestCase {
   func testMoveRandom() {
     let initial = Coord(x: 2, y: 2)
     var indiv = Indiv.stub(index: 0, loc: initial)
-    indiv.lastMoveDir = .init(dir: .E)
+    indiv.lastDirection = .east
     peeps = .init(individuals: [indiv])
 
     XCTAssertTrue(grid.isOccupiedAt(loc: initial))
     while grid.isOccupiedAt(loc: initial) {
-      executeActions(indiv: &indiv,
+      _ = executeActions(indiv: indiv,
                      levels: [.MOVE_RANDOM: .greatestFiniteMagnitude])
       peeps.drainMoveQueue()
     }
@@ -147,7 +147,7 @@ class ExecuteActionsTests: XCTestCase {
     indiv.responsiveness = 1.0
     peeps = .init(individuals: [indiv])
 
-    executeActions(indiv: &indiv, levels: [.SET_RESPONSIVENESS: 10])
+    indiv = executeActions(indiv: indiv, levels: [.SET_RESPONSIVENESS: 10])
     XCTAssertEqual(indiv.responsiveness, 0.9999, accuracy: 0.0001)
   }
 
@@ -156,7 +156,7 @@ class ExecuteActionsTests: XCTestCase {
     indiv.oscPeriod = 1
     peeps = .init(individuals: [indiv])
 
-    executeActions(indiv: &indiv, levels: [.SET_OSCILLATOR_PERIOD: 5])
+    indiv = executeActions(indiv: indiv, levels: [.SET_OSCILLATOR_PERIOD: 5])
     XCTAssertEqual(indiv.oscPeriod, 1098)
   }
 
@@ -165,7 +165,7 @@ class ExecuteActionsTests: XCTestCase {
     indiv.longProbeDist = 1
     peeps = .init(individuals: [indiv])
 
-    executeActions(indiv: &indiv, levels: [.SET_LONGPROBE_DIST: 20])
+    indiv = executeActions(indiv: indiv, levels: [.SET_LONGPROBE_DIST: 20])
     XCTAssertEqual(indiv.longProbeDist, 33)
   }
 

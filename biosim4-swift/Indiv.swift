@@ -10,9 +10,15 @@ struct Indiv {
   var nnet: NeuralNet // derived from .genome
   var responsiveness: Double // 0.0..1.0 (0 is like asleep)
   var oscPeriod: Int // 2..4*p.stepsPerGeneration (TBD, see executeActions())
-  var longProbeDist: Int // distance for long forward probe for obstructions
-  var lastMoveDir: Dir // direction of last movement
-  var challengeBits: Int // modified when the indiv accomplishes some task
+
+  /// Distance to check for obstructions with long forward probe
+  var longProbeDist: Int
+
+  /// Direction of last movement
+  var lastDirection: Direction
+
+  /// Modified when some task is accomplished in relation to the current challenge
+  var challengeBits: Int
   
   /// Returned sensor values range SENSOR_MIN..SENSOR_MAX
   func getSensor(_ sensor: Sensor, simStep: Int) -> Double {
@@ -44,11 +50,11 @@ struct Indiv {
       sensorVal = Double(minDistanceY) / (Double(p.sizeY) / 2.0)
     case .lastMoveDirectionX:
       // X component -1,0,1 maps to sensor values 0.0, 0.5, 1.0
-      let lastX = lastMoveDir.asNormalizedCoord().x
+      let lastX = lastDirection.asNormalizedCoord().x
       sensorVal = lastX == 0 ? 0.5 : (lastX == -1 ? 0.0 : 1.0)
     case .lastMoveDirectionY:
       // Y component -1,0,1 maps to sensor values 0.0, 0.5, 1.0
-      let lastY = lastMoveDir.asNormalizedCoord().y
+      let lastY = lastDirection.asNormalizedCoord().y
       sensorVal = lastY == 0 ? 0.5 : (lastY == -1 ? 0.0 : 1.0)
     case .locationX:
       // Maps current X location 0..p.sizeX-1 to sensor range 0.0..1.0
@@ -72,14 +78,14 @@ struct Indiv {
       // forward direction. If non found, returns the maximum sensor value.
       // Maps the result to the sensor range 0.0..1.0.
       sensorVal = Double(longProbePopulationForward(loc: loc,
-                                                    dir: lastMoveDir,
+                                                    direction: lastDirection,
                                                     distance: longProbeDist)) / Double(longProbeDist)
     case .longProbeBarrierForward:
       // Measures the distance to the nearest barrier in the forward
       // direction. If non found, returns the maximum sensor value.
       // Maps the result to the sensor range 0.0..1.0.
       sensorVal = Double(longProbeBarrierForward(loc: loc,
-                                                 dir: lastMoveDir,
+                                                 direction: lastDirection,
                                                  distance: longProbeDist)) / Double(longProbeDist)
     case .population:
       // Returns population density in neighborhood converted linearly from
@@ -99,21 +105,21 @@ struct Indiv {
     case .populationForward:
       // Sense population density along axis of last movement direction, mapped
       // to sensor range 0.0..1.0
-      sensorVal = getPopulationDensityAlongAxis(loc: loc, dir: lastMoveDir)
+      sensorVal = getPopulationDensityAlongAxis(loc: loc, direction: lastDirection)
     case .populationLeftRight:
       // Sense population density along an axis 90 degrees from last movement direction
-      sensorVal = getPopulationDensityAlongAxis(loc: loc, dir: lastMoveDir.rotate90DegCW())
+      sensorVal = getPopulationDensityAlongAxis(loc: loc, direction: lastDirection.rotate90DegreesClockwise())
     case .barrierForward:
       // Sense the nearest barrier along axis of last movement direction, mapped
       // to sensor range 0.0..1.0
       sensorVal = getShortProbeBarrierDistance(loc: loc,
-                                               dir: lastMoveDir,
+                                               direction: lastDirection,
                                                distance: p.shortProbeBarrierDistance)
     case .barrierLeftRight:
       // Sense the nearest barrier along axis perpendicular to last movement direction, mapped
       // to sensor range 0.0..1.0
       sensorVal = getShortProbeBarrierDistance(loc: loc,
-                                               dir: lastMoveDir.rotate90DegCW(),
+                                               direction: lastDirection.rotate90DegreesClockwise(),
                                                distance: p.shortProbeBarrierDistance)
     case .random:
       // Returns a random sensor value in the range 0.0..1.0.
@@ -124,14 +130,14 @@ struct Indiv {
       sensorVal = getSignalDensity(loc: loc, layer: 0)
     case .signal0Forward:
       // Sense signal0 density along axis of last movement direction
-      sensorVal = getSignalDensityAlongAxis(loc: loc, dir: lastMoveDir, layer: 0)
+      sensorVal = getSignalDensityAlongAxis(loc: loc, direction: lastDirection, layer: 0)
     case .signal0LeftRight:
       // Sense signal0 density along an axis perpendicular to last movement direction
-      sensorVal = getSignalDensityAlongAxis(loc: loc, dir: lastMoveDir.rotate90DegCW(), layer: 0)
+      sensorVal = getSignalDensityAlongAxis(loc: loc, direction: lastDirection.rotate90DegreesClockwise(), layer: 0)
     case .geneticSimilarityForward:
       // Return minimum sensor value if nobody is alive in the forward adjacent location,
       // else returns a similarity match in the sensor range 0.0..1.0
-      let loc2 = loc + lastMoveDir;
+      let loc2 = loc + lastDirection;
       if (grid.isInBounds(loc: loc2) && grid.isOccupiedAt(loc: loc2)) {
         let indiv2 = peeps.getIndiv(loc: loc2)
         if indiv2.alive {
@@ -163,7 +169,7 @@ struct Indiv {
     self.age = 0
     self.oscPeriod = 34 //TODO: Define a constant
     self.alive = true
-    self.lastMoveDir = .random8()
+    self.lastDirection = .random()
     self.responsiveness = 0.5 // range 0.0..1.0
     self.longProbeDist = p.longProbeDistance //TODO: Avoid referencing global state
     self.challengeBits = 0 // will be set true when some task gets accomplished

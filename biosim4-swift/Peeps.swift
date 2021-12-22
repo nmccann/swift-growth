@@ -73,12 +73,12 @@ class Peeps {
       }
 
       let newLoc = moveRecord.1
-      let moveDir = (newLoc - indiv.loc).asDir()
-      if grid.isEmptyAt(loc: newLoc) {
+
+      if let moveDirection = (newLoc - indiv.loc).asDir(), grid.isEmptyAt(loc: newLoc) {
         grid.set(loc: indiv.loc, val: nil)
         grid.set(loc: newLoc, val: indiv.index)
         indiv.loc = newLoc
-        indiv.lastMoveDir = moveDir
+        indiv.lastDirection = moveDirection
         peeps[moveRecord.0] = indiv
       }
     }

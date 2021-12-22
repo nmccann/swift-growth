@@ -5,6 +5,10 @@ struct Coord: Equatable {
   let x: Int
   let y: Int
 
+  static var zero: Coord {
+    .init(x: 0, y: 0)
+  }
+
   var isNormalized: Bool {
     x >= -1 && x <= 1 && y >= -1 && y <= 1
   }
@@ -13,20 +17,13 @@ struct Coord: Equatable {
     .init(floatingLength)
   }
 
-  var floatingLength: Double {
-    sqrt(pow(Double(x), 2) + pow(Double(y), 2))
-  }
-
   func normalize() -> Coord {
-//    let temp = asDir()
-//    let meow = temp.asNormalizedCoord()
-//    return meow
-    asDir().asNormalizedCoord()
+    asDir()?.asNormalizedCoord() ?? .zero
   }
 
-  func asDir() -> Dir {
+  func asDir() -> Direction? {
     if x == 0 && y == 0 {
-      return .init(dir: .center)
+      return nil
     }
 
     let two_pi = Double.pi * 2
@@ -55,12 +52,12 @@ struct Coord: Equatable {
      3  4  5
      0  1  2
      */
-    let mapping: [Compass] = [.E, .NE, .N, .NW, .W, .SW, .S, .SE]
-    return Dir(dir: mapping[slice])
+    let mapping: [Direction] = [.east, .northEast, .north, .northWest, .west, .southWest, .south, .southEast]
+    return mapping[slice]
   }
 
   func asPolar() -> Polar {
-    .init(mag: length, dir: asDir())
+    .init(magnitude: length, direction: asDir())
   }
 
   // returns -1.0 (opposite directions) .. +1.0 (same direction)
@@ -87,8 +84,8 @@ struct Coord: Equatable {
   }
 
   // returns -1.0 (opposite directions) .. +1.0 (same direction)
-  // returns 1.0 if self is (0,0) or d is CENTER
-  func raySameness(other: Dir) -> Double {
+  // returns 1.0 if self is (0,0)
+  func raySameness(other: Direction) -> Double {
     raySameness(other: other.asNormalizedCoord())
   }
 
@@ -104,12 +101,17 @@ struct Coord: Equatable {
     .init(x: lhs.x * rhs, y: lhs.y * rhs)
   }
 
-  static func +(lhs: Coord, rhs: Dir) -> Coord {
+  static func +(lhs: Coord, rhs: Direction) -> Coord {
     lhs + rhs.asNormalizedCoord()
   }
 
-  static func -(lhs: Coord, rhs: Dir) -> Coord {
+  static func -(lhs: Coord, rhs: Direction) -> Coord {
     lhs - rhs.asNormalizedCoord()
   }
 }
 
+private extension Coord {
+  var floatingLength: Double {
+    sqrt(pow(Double(x), 2) + pow(Double(y), 2))
+  }
+}

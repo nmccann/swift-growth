@@ -1,28 +1,33 @@
 import Foundation
 
 struct Polar {
-  let mag: Int
-  let dir: Dir
-
-  init(mag: Int = 0, dir: Compass = .center) {
-    self.mag = mag
-    self.dir = .init(dir: dir)
-  }
-
-  init(mag: Int, dir: Dir) {
-    self.mag = mag
-    self.dir = dir
-  }
+  let magnitude: Int
+  let direction: Direction?
 
   func asCoord() -> Coord {
-    guard dir.dir9 != .center else {
+    guard let direction = direction else {
       return .init(x: 0, y: 0)
     }
 
+    guard let slice = Self.radianSliceMapping[direction] else {
+      fatalError("Expected to find a slice for \(direction)")
+    }
+
     let radiansPerSlice = (Double.pi * 2) / 8
-    let compassToRadians = [5, 6, 7, 4, 0, 0, 3, 2, 1].map { $0 * radiansPerSlice }
-    let x = Int(round(Double(mag) * cos(compassToRadians[dir.dir9.rawValue])))
-    let y = Int(round(Double(mag) * sin(compassToRadians[dir.dir9.rawValue])))
+    let compassInRadians = Double(slice) * radiansPerSlice
+    let x = Int(round(Double(magnitude) * cos(compassInRadians)))
+    let y = Int(round(Double(magnitude) * sin(compassInRadians)))
     return .init(x: x, y: y)
   }
+}
+
+private extension Polar {
+  static let radianSliceMapping: [Direction: Int] = [.southWest: 5,
+                                                     .south: 6,
+                                                     .southEast: 7,
+                                                     .west: 4,
+                                                     .east: 0,
+                                                     .northWest: 3,
+                                                     .north: 2,
+                                                     .northEast: 1]
 }

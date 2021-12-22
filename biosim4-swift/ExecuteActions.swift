@@ -108,7 +108,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
     level *= responsivenessAdjusted
     
     if level > killThreshold && prob2bool((level - ACTION_MIN) / ACTION_RANGE) {
-      let otherLoc = indiv.loc + indiv.lastMoveDir;
+      let otherLoc = indiv.loc + indiv.lastDirection;
       
       if grid.isInBounds(loc: otherLoc) && grid.isOccupiedAt(loc: otherLoc) {
         let indiv2 = peeps.getIndiv(loc: otherLoc)
@@ -139,7 +139,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
   
   var level: Double
   var offset: Coord
-  let lastMoveOffset = indiv.lastMoveDir.asNormalizedCoord()
+  let lastMoveOffset = indiv.lastDirection.asNormalizedCoord()
   
   // moveX,moveY will be the accumulators that will hold the sum of all the
   // urges to move along each axis. (+- floating values of arbitrary range)
@@ -162,25 +162,25 @@ func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
   }
   
   if let level = levels[.MOVE_LEFT] {
-    offset = indiv.lastMoveDir.rotate90DegCCW().asNormalizedCoord()
+    offset = indiv.lastDirection.rotate90DegreesCounterClockwise().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
   
   if let level = levels[.MOVE_RIGHT] {
-    offset = indiv.lastMoveDir.rotate90DegCW().asNormalizedCoord()
+    offset = indiv.lastDirection.rotate90DegreesClockwise().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
   
   if let level = levels[.MOVE_RL] {
-    offset = indiv.lastMoveDir.rotate90DegCW().asNormalizedCoord()
+    offset = indiv.lastDirection.rotate90DegreesClockwise().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }
   
   if let level = levels[.MOVE_RANDOM] {
-    offset = Dir.random8().asNormalizedCoord()
+    offset = Direction.random().asNormalizedCoord()
     moveX += Double(offset.x) * level
     moveY += Double(offset.y) * level
   }

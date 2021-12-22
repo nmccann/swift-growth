@@ -1,6 +1,6 @@
 import Foundation
 
-enum RunMode: Int {
+enum RunMode {
   case stop, run, pause, abort
 }
 
