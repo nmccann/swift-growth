@@ -21,33 +21,33 @@ struct Indiv {
   var challengeBits: Int
   
   /// Returned sensor values range SENSOR_MIN..SENSOR_MAX
-  func getSensor(_ sensor: Sensor, simStep: Int) -> Double {
+  func getSensor(_ sensor: Sensor, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
     var sensorVal = 0.0
     
     switch sensor {
     case .age:
       // Converts age (units of simSteps compared to life expectancy)
       // linearly to normalized sensor range 0.0..1.0
-      sensorVal = Double(age) / Double(p.stepsPerGeneration)
+      sensorVal = Double(age) / Double(parameters.stepsPerGeneration)
     case .boundaryDistance:
       // Finds closest boundary, compares that to the max possible dist
       // to a boundary from the center, and converts that linearly to the
       // sensor range 0.0..1.0
-      let distanceX = min(loc.x, (p.sizeX - loc.x) - 1)
-      let distanceY = min(loc.y, (p.sizeY - loc.y) - 1)
+      let distanceX = min(loc.x, (grid.size.x - loc.x) - 1)
+      let distanceY = min(loc.y, (grid.size.y - loc.y) - 1)
       let closest = min(distanceX, distanceY)
-      let maxPossible = max(p.sizeX / 2 - 1, p.sizeY / 2 - 1)
+      let maxPossible = max(grid.size.x / 2 - 1, grid.size.y / 2 - 1)
       sensorVal = Double(closest) / Double(maxPossible)
     case .boundaryDistanceX:
       // Measures the distance to nearest boundary in the east-west axis,
       // max distance is half the grid width; scaled to sensor range 0.0..1.0.
-      let minDistanceX = min(loc.x, (p.sizeX - loc.x) - 1)
-      sensorVal = Double(minDistanceX) / (Double(p.sizeX) / 2.0)
+      let minDistanceX = min(loc.x, (grid.size.x - loc.x) - 1)
+      sensorVal = Double(minDistanceX) / (Double(grid.size.x) / 2.0)
     case .boundaryDistanceY:
       // Measures the distance to nearest boundary in the south-north axis,
       // max distance is half the grid height; scaled to sensor range 0.0..1.0.
-      let minDistanceY = min(loc.y, (p.sizeY - loc.y) - 1)
-      sensorVal = Double(minDistanceY) / (Double(p.sizeY) / 2.0)
+      let minDistanceY = min(loc.y, (grid.size.y - loc.y) - 1)
+      sensorVal = Double(minDistanceY) / (Double(grid.size.y) / 2.0)
     case .lastMoveDirectionX:
       // X component -1,0,1 maps to sensor values 0.0, 0.5, 1.0
       let lastX = lastDirection.asNormalizedCoord().x
@@ -57,11 +57,11 @@ struct Indiv {
       let lastY = lastDirection.asNormalizedCoord().y
       sensorVal = lastY == 0 ? 0.5 : (lastY == -1 ? 0.0 : 1.0)
     case .locationX:
-      // Maps current X location 0..p.sizeX-1 to sensor range 0.0..1.0
-      sensorVal = Double(loc.x) / Double(p.sizeX - 1)
+      // Maps current X location 0..grid.size.x-1 to sensor range 0.0..1.0
+      sensorVal = Double(loc.x) / Double(grid.size.x - 1)
     case .locationY:
-      // Maps current Y location 0..p.sizeY-1 to sensor range 0.0..1.0
-      sensorVal = Double(loc.y) / Double(p.sizeY - 1)
+      // Maps current Y location 0..grid.size.y-1 to sensor range 0.0..1.0
+      sensorVal = Double(loc.y) / Double(grid.size.y - 1)
     case .oscillator1:
       // Maps the oscillator sine wave to sensor range 0.0..1.0;
       // cycles starts at simStep 0 for everbody.
@@ -79,14 +79,16 @@ struct Indiv {
       // Maps the result to the sensor range 0.0..1.0.
       sensorVal = Double(longProbePopulationForward(loc: loc,
                                                     direction: lastDirection,
-                                                    distance: longProbeDist)) / Double(longProbeDist)
+                                                    distance: longProbeDist,
+                                                    on: grid)) / Double(longProbeDist)
     case .longProbeBarrierForward:
       // Measures the distance to the nearest barrier in the forward
       // direction. If non found, returns the maximum sensor value.
       // Maps the result to the sensor range 0.0..1.0.
       sensorVal = Double(longProbeBarrierForward(loc: loc,
                                                  direction: lastDirection,
-                                                 distance: longProbeDist)) / Double(longProbeDist)
+                                                 distance: longProbeDist,
+                                                 on: grid)) / Double(longProbeDist)
     case .population:
       // Returns population density in neighborhood converted linearly from
       // 0..100% to sensor range
@@ -100,40 +102,48 @@ struct Indiv {
         }
       }
       
-      grid.visitNeighborhood(loc: loc, radius: p.populationSensorRadius, f: checkOccupancy)
+      grid.visitNeighborhood(loc: loc, radius: parameters.populationSensorRadius, f: checkOccupancy)
       sensorVal = Double(countOccupied) / Double(countLocs)
     case .populationForward:
       // Sense population density along axis of last movement direction, mapped
       // to sensor range 0.0..1.0
-      sensorVal = getPopulationDensityAlongAxis(loc: loc, direction: lastDirection)
+      sensorVal = getPopulationDensityAlongAxis(loc: loc,
+                                                direction: lastDirection,
+                                                on: grid,
+                                                with: parameters)
     case .populationLeftRight:
       // Sense population density along an axis 90 degrees from last movement direction
-      sensorVal = getPopulationDensityAlongAxis(loc: loc, direction: lastDirection.rotate90DegreesClockwise())
+      sensorVal = getPopulationDensityAlongAxis(loc: loc,
+                                                direction: lastDirection.rotate90DegreesClockwise(),
+                                                on: grid,
+                                                with: parameters)
     case .barrierForward:
       // Sense the nearest barrier along axis of last movement direction, mapped
       // to sensor range 0.0..1.0
       sensorVal = getShortProbeBarrierDistance(loc: loc,
                                                direction: lastDirection,
-                                               distance: p.shortProbeBarrierDistance)
+                                               distance: parameters.shortProbeBarrierDistance,
+                                               on: grid)
     case .barrierLeftRight:
       // Sense the nearest barrier along axis perpendicular to last movement direction, mapped
       // to sensor range 0.0..1.0
       sensorVal = getShortProbeBarrierDistance(loc: loc,
                                                direction: lastDirection.rotate90DegreesClockwise(),
-                                               distance: p.shortProbeBarrierDistance)
+                                               distance: parameters.shortProbeBarrierDistance,
+                                               on: grid)
     case .random:
       // Returns a random sensor value in the range 0.0..1.0.
       sensorVal = Double.random(in: 0...1)
     case .signal0:
       // Returns magnitude of signal0 in the local neighborhood, with
       // 0.0..maxSignalSum converted to sensorRange 0.0..1.0
-      sensorVal = getSignalDensity(loc: loc, layer: 0)
+      sensorVal = getSignalDensity(loc: loc, layer: 0, on: grid, with: parameters)
     case .signal0Forward:
       // Sense signal0 density along axis of last movement direction
-      sensorVal = getSignalDensityAlongAxis(loc: loc, direction: lastDirection, layer: 0)
+      sensorVal = getSignalDensityAlongAxis(loc: loc, direction: lastDirection, layer: 0, on: grid, with: parameters)
     case .signal0LeftRight:
       // Sense signal0 density along an axis perpendicular to last movement direction
-      sensorVal = getSignalDensityAlongAxis(loc: loc, direction: lastDirection.rotate90DegreesClockwise(), layer: 0)
+      sensorVal = getSignalDensityAlongAxis(loc: loc, direction: lastDirection.rotate90DegreesClockwise(), layer: 0, on: grid, with: parameters)
     case .geneticSimilarityForward:
       // Return minimum sensor value if nobody is alive in the forward adjacent location,
       // else returns a similarity match in the sensor range 0.0..1.0
@@ -165,7 +175,6 @@ struct Indiv {
     self.index = index
     self.loc = loc
     self.birthLoc = loc //commented out in original implementation
-    grid.set(loc: loc, val: index) //TODO: Avoid mutating global state like this
     self.age = 0
     self.oscPeriod = 34 //TODO: Define a constant
     self.alive = true

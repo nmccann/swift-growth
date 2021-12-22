@@ -13,18 +13,18 @@ import Foundation
  6. We save the resulting world condition as a single image frame (if
  p.saveVideo is true).
  */
-func endOfSimStep(_ simStep: Int, generation: Int) {
-  switch p.challenge {
+func endOfSimStep(_ simStep: Int, generation: Int, on grid: Grid, with parameters: Params) {
+  switch parameters.challenge {
   case .radioactiveWalls:
     // During the first half of the generation, the west wall is radioactive,
     // where X == 0. In the last half of the generation, the east wall is
     // radioactive, where X = the area width - 1. There's an exponential
     // falloff of the danger, falling off to zero at the arena half line.
-    let radioactiveX = (simStep < p.stepsPerGeneration / 2) ? 0 : p.sizeX - 1
+    let radioactiveX = (simStep < parameters.stepsPerGeneration / 2) ? 0 : grid.size.x - 1
 
     for indiv in peeps.individuals where indiv.alive {
       let distanceFromRadioactiveWall = Double(abs(indiv.loc.x - radioactiveX))
-      if distanceFromRadioactiveWall < Double(p.sizeX / 2) {
+      if distanceFromRadioactiveWall < Double(grid.size.x / 2) {
         let chanceOfDeath = 1.0 / distanceFromRadioactiveWall
         if Double.random(in: 0...1) < chanceOfDeath {
           peeps.queueForDeath(indiv)
@@ -36,7 +36,7 @@ func endOfSimStep(_ simStep: Int, generation: Int) {
   case .touchAnyWall:
     // If the individual is touching any wall, we set its challengeFlag to true.
     // At the end of the generation, all those with the flag true will reproduce.
-    for i in 0..<p.population {
+    for i in 0..<parameters.population {
       if isOnEdge(indiv: peeps[i], of: grid) {
         peeps[i].challengeBits = 1
       }
@@ -47,7 +47,7 @@ func endOfSimStep(_ simStep: Int, generation: Int) {
     // member if they are within a specified radius of a barrier center. They have to
     // visit the barriers in sequential order.
     let radius = 9.0
-    for i in 0..<p.population {
+    for i in 0..<parameters.population {
       let indiv = peeps[i]
 
       //TODO: Possible performance improvement, use challenge bits to skip barriers

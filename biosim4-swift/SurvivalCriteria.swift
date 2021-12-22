@@ -1,26 +1,26 @@
 import Foundation
 
-func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?) -> (Bool, Double) {
+func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?, on grid: Grid) -> (Bool, Double) {
   guard indiv.alive else {
     return (false, 0)
   }
 
   switch challenge {
   case .circle:
-    let safeCenter = Coord(x: Int(Double(p.sizeX) / 4.0), y: Int(Double(p.sizeY) / 4.0))
-    let radius = Double(p.sizeX) / 4.0
+    let safeCenter = Coord(x: Int(Double(grid.size.x) / 4.0), y: Int(Double(grid.size.y) / 4.0))
+    let radius = Double(grid.size.x) / 4.0
     let offset = safeCenter - indiv.loc
     let distance = Double(offset.length)
     return distance <= radius ? (true, (radius - distance) / radius) : (false, 0)
 
   case .rightHalf:
-    return indiv.loc.x > p.sizeX / 2 ? (true, 1) : (false, 0)
+    return indiv.loc.x > grid.size.x / 2 ? (true, 1) : (false, 0)
 
   case .rightQuarter:
-    return indiv.loc.x > p.sizeX / 2 + p.sizeX / 4 ? (true, 1) : (false, 0)
+    return indiv.loc.x > grid.size.x / 2 + grid.size.x / 4 ? (true, 1) : (false, 0)
 
   case .leftEighth:
-    return indiv.loc.x < p.sizeX / 8 ? (true, 1) : (false, 0)
+    return indiv.loc.x < grid.size.x / 8 ? (true, 1) : (false, 0)
 
   case .string:
     let minNeighbors = 22
@@ -44,22 +44,22 @@ func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?) -> (Bool, Doub
     return count >= minNeighbors && count <= maxNeighbors ? (true, 1) : (false, 0)
 
   case .centerWeighted:
-    let safeCenter = Coord(x: Int(Double(p.sizeX) / 2.0), y: Int(Double(p.sizeY) / 2.0))
-    let radius = Double(p.sizeX) / 3.0
+    let safeCenter = Coord(x: Int(Double(grid.size.x) / 2.0), y: Int(Double(grid.size.y) / 2.0))
+    let radius = Double(grid.size.x) / 3.0
     let offset = safeCenter - indiv.loc
     let distance = Double(offset.length)
     return distance <= radius ? (true, (radius - distance) / radius) : (false, 0)
 
   case .centerUnweighted:
-    let safeCenter = Coord(x: Int(Double(p.sizeX) / 2.0), y: Int(Double(p.sizeY) / 2.0))
-    let radius = Double(p.sizeX) / 3.0
+    let safeCenter = Coord(x: Int(Double(grid.size.x) / 2.0), y: Int(Double(grid.size.y) / 2.0))
+    let radius = Double(grid.size.x) / 3.0
     let offset = safeCenter - indiv.loc
     let distance = Double(offset.length)
     return distance <= radius ? (true, 1) : (false, 0)
 
   case .centerSparse:
-    let safeCenter = Coord(x: Int(Double(p.sizeX) / 2.0), y: Int(Double(p.sizeY) / 2.0))
-    let outerRadius = Double(p.sizeX) / 4.0
+    let safeCenter = Coord(x: Int(Double(grid.size.x) / 2.0), y: Int(Double(grid.size.y) / 2.0))
+    let outerRadius = Double(grid.size.x) / 4.0
     let innerRadius = 1.5
     let minNeighbors = 5 // includes self
     let maxNeighbors = 8
@@ -81,12 +81,12 @@ func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?) -> (Bool, Doub
     return count >= minNeighbors && count <= maxNeighbors ? (true, 1) : (false, 0)
 
   case .corner:
-    return corner(indiv: indiv) { pass, _, _ in
+    return corner(indiv: indiv, on: grid) { pass, _, _ in
       pass ? 1 : 0
     }
 
   case .cornerWeighted:
-    return corner(indiv: indiv) { pass, radius, distance in
+    return corner(indiv: indiv, on: grid) { pass, radius, distance in
       pass ? (radius - distance) / radius : 0
     }
 
@@ -101,13 +101,13 @@ func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?) -> (Bool, Doub
 
   case .migrateDistance:
     let distance = Double((indiv.loc - indiv.birthLoc).length)
-    return (true, distance / Double(max(p.sizeX, p.sizeY)))
+    return (true, distance / Double(max(grid.size.x, grid.size.y)))
 
   case .eastWestEighths:
-    return indiv.loc.x < p.sizeX / 8 || indiv.loc.x >= (p.sizeX - p.sizeX / 8) ? (true, 1) : (false, 0)
+    return indiv.loc.x < grid.size.x / 8 || indiv.loc.x >= (grid.size.x - grid.size.x / 8) ? (true, 1) : (false, 0)
 
   case .nearBarrier:
-    let radius = Double(p.sizeX / 2)
+    let radius = Double(grid.size.x / 2)
 
     let distance =
     grid.getBarrierCenters().lazy
@@ -161,7 +161,7 @@ func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?) -> (Bool, Doub
     return count > 0 ? (true, Double(count) / Double(maxNumberOfBits)) : (false, 0)
 
   case .altruismSacrifice:
-    let size = CGSize(width: p.sizeX, height: p.sizeY)
+    let size = CGSize(width: grid.size.x, height: grid.size.y)
     let radius = size.width / 4.0 // in 128^2 world, holds 804 agents
 
     let distance = Double((Coord(x: Int(size.width - size.width / 4.0),
@@ -169,7 +169,7 @@ func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?) -> (Bool, Doub
     return distance <= radius ? (true, (radius - distance) / radius) : (false, 0)
 
   case .altruism:
-    let size = CGSize(width: p.sizeX, height: p.sizeY)
+    let size = CGSize(width: grid.size.x, height: grid.size.y)
     let safeCenter = Coord(x: Int(size.width / 4.0), y: Int(size.height / 4.0))
     let radius = size.width / 4.0 // in a 128^2 world, holds 3216
     let offset = safeCenter - indiv.loc
@@ -188,9 +188,10 @@ func passedSurvivalCriterion(indiv: Indiv, challenge: Challenge?) -> (Bool, Doub
 ///   - scoring: Used to apply different scoring curves
 /// - Returns: An indication of whether the individual passed the challenge, and their accompanying score
 private func corner(indiv: Indiv,
+                    on grid: Grid,
                     scoring: (_ pass: Bool, _ radius: Double, _ distance: Double) -> Double) -> (Bool, Double) {
-  assert(p.sizeX == p.sizeY)
-  let radius = Double(p.sizeX) / 8.0
+  assert(grid.size.x == grid.size.y)
+  let radius = Double(grid.size.x) / 8.0
 
   let topLeftDistance = Double((Coord(x: 0, y: 0) - indiv.loc).length)
   if topLeftDistance <= radius
@@ -198,19 +199,19 @@ private func corner(indiv: Indiv,
     return (true, scoring(true, radius, topLeftDistance))
   }
 
-  let bottomLeftDistance = Double((Coord(x: 0, y: p.sizeY - 1) - indiv.loc).length)
+  let bottomLeftDistance = Double((Coord(x: 0, y: grid.size.y - 1) - indiv.loc).length)
   if bottomLeftDistance <= radius
   {
     return (true, scoring(true, radius, bottomLeftDistance))
   }
 
-  let topRightDistance = Double((Coord(x: p.sizeX - 1, y: 0) - indiv.loc).length)
+  let topRightDistance = Double((Coord(x: grid.size.x - 1, y: 0) - indiv.loc).length)
   if topRightDistance <= radius
   {
     return (true, scoring(true, radius, topRightDistance))
   }
 
-  let bottomRightDistance = Double((Coord(x: p.sizeX - 1, y: p.sizeY - 1) - indiv.loc).length)
+  let bottomRightDistance = Double((Coord(x: grid.size.x - 1, y: grid.size.y - 1) - indiv.loc).length)
   if bottomRightDistance <= radius
   {
     return (true, scoring(true, radius, bottomRightDistance))

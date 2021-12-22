@@ -3,14 +3,14 @@ import Foundation
 // Requires that the grid, signals, and peeps containers have been allocated.
 // This will erase the grid and signal layers, then create a new population in
 // the peeps container at random locations with random genomes.
-func initializeGeneration0() {
+func initializeGeneration0(on grid: Grid, with parameters: Params) {
   // The grid has already been allocated, just clear and reuse it
   grid.nilFill()
 
-  if let replaceBarrier = p.replaceBarrier, replaceBarrier.generation == 0 {
+  if let replaceBarrier = parameters.replaceBarrier, replaceBarrier.generation == 0 {
     grid.applyBarrier(replaceBarrier.type)
   } else {
-    grid.applyBarrier(p.barrierType)
+    grid.applyBarrier(parameters.barrierType)
   }
 
   // The signal layers have already been allocated, so just reuse them
@@ -18,10 +18,15 @@ func initializeGeneration0() {
   
   // Spawn the population. The peeps container has already been allocated,
   // just clear and reuse it
-  let individuals: [Indiv] = (0..<p.population).map { .init(index: $0,
+  let individuals: [Indiv] = (0..<parameters.population).map { .init(index: $0,
                                                             loc: grid.findEmptyLocation(),
                                                             genome: makeRandomGenome()) }
-  peeps = .init(individuals: individuals)
+
+  individuals.forEach { individual in
+    grid.set(loc: individual.loc, val: individual.index)
+  }
+
+  peeps = .init(individuals: individuals, on: grid)
 }
 
 // Requires a container with one or more parent genomes to choose from.
@@ -29,24 +34,28 @@ func initializeGeneration0() {
 // peeps containers have been allocated. This will erase the grid and signal
 // layers, then create a new population in the peeps container with random
 // locations and genomes derived from the container of parent genomes.
-func initializeNewGeneration(parentGenomes: [Genome], generation: Int) {
+func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: Grid, with parameters: Params) {
   // The grid, signals, and peeps containers have already been allocated, just
   // clear them if needed and reuse the elements
   grid.nilFill()
 
-  if let replaceBarrier = p.replaceBarrier, generation > replaceBarrier.generation {
+  if let replaceBarrier = parameters.replaceBarrier, generation > replaceBarrier.generation {
     grid.applyBarrier(replaceBarrier.type)
   } else {
-    grid.applyBarrier(p.barrierType)
+    grid.applyBarrier(parameters.barrierType)
   }
 
   signals.zeroFill()
   
   // Spawn the population. This overwrites all the elements of peeps[]
-  let individuals: [Indiv] = (0..<p.population).map { .init(index: $0,
+  let individuals: [Indiv] = (0..<parameters.population).map { .init(index: $0,
                                                             loc: grid.findEmptyLocation(),
                                                             genome: generateChildGenome(parentGenomes: parentGenomes)) }
-  peeps = .init(individuals: individuals)
+
+  individuals.forEach { individual in
+    grid.set(loc: individual.loc, val: individual.index)
+  }
+  peeps = .init(individuals: individuals, on: grid)
 }
 
 // At this point, the deferred death queue and move queue have been processed
@@ -59,18 +68,18 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int) {
 // nets instead of rebuilding them.
 // Returns number of survivor-reproducers.
 // Must be called in single-thread mode between generations.
-func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
+func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with parameters: Params) -> Int {
   // This container will hold the indexes and survival scores (0.0..1.0)
   // of all the survivors who will provide genomes for repopulation.
   var parents: [(Int, Double)] = [] // <indiv index, score>
   
-  if case .altruism = p.challenge {
+  if case .altruism = parameters.challenge {
     //TODO: Implement altruism challenge
   } else {
     // First, make a list of all the individuals who will become parents; save
     // their scores for later sorting. Indexes start at 1.
-    for i in 0..<p.population {
-      let passed = passedSurvivalCriterion(indiv: peeps[i], challenge: p.challenge)
+    for i in 0..<parameters.population {
+      let passed = passedSurvivalCriterion(indiv: peeps[i], challenge: parameters.challenge, on: grid)
       
       // Save the parent genome if it results in valid neural connections
       // ToDo: if the parents no longer need their genome record, we could
@@ -92,11 +101,11 @@ func spawnNewGeneration(generation: Int, murderCount: Int) -> Int {
   // Now we have a container of zero or more parents' genomes
   if !parentGenomes.isEmpty {
     // Spawn a new generation
-    initializeNewGeneration(parentGenomes: parentGenomes, generation: generation + 1);
+    initializeNewGeneration(parentGenomes: parentGenomes, generation: generation + 1, on: grid, with: parameters);
   } else {
     // Special case: there are no surviving parents: start the simulation over
     // from scratch with randomly-generated genomes
-    initializeGeneration0()
+    initializeGeneration0(on: grid, with: parameters)
   }
   
   return parentGenomes.count

@@ -13,8 +13,8 @@ func prob2bool(_ factor: Double) -> Bool {
 /// exponential curve. The steepness of the curve is determined by the K factor
 /// which is a small positive integer. This tends to reduce the activity level
 /// a bit (makes the peeps less reactive and jittery).
-func responseCurve(_ r: Double) -> Double {
-  let k = Double(p.responsivenessCurveKFactor)
+func responseCurve(_ r: Double, factor: Int) -> Double {
+  let k = Double(factor)
   return pow(r - 2.0, -2.0 * k) - pow(2.0, -2.0 * k) * (1.0 - r)
 }
 
@@ -50,7 +50,9 @@ func responseCurve(_ r: Double) -> Double {
  simulator step by endOfSimStep() in a single thread after all individuals have been
  evaluated multithreadedly.
  **********************************************************************************/
-func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
+func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with parameters: Params) -> ActionResult {
+  var killed: Indiv?
+  var newLocation: Coord?
   var indiv = indiv
   // Responsiveness action - convert neuron action level from arbitrary float range
   // to the range 0.0..1.0. If this action neuron is enabled but not driven, will
@@ -62,10 +64,11 @@ func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
   
   // For the rest of the action outputs, we'll apply an adjusted responsiveness
   // factor (see responseCurve() for more info). Range 0.0..1.0.
-  let responsivenessAdjusted = responseCurve(indiv.responsiveness)
+  let responsivenessAdjusted = responseCurve(indiv.responsiveness,
+                                             factor: parameters.responsivenessCurveKFactor)
   
   // Oscillator period action - convert action level nonlinearly to
-  // 2..4*p.stepsPerGeneration. If this action neuron is enabled but not driven,
+  // 2..4*parameters.stepsPerGeneration. If this action neuron is enabled but not driven,
   // will default to 1.5 + e^(3.5) = a period of 34 simSteps.
   if let periodf = levels[.SET_OSCILLATOR_PERIOD] {
     let newPeriodf01 = (tanh(periodf) + 1.0) / 2.0 // convert to 0.0..1.0
@@ -102,7 +105,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
   // Kill forward -- if this action value is > threshold, value is converted to probability
   // of an attempted murder. Probabilities under the threshold are considered 0.0.
   // If this action neuron is enabled but not driven, the neighbors are safe.
-  if var level = levels[.KILL_FORWARD], p.killEnable {
+  if var level = levels[.KILL_FORWARD], parameters.killEnable {
     let killThreshold = 0.5  // 0.0..1.0; 0.5 is midlevel
     level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
     level *= responsivenessAdjusted
@@ -114,7 +117,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
         let indiv2 = peeps.getIndiv(loc: otherLoc)
         let distance = (indiv.loc - indiv2.loc).length
         assert(distance == 1);
-        peeps.queueForDeath(indiv2)
+        killed = indiv2
       }
     }
   }
@@ -136,8 +139,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
   //     Xprob, Yprob == 99.9%, 29% probability of X and Y becoming 1 (or -1)
   //     X, Y == -1, 0 after applying the sign and probability
   //     The agent will then be moved West (an offset of -1, 0) if it's a legal move.
-  
-  var level: Double
+
   var offset: Coord
   let lastMoveOffset = indiv.lastDirection.asNormalizedCoord()
   
@@ -204,11 +206,17 @@ func executeActions(indiv: Indiv, levels: [Action: Double]) -> Indiv {
   let movementOffset = Coord(x: Int(probX * signumX), y: Int(probY * signumY))
   
   // Move there if it's a valid location
-  let newLoc = indiv.loc + movementOffset
+  let proposedLocation = indiv.loc + movementOffset
   
-  if grid.isInBounds(loc: newLoc) && grid.isEmptyAt(loc: newLoc) {
-    peeps.queueForMove(indiv, newLoc: newLoc)
+  if grid.isInBounds(loc: proposedLocation) && grid.isEmptyAt(loc: proposedLocation) {
+    newLocation = proposedLocation
   }
 
-  return indiv
+  return .init(indiv: indiv, newLocation: newLocation, killed: killed)
+}
+
+struct ActionResult {
+  let indiv: Indiv
+  let newLocation: Coord?
+  let killed: Indiv?
 }

@@ -98,7 +98,7 @@ class Grid {
     func drawBox(min: (x: Int, y: Int), max: (x: Int, y: Int)) {
       for x in min.x...max.x {
         for y in min.y...max.y {
-          grid.set(x: x, y: y, val: BARRIER)
+          set(x: x, y: y, val: BARRIER)
           barrierLocations.append(.init(x: x, y: y))
         }
       }
@@ -124,7 +124,7 @@ class Grid {
       for _ in 0..<numberOfLocations {
         let loc = Coord(x: .random(in: 0..<size.x), y: .random(in: 0..<size.y))
         visitNeighborhood(loc: loc, radius: radius) {
-          grid.set(loc: $0, val: BARRIER)
+          set(loc: $0, val: BARRIER)
           barrierLocations.append($0)
         }
       }

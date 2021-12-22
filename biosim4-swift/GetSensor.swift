@@ -1,6 +1,6 @@
 import Foundation
 
-func getPopulationDensityAlongAxis(loc: Coord, direction: Direction) -> Double {
+func getPopulationDensityAlongAxis(loc: Coord, direction: Direction, on grid: Grid, with parameters: Params) -> Double {
   // Converts the population along the specified axis to the sensor range. The
   // locations of neighbors are scaled by the inverse of their distance times
   // the positive absolute cosine of the difference of their angle and the
@@ -24,9 +24,9 @@ func getPopulationDensityAlongAxis(loc: Coord, direction: Direction) -> Double {
     sum += contribution
   }
   
-  grid.visitNeighborhood(loc: loc, radius: p.populationSensorRadius, f: checkOccupancy(tloc:))
+  grid.visitNeighborhood(loc: loc, radius: parameters.populationSensorRadius, f: checkOccupancy(tloc:))
   
-  let maxSumMagnitude = 6.0 * p.populationSensorRadius
+  let maxSumMagnitude = 6.0 * parameters.populationSensorRadius
   assert(sum >= -maxSumMagnitude && sum <= maxSumMagnitude)
   
   var sensorVal = sum / maxSumMagnitude // convert to -1.0...1.0
@@ -39,7 +39,7 @@ func getPopulationDensityAlongAxis(loc: Coord, direction: Direction) -> Double {
 /// direction, not including loc. If the probe encounters a boundary or a
 /// barrier before reaching the provided distance, returns distance.
 /// Returns 0..distance.
-func longProbePopulationForward(loc: Coord, direction: Direction, distance: Int) -> Int {
+func longProbePopulationForward(loc: Coord, direction: Direction, distance: Int, on grid: Grid) -> Int {
   var loc = loc
   assert(distance > 0)
   var count = 0
@@ -63,7 +63,7 @@ func longProbePopulationForward(loc: Coord, direction: Direction, distance: Int)
 /// If the distance to the border is less than the provided distance
 /// and no barriers are found, returns distance.
 /// Returns 0..distance.
-func longProbeBarrierForward(loc: Coord, direction: Direction, distance: Int) -> Int {
+func longProbeBarrierForward(loc: Coord, direction: Direction, distance: Int, on grid: Grid) -> Int {
   var loc = loc
   assert(distance > 0)
   var count = 0
@@ -85,7 +85,7 @@ func longProbeBarrierForward(loc: Coord, direction: Direction, distance: Int) ->
 /// Converts the number of locations (not including loc) to the next barrier location
 /// along opposite directions of the specified axis to the sensor range. If no barriers
 /// are found, the result is sensor mid-range. Ignores agents in the path.
-func getShortProbeBarrierDistance(loc loc0: Coord, direction: Direction, distance: Int) -> Double {
+func getShortProbeBarrierDistance(loc loc0: Coord, direction: Direction, distance: Int, on grid: Grid) -> Double {
   var countForward = 0
   var countReverse = 0
   var loc = loc0 + direction
@@ -122,7 +122,7 @@ func getShortProbeBarrierDistance(loc loc0: Coord, direction: Direction, distanc
 
 /// returns magnitude of the specified signal layer in a neighborhood, with
 /// 0.0..maxSignalSum converted to the sensor range.
-func getSignalDensity(loc: Coord, layer: Int) -> Double {
+func getSignalDensity(loc: Coord, layer: Int, on grid: Grid, with parameters: Params) -> Double {
   var countLocs = 0
   var sum = 0.0
   
@@ -131,7 +131,7 @@ func getSignalDensity(loc: Coord, layer: Int) -> Double {
     sum += Double(signals.getMagnitude(layer: layer, loc: tloc))
   }
   
-  grid.visitNeighborhood(loc: loc, radius: Double(p.signalSensorRadius), f: signalCheck(tloc:))
+  grid.visitNeighborhood(loc: loc, radius: Double(parameters.signalSensorRadius), f: signalCheck(tloc:))
   let maxSum = Double(countLocs * SIGNAL_MAX)
   return sum / maxSum // convert to 0.0...1.0
 }
@@ -143,7 +143,7 @@ func getSignalDensity(loc: Coord, layer: Int) -> Double {
 /// about 2*radius*SIGNAL_MAX (?). We don't adjust for being close to a border,
 /// so signal densities along borders and in corners are commonly sparser than
 /// away from borders.
-func getSignalDensityAlongAxis(loc: Coord, direction: Direction, layer: Int) -> Double {
+func getSignalDensityAlongAxis(loc: Coord, direction: Direction, layer: Int, on grid: Grid, with parameters: Params) -> Double {
   var sum = 0.0
   let directionVector = direction.asNormalizedCoord()
 
@@ -159,10 +159,10 @@ func getSignalDensityAlongAxis(loc: Coord, direction: Direction, layer: Int) -> 
   }
 
   grid.visitNeighborhood(loc: loc,
-                         radius: Double(p.signalSensorRadius),
+                         radius: Double(parameters.signalSensorRadius),
                          f: signalCheck(tloc:))
 
-  let maxSumMagnitude = 6.0 * Double(p.signalSensorRadius * SIGNAL_MAX)
+  let maxSumMagnitude = 6.0 * Double(parameters.signalSensorRadius * SIGNAL_MAX)
   assert(sum >= -maxSumMagnitude && sum <= maxSumMagnitude)
 
   var sensorVal = sum / maxSumMagnitude // convert to -1.0...1.0

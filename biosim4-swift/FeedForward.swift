@@ -32,7 +32,7 @@ import Foundation
  actionLevels[] which is returned to the caller by value (thanks RVO).
  ********************************************************************************/
 extension Indiv {
-  mutating func feedForward(simStep: Int) -> [Action: Double] {
+  mutating func feedForward(simStep: Int, on grid: Grid, with parameters: Params) -> [Action: Double] {
     // This container is used to return values for all the action outputs. This array
     // contains one value per action neuron, which is the sum of all its weighted
     // input connections. The sum has an arbitrary range. Return by value assumes compiler
@@ -67,7 +67,7 @@ extension Indiv {
       // The values are summed for now, later passed through a transfer function
       var inputVal: Double
       if case .sensor = conn.sourceType {
-        inputVal = getSensor(.init(rawValue: conn.sourceNum)!, simStep: simStep);
+        inputVal = getSensor(.init(rawValue: conn.sourceNum)!, simStep: simStep, on: grid, with: parameters)
       } else {
         inputVal = nnet.neurons[conn.sourceNum].output;
       }

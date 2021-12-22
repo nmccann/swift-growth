@@ -19,9 +19,11 @@ class Peeps {
   var individuals: [Indiv] = []
   var deathQueue: [Int] = []
   var moveQueue: [(Int, Coord)] = []
+  var grid: Grid
   
-  init(individuals: [Indiv]) {
+  init(individuals: [Indiv], on grid: Grid) {
     self.individuals = individuals
+    self.grid = grid
   }
   
   /// Safe to call during multithread mode.

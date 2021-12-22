@@ -8,7 +8,7 @@ var runMode = RunMode.run
 var p = Params.defaults
 var grid = Grid(sizeX: p.sizeX, sizeY: p.sizeY) // 2D arena where the individuals live
 var signals = Signals(layers: p.signalLayers, sizeX: p.sizeX, sizeY: p.sizeY)  // pheromone layers
-var peeps = Peeps(individuals: []) // container of all the individuals
+var peeps = Peeps(individuals: [], on: grid) // container of all the individuals
 var generation = 0
 var murderCount = 0
 var simStep = 0
@@ -58,25 +58,47 @@ func initializeSimulator() {
   // will be reused in each new generation.
   grid = .init(sizeX: p.sizeX, sizeY: p.sizeY) // the land on which the peeps live
   //  signals.init(p.signalLayers, p.sizeX, p.sizeY);  // where the pheromones waft
-  peeps = .init(individuals: []) // the peeps themselves (will be filled in when the first generation is initialized)
+  peeps = .init(individuals: [], on: grid) // the peeps themselves (will be filled in when the first generation is initialized)
   
   generation = 0
-  initializeGeneration0(); // starting population
+  initializeGeneration0(on: grid, with: p); // starting population
 }
 
 func advanceSimulator() {
-  peeps.individuals = peeps.individuals.map {
+  let results: [ActionResult] = peeps.individuals.map {
     guard $0.alive else {
-      return $0
+      return .init(indiv: $0, newLocation: nil, killed: nil)
     }
 
-    return simStepOneIndiv(indiv: $0, simStep: simStep)
+    return simStepOneIndiv(indiv: $0, simStep: simStep, on: grid, with: p)
   }
+
+  peeps.individuals.removeAll()
+
+  results.forEach { result in
+    peeps.individuals.append(result.indiv)
+
+    if let newLocation = result.newLocation {
+      peeps.queueForMove(result.indiv, newLoc: newLocation)
+    }
+
+    if let killed = result.killed {
+      peeps.queueForDeath(killed)
+    }
+  }
+
+//  peeps.individuals = peeps.individuals.map {
+//    guard $0.alive else {
+//      return $0
+//    }
+//
+//    return simStepOneIndiv(indiv: $0, simStep: simStep)
+//  }
   
   // In single-thread mode: this executes deferred, queued deaths and movements,
   // updates signal layers (pheromone), etc.
-  murderCount += peeps.deathQueueSize();
-  endOfSimStep(simStep, generation: generation);
+  murderCount += peeps.deathQueueSize()
+  endOfSimStep(simStep, generation: generation, on: grid, with: p)
   
   simStep += 1
   
@@ -85,7 +107,7 @@ func advanceSimulator() {
   }
   
   endOfGeneration(generation)
-  let numberSurvivors = spawnNewGeneration(generation: generation, murderCount: murderCount)
+  let numberSurvivors = spawnNewGeneration(generation: generation, murderCount: murderCount, on: grid, with: p)
   murderCount = 0
   simStep = 0
   
@@ -126,11 +148,11 @@ func advanceSimulator() {
  For many simulation scenarios, this matches our indiv.age member.
  randomUint - global random number generator, a private instance is given to each thread
  **********************************************************************************************/
-func simStepOneIndiv(indiv: Indiv, simStep: Int) -> Indiv {
+func simStepOneIndiv(indiv: Indiv, simStep: Int, on grid: Grid, with parameters: Params) -> ActionResult {
   var indiv = indiv
   indiv.age += 1 // for this implementation, tracks simStep
-  let actionLevels = indiv.feedForward(simStep: simStep)
-  return executeActions(indiv: indiv, levels: actionLevels)
+  let actionLevels = indiv.feedForward(simStep: simStep, on: grid, with: parameters)
+  return executeActions(indiv: indiv, levels: actionLevels, on: grid, with: parameters)
 }
 
 
