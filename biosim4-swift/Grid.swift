@@ -121,14 +121,13 @@ class Grid {
       let numberOfLocations = 5
       let radius = 5.0
 
-      for i in 1...numberOfLocations {
-        let loc = Coord(x: .random(in: 0...size.x), y: .random(in: 0...size.y))
+      for _ in 0..<numberOfLocations {
+        let loc = Coord(x: .random(in: 0..<size.x), y: .random(in: 0..<size.y))
         visitNeighborhood(loc: loc, radius: radius) {
           grid.set(loc: $0, val: BARRIER)
           barrierLocations.append($0)
         }
       }
-      return // TODO
     }
   }
 
