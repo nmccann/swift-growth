@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4FD39BB42759BFCF006D5ED5"
-               BuildableName = "biosim4-swift.app"
+               BuildableName = "swift-growth.app"
                BlueprintName = "swift-growth"
                ReferencedContainer = "container:swift-growth.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4FD39BCB2759BFD0006D5ED5"
-               BuildableName = "biosim4-swiftTests.xctest"
+               BuildableName = "swift-growthTests.xctest"
                BlueprintName = "swift-growthTests"
                ReferencedContainer = "container:swift-growth.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4FD39BD52759BFD0006D5ED5"
-               BuildableName = "biosim4-swiftUITests.xctest"
+               BuildableName = "swift-growthUITests.xctest"
                BlueprintName = "swift-growthUITests"
                ReferencedContainer = "container:swift-growth.xcodeproj">
             </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4FD39BB42759BFCF006D5ED5"
-            BuildableName = "biosim4-swift.app"
+            BuildableName = "swift-growth.app"
             BlueprintName = "swift-growth"
             ReferencedContainer = "container:swift-growth.xcodeproj">
          </BuildableReference>
@@ -82,7 +82,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4FD39BB42759BFCF006D5ED5"
-            BuildableName = "biosim4-swift.app"
+            BuildableName = "swift-growth.app"
             BlueprintName = "swift-growth"
             ReferencedContainer = "container:swift-growth.xcodeproj">
          </BuildableReference>
