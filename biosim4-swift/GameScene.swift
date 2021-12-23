@@ -10,6 +10,7 @@ class GameScene: SKScene {
   private let simulatorRefreshRate: TimeInterval = 1.0 / 60.0
   private var simulatorStepsPerRefresh = 1
   private var isAdvancing = false
+  private var isStepReady = true
   private let padding: Double = 40
 
   override func sceneDidLoad() {
@@ -59,7 +60,12 @@ class GameScene: SKScene {
     }
 
     previousTime = currentTime
-    advanceAndUpdateBySteps(simulatorStepsPerRefresh)
+
+    if isStepReady {
+      updateNodes()
+    }
+
+    advanceBySteps(simulatorStepsPerRefresh)
   }
 
   override func didChangeSize(_ oldSize: CGSize) {
@@ -95,7 +101,7 @@ private extension GameScene {
     barrierNodes.forEach { gridNode.addChild($0) }
   }
 
-  func advanceAndUpdateBySteps(_ steps: Int) {
+  func updateNodes() {
     if grid.barrierLocations.count != barrierNodes.count {
       generateGrid()
     }
@@ -107,18 +113,22 @@ private extension GameScene {
     zip(barrierNodes, grid.barrierLocations).forEach { barrier, location in
       updateBarrier(barrier, location: location, size: cellSize)
     }
+  }
 
+  func advanceBySteps(_ steps: Int) {
     guard !isAdvancing else {
       return
     }
 
     didStartAdvancing()
 
-    Task.detached {
+    Task.detached(priority: .high) {
       for _ in 0..<steps {
+        await self.didStartStep()
         await advanceSimulator()
+        await self.didFinishStep()
       }
-      
+
       await self.didFinishAdvancing()
     }
   }
@@ -148,10 +158,18 @@ private extension GameScene {
     case (.run, NSDownArrowFunctionKey) where !keyDown:   runMode = .stop
     case (.stop, NSDownArrowFunctionKey) where !keyDown:  runMode = .run
     case (.run, NSRightArrowFunctionKey) where !keyDown:  adjustStepsPerRefresh(by: 1)
-    case (.stop, NSRightArrowFunctionKey) where keyDown:  advanceAndUpdateBySteps(1)
+    case (.stop, NSRightArrowFunctionKey) where keyDown:  advanceBySteps(1)
     case (.run, NSLeftArrowFunctionKey) where !keyDown:   adjustStepsPerRefresh(by: -1)
     default: break
     }
+  }
+
+  func didStartStep() {
+    isStepReady = false
+  }
+
+  func didFinishStep() {
+    isStepReady = true
   }
 
   func didStartAdvancing() {
