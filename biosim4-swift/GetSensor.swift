@@ -132,7 +132,7 @@ func getSignalDensity(loc: Coord, layer: Int, on grid: Grid, with parameters: Pa
   }
   
   grid.visitNeighborhood(loc: loc, radius: Double(parameters.signalSensorRadius), f: signalCheck(tloc:))
-  let maxSum = Double(countLocs * SIGNAL_MAX)
+  let maxSum = Double(countLocs) * SIGNAL_MAX
   return sum / maxSum // convert to 0.0...1.0
 }
 
@@ -162,7 +162,7 @@ func getSignalDensityAlongAxis(loc: Coord, direction: Direction, layer: Int, on 
                          radius: Double(parameters.signalSensorRadius),
                          f: signalCheck(tloc:))
 
-  let maxSumMagnitude = 6.0 * Double(parameters.signalSensorRadius * SIGNAL_MAX)
+  let maxSumMagnitude = 6.0 * Double(parameters.signalSensorRadius) * SIGNAL_MAX
   assert(sum >= -maxSumMagnitude && sum <= maxSumMagnitude)
 
   var sensorVal = sum / maxSumMagnitude // convert to -1.0...1.0

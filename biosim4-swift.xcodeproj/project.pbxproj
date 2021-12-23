@@ -21,6 +21,7 @@
 		4F20A0602771183A000153D9 /* GenomeCompare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F20A05F2771183A000153D9 /* GenomeCompare.swift */; };
 		4F297BBB276BFD7600B37A64 /* ExecuteActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F297BBA276BFD7600B37A64 /* ExecuteActionsTests.swift */; };
 		4F6024072773EBEB006B3D17 /* CollectionConcurrencyKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4F6024062773EBEB006B3D17 /* CollectionConcurrencyKit */; };
+		4F60240A2774340E006B3D17 /* Surge in Frameworks */ = {isa = PBXBuildFile; productRef = 4F6024092774340E006B3D17 /* Surge */; };
 		4F8B9E5A2771F19200E90732 /* SurvivalCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B9E592771F19200E90732 /* SurvivalCriteria.swift */; };
 		4F945C5C276A2F5E00E1E4FF /* ExecuteActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F945C5B276A2F5E00E1E4FF /* ExecuteActions.swift */; };
 		4F945C5E276B72A000E1E4FF /* PeepsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F945C5D276B72A000E1E4FF /* PeepsTests.swift */; };
@@ -112,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F60240A2774340E006B3D17 /* Surge in Frameworks */,
 				4FC83FA12772D95F00F4F3C7 /* Algorithms in Frameworks */,
 				4F6024072773EBEB006B3D17 /* CollectionConcurrencyKit in Frameworks */,
 			);
@@ -239,6 +241,7 @@
 			packageProductDependencies = (
 				4FC83FA02772D95F00F4F3C7 /* Algorithms */,
 				4F6024062773EBEB006B3D17 /* CollectionConcurrencyKit */,
+				4F6024092774340E006B3D17 /* Surge */,
 			);
 			productName = "biosim4-swift";
 			productReference = 4FD39BB52759BFCF006D5ED5 /* biosim4-swift.app */;
@@ -315,6 +318,7 @@
 			packageReferences = (
 				4FC83F9F2772D95F00F4F3C7 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				4F6024052773EBEB006B3D17 /* XCRemoteSwiftPackageReference "collectionconcurrencykit" */,
+				4F6024082774340E006B3D17 /* XCRemoteSwiftPackageReference "Surge" */,
 			);
 			productRefGroup = 4FD39BB62759BFCF006D5ED5 /* Products */;
 			projectDirPath = "";
@@ -755,6 +759,14 @@
 				minimumVersion = 0.2.0;
 			};
 		};
+		4F6024082774340E006B3D17 /* XCRemoteSwiftPackageReference "Surge" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Jounce/Surge";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		4FC83F9F2772D95F00F4F3C7 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-algorithms.git";
@@ -770,6 +782,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4F6024052773EBEB006B3D17 /* XCRemoteSwiftPackageReference "collectionconcurrencykit" */;
 			productName = CollectionConcurrencyKit;
+		};
+		4F6024092774340E006B3D17 /* Surge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F6024082774340E006B3D17 /* XCRemoteSwiftPackageReference "Surge" */;
+			productName = Surge;
 		};
 		4FC83FA02772D95F00F4F3C7 /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
