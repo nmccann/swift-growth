@@ -66,12 +66,14 @@ func initializeSimulator() {
 }
 
 func advanceSimulator() async {
+  let challenge = p.challenge ?? NoChallenge()
   let results: [ActionResult] = await peeps.individuals.concurrentMap {
     guard $0.alive else {
-      return .init(indiv: $0, newLocation: nil, killed: nil)
+      return .init(indiv: $0, newLocation: nil, killed: [])
     }
 
-    return simStepOneIndiv(indiv: $0, simStep: simStep, on: grid, with: p)
+    let result = simStepOneIndiv(indiv: $0, simStep: simStep, on: grid, with: p)
+    return challenge.modify(result, at: simStep, on: grid)
   }
 
   peeps.individuals.removeAll()
@@ -79,16 +81,16 @@ func advanceSimulator() async {
   results.forEach { result in
     peeps.individuals.append(result.indiv)
 
+    if let signal = result.signalEmission {
+      signals.increment(layer: signal.layer, loc: signal.location)
+    }
+
     if let newLocation = result.newLocation {
       peeps.queueForMove(result.indiv, newLoc: newLocation)
     }
 
-    if let killed = result.killed {
-      peeps.queueForDeath(killed)
-    }
-
-    if let signal = result.signalEmission {
-      signals.increment(layer: signal.layer, loc: signal.location)
+    result.killed.forEach {
+      peeps.queueForDeath($0)
     }
   }
   

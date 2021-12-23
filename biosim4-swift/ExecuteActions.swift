@@ -51,7 +51,7 @@ func responseCurve(_ r: Double, factor: Int) -> Double {
  evaluated multithreadedly.
  **********************************************************************************/
 func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with parameters: Params) -> ActionResult {
-  var result = ActionResult(indiv: indiv)
+  var result = ActionResult(indiv: indiv, killed: [])
 
   // Responsiveness action - convert neuron action level from arbitrary float range
   // to the range 0.0..1.0. If this action neuron is enabled but not driven, will
@@ -116,7 +116,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
         let indiv2 = peeps.getIndiv(loc: otherLoc)
         let distance = (result.indiv.loc - indiv2.loc).length
         assert(distance == 1)
-        result.killed = indiv2
+        result.killed.append(indiv2)
       }
     }
   }
@@ -218,5 +218,5 @@ struct ActionResult {
   var indiv: Indiv
   var newLocation: Coord?
   var signalEmission: (layer: Int, location: Coord)?
-  var killed: Indiv?
+  var killed: [Indiv]
 }

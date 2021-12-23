@@ -72,14 +72,16 @@ func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with p
   // This container will hold the indexes and survival scores (0.0..1.0)
   // of all the survivors who will provide genomes for repopulation.
   var parents: [(Int, Double)] = [] // <indiv index, score>
-  
-  if case .altruism = parameters.challenge {
+
+  let challenge = parameters.challenge ?? NoChallenge()
+
+//  if case .altruism = parameters.challenge {
     //TODO: Implement altruism challenge
-  } else {
+//  } else {
     // First, make a list of all the individuals who will become parents; save
     // their scores for later sorting. Indexes start at 1.
     for i in 0..<parameters.population {
-      let passed = passedSurvivalCriterion(indiv: peeps[i], challenge: parameters.challenge, on: grid)
+      let passed = challenge.test(peeps[i], on: grid)
       
       // Save the parent genome if it results in valid neural connections
       // ToDo: if the parents no longer need their genome record, we could
@@ -89,7 +91,7 @@ func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with p
         parents.append((i, passed.1))
       }
     }
-  }
+//  }
   
   // Sort the indexes of the parents by their fitness scores
   parents.sort { $0.1 > $1.1 }

@@ -80,7 +80,7 @@ struct Params {
                                genomeComparisonMethod: .hammingBits,
                                updateGraphLog: false,
                                updateGraphLogStride: 16,
-                               challenge: .rightQuarter,
+                               challenge: .rightQuarter(),
                                barrierType: .verticalBarRandom,
                                replaceBarrier: nil,
                                sizeX: 120,

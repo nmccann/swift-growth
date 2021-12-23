@@ -11,7 +11,6 @@
 		4F05072F276CE1D4002D5536 /* EndOfGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05072E276CE1D4002D5536 /* EndOfGeneration.swift */; };
 		4F050731276CE200002D5536 /* EndOfSimStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F050730276CE200002D5536 /* EndOfSimStep.swift */; };
 		4F050733276CE300002D5536 /* FeedForward.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F050732276CE300002D5536 /* FeedForward.swift */; };
-		4F050735276D004C002D5536 /* Challenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F050734276D004C002D5536 /* Challenge.swift */; };
 		4F050737276D95CC002D5536 /* BarrierType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F050736276D95CC002D5536 /* BarrierType.swift */; };
 		4F050739276EAF7B002D5536 /* GetSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F050738276EAF7B002D5536 /* GetSensor.swift */; };
 		4F05073B276F5FB0002D5536 /* Signals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05073A276F5FB0002D5536 /* Signals.swift */; };
@@ -22,7 +21,27 @@
 		4F297BBB276BFD7600B37A64 /* ExecuteActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F297BBA276BFD7600B37A64 /* ExecuteActionsTests.swift */; };
 		4F6024072773EBEB006B3D17 /* CollectionConcurrencyKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4F6024062773EBEB006B3D17 /* CollectionConcurrencyKit */; };
 		4F60240A2774340E006B3D17 /* Surge in Frameworks */ = {isa = PBXBuildFile; productRef = 4F6024092774340E006B3D17 /* Surge */; };
-		4F8B9E5A2771F19200E90732 /* SurvivalCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B9E592771F19200E90732 /* SurvivalCriteria.swift */; };
+		4F67FE272774AB4E0034C817 /* Challenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE262774AB4E0034C817 /* Challenge.swift */; };
+		4F67FE292774AF0E0034C817 /* CircleChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE282774AF0E0034C817 /* CircleChallenge.swift */; };
+		4F67FE2B2774AF140034C817 /* NoChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE2A2774AF140034C817 /* NoChallenge.swift */; };
+		4F67FE2D2774AF380034C817 /* RightHalfChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE2C2774AF380034C817 /* RightHalfChallenge.swift */; };
+		4F67FE2F2774AF400034C817 /* RightQuarterChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE2E2774AF400034C817 /* RightQuarterChallenge.swift */; };
+		4F67FE312774AF4C0034C817 /* LeftEighthChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE302774AF4C0034C817 /* LeftEighthChallenge.swift */; };
+		4F67FE332774AF550034C817 /* StringChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE322774AF550034C817 /* StringChallenge.swift */; };
+		4F67FE352774AF650034C817 /* RadioactiveWallsChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE342774AF650034C817 /* RadioactiveWallsChallenge.swift */; };
+		4F67FE372774F92E0034C817 /* TouchAnyWallChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE362774F92E0034C817 /* TouchAnyWallChallenge.swift */; };
+		4F67FE392774FBA20034C817 /* LocationSequenceChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE382774FBA20034C817 /* LocationSequenceChallenge.swift */; };
+		4F67FE3B2774FEB70034C817 /* CenterWeightedChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE3A2774FEB70034C817 /* CenterWeightedChallenge.swift */; };
+		4F67FE3D2774FEC80034C817 /* CenterUnweightedChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE3C2774FEC80034C817 /* CenterUnweightedChallenge.swift */; };
+		4F67FE3F2774FED40034C817 /* CenterSparseChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE3E2774FED40034C817 /* CenterSparseChallenge.swift */; };
+		4F67FE412774FEE20034C817 /* CornerChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE402774FEE20034C817 /* CornerChallenge.swift */; };
+		4F67FE452774FEF40034C817 /* AgainstAnyWallChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE442774FEF40034C817 /* AgainstAnyWallChallenge.swift */; };
+		4F67FE472774FEFB0034C817 /* MigrateDistanceChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE462774FEFB0034C817 /* MigrateDistanceChallenge.swift */; };
+		4F67FE492774FF040034C817 /* NearBarrierChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE482774FF040034C817 /* NearBarrierChallenge.swift */; };
+		4F67FE4B2774FF0A0034C817 /* PairsChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE4A2774FF0A0034C817 /* PairsChallenge.swift */; };
+		4F67FE4D2774FF180034C817 /* AltruismSacrificeChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE4C2774FF180034C817 /* AltruismSacrificeChallenge.swift */; };
+		4F67FE4F277500810034C817 /* EastWestEighthsDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE4E277500810034C817 /* EastWestEighthsDistance.swift */; };
+		4F67FE512775017C0034C817 /* Altruism.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67FE502775017C0034C817 /* Altruism.swift */; };
 		4F945C5C276A2F5E00E1E4FF /* ExecuteActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F945C5B276A2F5E00E1E4FF /* ExecuteActions.swift */; };
 		4F945C5E276B72A000E1E4FF /* PeepsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F945C5D276B72A000E1E4FF /* PeepsTests.swift */; };
 		4FB168282766F1B00048E6EB /* Genome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB168272766F1B00048E6EB /* Genome.swift */; };
@@ -70,7 +89,6 @@
 		4F05072E276CE1D4002D5536 /* EndOfGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndOfGeneration.swift; sourceTree = "<group>"; };
 		4F050730276CE200002D5536 /* EndOfSimStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndOfSimStep.swift; sourceTree = "<group>"; };
 		4F050732276CE300002D5536 /* FeedForward.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedForward.swift; sourceTree = "<group>"; };
-		4F050734276D004C002D5536 /* Challenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Challenge.swift; sourceTree = "<group>"; };
 		4F050736276D95CC002D5536 /* BarrierType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarrierType.swift; sourceTree = "<group>"; };
 		4F050738276EAF7B002D5536 /* GetSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetSensor.swift; sourceTree = "<group>"; };
 		4F05073A276F5FB0002D5536 /* Signals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signals.swift; sourceTree = "<group>"; };
@@ -79,7 +97,27 @@
 		4F1F8C0D2768D1A6003EC662 /* Peeps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peeps.swift; sourceTree = "<group>"; };
 		4F20A05F2771183A000153D9 /* GenomeCompare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenomeCompare.swift; sourceTree = "<group>"; };
 		4F297BBA276BFD7600B37A64 /* ExecuteActionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecuteActionsTests.swift; sourceTree = "<group>"; };
-		4F8B9E592771F19200E90732 /* SurvivalCriteria.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurvivalCriteria.swift; sourceTree = "<group>"; };
+		4F67FE262774AB4E0034C817 /* Challenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Challenge.swift; sourceTree = "<group>"; };
+		4F67FE282774AF0E0034C817 /* CircleChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleChallenge.swift; sourceTree = "<group>"; };
+		4F67FE2A2774AF140034C817 /* NoChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoChallenge.swift; sourceTree = "<group>"; };
+		4F67FE2C2774AF380034C817 /* RightHalfChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightHalfChallenge.swift; sourceTree = "<group>"; };
+		4F67FE2E2774AF400034C817 /* RightQuarterChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightQuarterChallenge.swift; sourceTree = "<group>"; };
+		4F67FE302774AF4C0034C817 /* LeftEighthChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftEighthChallenge.swift; sourceTree = "<group>"; };
+		4F67FE322774AF550034C817 /* StringChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringChallenge.swift; sourceTree = "<group>"; };
+		4F67FE342774AF650034C817 /* RadioactiveWallsChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioactiveWallsChallenge.swift; sourceTree = "<group>"; };
+		4F67FE362774F92E0034C817 /* TouchAnyWallChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAnyWallChallenge.swift; sourceTree = "<group>"; };
+		4F67FE382774FBA20034C817 /* LocationSequenceChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSequenceChallenge.swift; sourceTree = "<group>"; };
+		4F67FE3A2774FEB70034C817 /* CenterWeightedChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterWeightedChallenge.swift; sourceTree = "<group>"; };
+		4F67FE3C2774FEC80034C817 /* CenterUnweightedChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterUnweightedChallenge.swift; sourceTree = "<group>"; };
+		4F67FE3E2774FED40034C817 /* CenterSparseChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterSparseChallenge.swift; sourceTree = "<group>"; };
+		4F67FE402774FEE20034C817 /* CornerChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerChallenge.swift; sourceTree = "<group>"; };
+		4F67FE442774FEF40034C817 /* AgainstAnyWallChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgainstAnyWallChallenge.swift; sourceTree = "<group>"; };
+		4F67FE462774FEFB0034C817 /* MigrateDistanceChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrateDistanceChallenge.swift; sourceTree = "<group>"; };
+		4F67FE482774FF040034C817 /* NearBarrierChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearBarrierChallenge.swift; sourceTree = "<group>"; };
+		4F67FE4A2774FF0A0034C817 /* PairsChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairsChallenge.swift; sourceTree = "<group>"; };
+		4F67FE4C2774FF180034C817 /* AltruismSacrificeChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltruismSacrificeChallenge.swift; sourceTree = "<group>"; };
+		4F67FE4E277500810034C817 /* EastWestEighthsDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EastWestEighthsDistance.swift; sourceTree = "<group>"; };
+		4F67FE502775017C0034C817 /* Altruism.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Altruism.swift; sourceTree = "<group>"; };
 		4F945C5B276A2F5E00E1E4FF /* ExecuteActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecuteActions.swift; sourceTree = "<group>"; };
 		4F945C5D276B72A000E1E4FF /* PeepsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeepsTests.swift; sourceTree = "<group>"; };
 		4FB168272766F1B00048E6EB /* Genome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genome.swift; sourceTree = "<group>"; };
@@ -136,6 +174,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4F67FE252774AB3D0034C817 /* Challenges */ = {
+			isa = PBXGroup;
+			children = (
+				4F67FE262774AB4E0034C817 /* Challenge.swift */,
+				4F67FE282774AF0E0034C817 /* CircleChallenge.swift */,
+				4F67FE2A2774AF140034C817 /* NoChallenge.swift */,
+				4F67FE2C2774AF380034C817 /* RightHalfChallenge.swift */,
+				4F67FE2E2774AF400034C817 /* RightQuarterChallenge.swift */,
+				4F67FE302774AF4C0034C817 /* LeftEighthChallenge.swift */,
+				4F67FE322774AF550034C817 /* StringChallenge.swift */,
+				4F67FE3A2774FEB70034C817 /* CenterWeightedChallenge.swift */,
+				4F67FE3C2774FEC80034C817 /* CenterUnweightedChallenge.swift */,
+				4F67FE3E2774FED40034C817 /* CenterSparseChallenge.swift */,
+				4F67FE402774FEE20034C817 /* CornerChallenge.swift */,
+				4F67FE342774AF650034C817 /* RadioactiveWallsChallenge.swift */,
+				4F67FE362774F92E0034C817 /* TouchAnyWallChallenge.swift */,
+				4F67FE442774FEF40034C817 /* AgainstAnyWallChallenge.swift */,
+				4F67FE462774FEFB0034C817 /* MigrateDistanceChallenge.swift */,
+				4F67FE4E277500810034C817 /* EastWestEighthsDistance.swift */,
+				4F67FE482774FF040034C817 /* NearBarrierChallenge.swift */,
+				4F67FE4A2774FF0A0034C817 /* PairsChallenge.swift */,
+				4F67FE382774FBA20034C817 /* LocationSequenceChallenge.swift */,
+				4F67FE4C2774FF180034C817 /* AltruismSacrificeChallenge.swift */,
+				4F67FE502775017C0034C817 /* Altruism.swift */,
+			);
+			name = Challenges;
+			sourceTree = "<group>";
+		};
 		4FD39BAC2759BFCF006D5ED5 = {
 			isa = PBXGroup;
 			children = (
@@ -159,6 +225,7 @@
 		4FD39BB72759BFCF006D5ED5 /* biosim4-swift */ = {
 			isa = PBXGroup;
 			children = (
+				4F67FE252774AB3D0034C817 /* Challenges */,
 				4FD39BEA2759C0FD006D5ED5 /* Basic Types */,
 				4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */,
 				4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */,
@@ -180,7 +247,6 @@
 				4F05072E276CE1D4002D5536 /* EndOfGeneration.swift */,
 				4F050730276CE200002D5536 /* EndOfSimStep.swift */,
 				4F050732276CE300002D5536 /* FeedForward.swift */,
-				4F050734276D004C002D5536 /* Challenge.swift */,
 				4F050736276D95CC002D5536 /* BarrierType.swift */,
 				4F050738276EAF7B002D5536 /* GetSensor.swift */,
 				4F05073A276F5FB0002D5536 /* Signals.swift */,
@@ -217,7 +283,6 @@
 				4FD39BEB2759C10A006D5ED5 /* Polar.swift */,
 				4FD39BED2759C111006D5ED5 /* Direction.swift */,
 				4FD39BEF2759C115006D5ED5 /* Coord.swift */,
-				4F8B9E592771F19200E90732 /* SurvivalCriteria.swift */,
 			);
 			name = "Basic Types";
 			sourceTree = "<group>";
@@ -364,27 +429,46 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F67FE4D2774FF180034C817 /* AltruismSacrificeChallenge.swift in Sources */,
 				4FD39BEE2759C111006D5ED5 /* Direction.swift in Sources */,
+				4F67FE392774FBA20034C817 /* LocationSequenceChallenge.swift in Sources */,
+				4F67FE3B2774FEB70034C817 /* CenterWeightedChallenge.swift in Sources */,
+				4F67FE292774AF0E0034C817 /* CircleChallenge.swift in Sources */,
 				4FD39BEC2759C10A006D5ED5 /* Polar.swift in Sources */,
 				4F050731276CE200002D5536 /* EndOfSimStep.swift in Sources */,
 				4F05072D276CDDDF002D5536 /* SpawnNewGeneration.swift in Sources */,
 				4FB1682C276791E00048E6EB /* Simulator.swift in Sources */,
 				4F05072F276CE1D4002D5536 /* EndOfGeneration.swift in Sources */,
+				4F67FE4F277500810034C817 /* EastWestEighthsDistance.swift in Sources */,
 				4FB168282766F1B00048E6EB /* Genome.swift in Sources */,
+				4F67FE512775017C0034C817 /* Altruism.swift in Sources */,
+				4F67FE452774FEF40034C817 /* AgainstAnyWallChallenge.swift in Sources */,
 				4FD39BC12759BFCF006D5ED5 /* ViewController.swift in Sources */,
 				4F1F8C0E2768D1A6003EC662 /* Peeps.swift in Sources */,
-				4F050735276D004C002D5536 /* Challenge.swift in Sources */,
+				4F67FE352774AF650034C817 /* RadioactiveWallsChallenge.swift in Sources */,
+				4F67FE3D2774FEC80034C817 /* CenterUnweightedChallenge.swift in Sources */,
 				4F945C5C276A2F5E00E1E4FF /* ExecuteActions.swift in Sources */,
 				4FB1682E276794D30048E6EB /* Params.swift in Sources */,
+				4F67FE372774F92E0034C817 /* TouchAnyWallChallenge.swift in Sources */,
+				4F67FE492774FF040034C817 /* NearBarrierChallenge.swift in Sources */,
+				4F67FE332774AF550034C817 /* StringChallenge.swift in Sources */,
+				4F67FE2B2774AF140034C817 /* NoChallenge.swift in Sources */,
 				4F16F6E02761AEC3008C7F50 /* Grid.swift in Sources */,
+				4F67FE3F2774FED40034C817 /* CenterSparseChallenge.swift in Sources */,
 				4F05073B276F5FB0002D5536 /* Signals.swift in Sources */,
+				4F67FE272774AB4E0034C817 /* Challenge.swift in Sources */,
+				4F67FE412774FEE20034C817 /* CornerChallenge.swift in Sources */,
 				4F16F6E22764D209008C7F50 /* SensorsActions.swift in Sources */,
+				4F67FE2F2774AF400034C817 /* RightQuarterChallenge.swift in Sources */,
+				4F67FE4B2774FF0A0034C817 /* PairsChallenge.swift in Sources */,
 				4FD39BF02759C115006D5ED5 /* Coord.swift in Sources */,
+				4F67FE312774AF4C0034C817 /* LeftEighthChallenge.swift in Sources */,
+				4F67FE2D2774AF380034C817 /* RightHalfChallenge.swift in Sources */,
 				4F20A0602771183A000153D9 /* GenomeCompare.swift in Sources */,
 				4F050737276D95CC002D5536 /* BarrierType.swift in Sources */,
 				4F050733276CE300002D5536 /* FeedForward.swift in Sources */,
 				4FD39BBF2759BFCF006D5ED5 /* GameScene.swift in Sources */,
-				4F8B9E5A2771F19200E90732 /* SurvivalCriteria.swift in Sources */,
+				4F67FE472774FEFB0034C817 /* MigrateDistanceChallenge.swift in Sources */,
 				4FB1682A276790760048E6EB /* Indiv.swift in Sources */,
 				4F050739276EAF7B002D5536 /* GetSensor.swift in Sources */,
 				4FD39BB92759BFCF006D5ED5 /* AppDelegate.swift in Sources */,
