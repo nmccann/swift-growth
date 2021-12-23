@@ -8,7 +8,7 @@ class GameScene: SKScene {
   private var cellSize: CGSize = .init(width: 1, height: 1)
   private var previousTime: TimeInterval = 0
   private let simulatorRefreshRate: TimeInterval = 1.0 / 60.0
-  private var simulatorStepsPerRefresh = 1
+  private var simulatorStepsPerRefresh = 10
   private var isAdvancing = false
   private var isStepReady = true
   private let padding: Double = 40
@@ -123,11 +123,14 @@ private extension GameScene {
     didStartAdvancing()
 
     Task.detached(priority: .high) {
+      let before = Date().timeIntervalSince1970
       for _ in 0..<steps {
         await self.didStartStep()
         await advanceSimulator()
         await self.didFinishStep()
       }
+      let after = Date().timeIntervalSince1970
+      print("Delta \(after - before)")
 
       await self.didFinishAdvancing()
     }

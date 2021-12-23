@@ -50,7 +50,7 @@ struct Params {
   let imageDir: String
   let graphLogUpdateCommand: String
   
-  static let defaults = Params(population: 100,
+  static let defaults = Params(population: 400,
                                stepsPerGeneration: 100,
                                maxGenerations: 100,
                                numThreads: 1,
@@ -80,8 +80,8 @@ struct Params {
                                genomeComparisonMethod: .hammingBits,
                                updateGraphLog: false,
                                updateGraphLogStride: 16,
-                               challenge: .rightQuarter(),
-                               barrierType: .verticalBarRandom,
+                               challenge: .corner(scoring: .weighted),
+                               barrierType: nil,
                                replaceBarrier: nil,
                                sizeX: 120,
                                sizeY: 120,

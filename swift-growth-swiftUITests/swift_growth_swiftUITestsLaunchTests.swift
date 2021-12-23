@@ -1,6 +1,6 @@
 import XCTest
 
-class biosim4_swiftUITestsLaunchTests: XCTestCase {
+class swift_growthUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
