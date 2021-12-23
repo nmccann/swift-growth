@@ -42,10 +42,10 @@ class Peeps {
     for index in deathQueue {
       // TODO: Don't rely on static instance from Simulator
       // This matches original implementation, but is not ideal
-      var indiv = peeps[index]
+      var indiv = individuals[index]
       indiv.alive = false
       grid.set(loc: indiv.loc, val: nil)
-      peeps[index] = indiv
+      individuals[index] = indiv
     }
     deathQueue.removeAll()
   }
@@ -69,7 +69,7 @@ class Peeps {
     for moveRecord in moveQueue {
       // TODO: Don't rely on static instance for `peeps` or `grid` from Simulator
       // This matches original implementation, but is not ideal
-      var indiv = peeps[moveRecord.0]
+      var indiv = individuals[moveRecord.0]
       guard indiv.alive else {
         continue
       }
@@ -81,7 +81,7 @@ class Peeps {
         grid.set(loc: newLoc, val: indiv.index)
         indiv.loc = newLoc
         indiv.lastDirection = moveDirection
-        peeps[moveRecord.0] = indiv
+        individuals[moveRecord.0] = indiv
       }
     }
     
