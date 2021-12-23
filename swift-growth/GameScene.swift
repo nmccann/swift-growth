@@ -8,7 +8,7 @@ class GameScene: SKScene {
   private var cellSize: CGSize = .init(width: 1, height: 1)
   private var previousTime: TimeInterval = 0
   private let simulatorRefreshRate: TimeInterval = 1.0 / 60.0
-  private var simulatorStepsPerRefresh = 10
+  private var simulatorStepsPerRefresh = 1
   private var isAdvancing = false
   private var isStepReady = true
   private let padding: Double = 40
