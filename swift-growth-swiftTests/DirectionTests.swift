@@ -1,5 +1,5 @@
 import XCTest
-@testable import biosim4_swift
+@testable import swift_growth
 
 class DirectionTests: XCTestCase {
   func testRotate() {

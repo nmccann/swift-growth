@@ -1,20 +1,25 @@
 import Foundation
 import XCTest
-@testable import biosim4_swift
+@testable import swift_growth
 
 class PeepsTests: XCTestCase {
+  var parameters: Params!
+  var peeps: Peeps!
+  var grid: Grid!
+
   override func setUp() {
-    p = .defaults
-    p.sizeX = 4
-    p.sizeY = 4
-    grid = .init(sizeX: p.sizeX, sizeY: p.sizeY)
+    parameters = .defaults
+    parameters.sizeX = 4
+    parameters.sizeY = 4
+    grid = .init(sizeX: parameters.sizeX, sizeY: parameters.sizeY)
     grid.nilFill()
-    peeps = .init(individuals: [])
+    peeps = .init(individuals: [], on: grid)
   }
   
   func testQueueForMove() {
     let indiv = Indiv.stub(index: 0, loc: .init(x: 0, y: 0))
-    peeps = .init(individuals: [indiv])
+    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
+    peeps = .init(individuals: [indiv], on: grid)
     
     peeps.queueForMove(indiv, newLoc: .init(x: 1, y: 0))
     
@@ -31,7 +36,8 @@ class PeepsTests: XCTestCase {
   
   func testQueueForDeath() {
     let indiv = Indiv.stub(index: 0, loc: .init(x: 0, y: 0))
-    peeps = .init(individuals: [indiv])
+    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
+    peeps = .init(individuals: [indiv], on: grid)
     
     peeps.queueForDeath(indiv)
     

@@ -1,5 +1,5 @@
 import Foundation
-@testable import biosim4_swift
+@testable import swift_growth
 
 extension Indiv {
   static func stub(index: Int = 0,
