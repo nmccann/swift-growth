@@ -123,14 +123,11 @@ private extension GameScene {
     didStartAdvancing()
 
     Task.detached(priority: .high) {
-      let before = Date().timeIntervalSince1970
       for _ in 0..<steps {
         await self.didStartStep()
         await advanceSimulator()
         await self.didFinishStep()
       }
-      let after = Date().timeIntervalSince1970
-      print("Delta \(after - before)")
 
       await self.didFinishAdvancing()
     }
