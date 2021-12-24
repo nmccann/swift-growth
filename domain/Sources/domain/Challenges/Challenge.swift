@@ -11,7 +11,7 @@ extension Challenge {
   }
 }
 
-public struct ChallengeResult {
+public struct ChallengeResult: Equatable {
   let didPass: Bool
   let score: Double
 
