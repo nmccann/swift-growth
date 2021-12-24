@@ -4,7 +4,7 @@ let BARRIER = 0xffff
 
 public class Grid {
   var data: [Column]
-  var barrierLocations: [Coord] = []
+  public var barrierLocations: [Coord] = []
   var barrierCenters: [Coord] = []
   let size: (x: Int, y: Int)
 

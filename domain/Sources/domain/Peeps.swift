@@ -16,7 +16,7 @@ import Foundation
 // This class does not manage properties inside Indiv except for the
 // Indiv's location in the grid and its aliveness.
 public class Peeps {
-  var individuals: [Indiv] = []
+  public var individuals: [Indiv] = []
   var deathQueue: [Int] = []
   var moveQueue: [(Int, Coord)] = []
   var grid: Grid

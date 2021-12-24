@@ -1,6 +1,6 @@
 import Foundation
 
-enum BarrierType {
+public enum BarrierType {
   /// Vertical bar in constant location
   case verticalBarConstant
 

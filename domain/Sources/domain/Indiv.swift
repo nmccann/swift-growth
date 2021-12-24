@@ -1,9 +1,9 @@
 import Foundation
 
 public struct Indiv {
-  var alive: Bool
+  public var alive: Bool
   let index: Int // index into peeps[] container
-  var loc: Coord // refers to a location in grid[][]
+  public var loc: Coord // refers to a location in grid[][]
   let birthLoc: Coord
   var age: Int
   let genome: Genome

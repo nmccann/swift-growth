@@ -1,6 +1,6 @@
 import Foundation
 
-protocol Challenge {
+public protocol Challenge {
   func modify(_ result: ActionResult, at step: Int, on grid: Grid) -> ActionResult
   func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double)
 }

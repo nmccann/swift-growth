@@ -58,7 +58,7 @@ func genomeSimilarity(_ lhs: Genome, _ rhs: Genome) -> Double {
 
 /// returns 0.0..1.0
 /// Samples random pairs of individuals regardless if they are alive or not
-func geneticDiversity() -> Double {
+public func geneticDiversity() -> Double {
   guard p.population >= 2 else {
     return 0
   }

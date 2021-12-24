@@ -1,9 +1,8 @@
 import Foundation
 
-
-struct Coord: Equatable {
-  let x: Int
-  let y: Int
+public struct Coord: Equatable {
+  public let x: Int
+  public let y: Int
 
   static var zero: Coord {
     .init(x: 0, y: 0)

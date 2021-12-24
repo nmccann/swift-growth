@@ -9,6 +9,20 @@
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "domain"
+               BuildableName = "domain"
+               BlueprintName = "domain"
+               ReferencedContainer = "container:domain">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
             buildForAnalyzing = "YES">
@@ -17,6 +31,48 @@
                BlueprintIdentifier = "4FD39BB42759BFCF006D5ED5"
                BuildableName = "swift-growth.app"
                BlueprintName = "swift-growth"
+               ReferencedContainer = "container:swift-growth.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "domainTests"
+               BuildableName = "domainTests"
+               BlueprintName = "domainTests"
+               ReferencedContainer = "container:domain">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4FD39BCB2759BFD0006D5ED5"
+               BuildableName = "swift-growthTests.xctest"
+               BlueprintName = "swift-growthTests"
+               ReferencedContainer = "container:swift-growth.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4FD39BD52759BFD0006D5ED5"
+               BuildableName = "swift-growthUITests.xctest"
+               BlueprintName = "swift-growthUITests"
                ReferencedContainer = "container:swift-growth.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,23 +85,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES"
+            testExecutionOrdering = "random">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4FD39BCB2759BFD0006D5ED5"
-               BuildableName = "swift-growthTests.xctest"
-               BlueprintName = "swift-growthTests"
-               ReferencedContainer = "container:swift-growth.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4FD39BD52759BFD0006D5ED5"
-               BuildableName = "swift-growthUITests.xctest"
-               BlueprintName = "swift-growthUITests"
-               ReferencedContainer = "container:swift-growth.xcodeproj">
+               BlueprintIdentifier = "domainTests"
+               BuildableName = "domainTests"
+               BlueprintName = "domainTests"
+               ReferencedContainer = "container:domain">
             </BuildableReference>
          </TestableReference>
       </Testables>

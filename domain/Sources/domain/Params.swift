@@ -1,54 +1,54 @@
 import Foundation
 
-enum GenomeComparison {
+public enum GenomeComparison {
   case jaroWinkler
   case hammingBits
   case hammingBytes
 }
 
 public struct Params {
-  let population: Int // >= 0
-  let stepsPerGeneration: Int // > 0
-  let maxGenerations: Int // >= 0
-  let numThreads: Int // > 0
-  let signalLayers: Int // >= 0
-  let genomeMaxLength: Int // > 0
-  let maxNumberNeurons: Int // > 0
-  let pointMutationRate: Double // 0.0..1.0
-  let geneInsertionDeletionRate: Double // 0.0..1.0
-  let deletionRatio: Double // 0.0..1.0
-  let killEnable: Bool
-  let sexualReproduction: Bool
-  let chooseParentsByFitness: Bool
-  let populationSensorRadius: Double // > 0.0
-  let signalSensorRadius: Int // > 0
-  let responsiveness: Double // >= 0.0
-  let responsivenessCurveKFactor: Int // 1, 2, 3, or 4
-  let longProbeDistance: Int // > 0
-  let shortProbeBarrierDistance: Int // > 0
-  let valenceSaturationMag: Double
-  let saveVideo: Bool
-  let videoStride: Int // > 0
-  let videoSaveFirstFrames: Int // >= 0, overrides videoStride
-  let displayScale: Int
-  let agentSize: Int
-  let genomeAnalysisStride: Int // > 0
-  let displaySampleGenomes: Int // >= 0
-  let genomeComparisonMethod: GenomeComparison
-  let updateGraphLog: Bool
-  let updateGraphLogStride: Int // > 0
-  let challenge: Challenge?
-  let barrierType: BarrierType?
-  let replaceBarrier: (type: BarrierType, generation: Int)?
+  public let population: Int // >= 0
+  public let stepsPerGeneration: Int // > 0
+  public let maxGenerations: Int // >= 0
+  public let numThreads: Int // > 0
+  public let signalLayers: Int // >= 0
+  public let genomeMaxLength: Int // > 0
+  public let maxNumberNeurons: Int // > 0
+  public let pointMutationRate: Double // 0.0..1.0
+  public let geneInsertionDeletionRate: Double // 0.0..1.0
+  public let deletionRatio: Double // 0.0..1.0
+  public let killEnable: Bool
+  public let sexualReproduction: Bool
+  public let chooseParentsByFitness: Bool
+  public let populationSensorRadius: Double // > 0.0
+  public let signalSensorRadius: Int // > 0
+  public let responsiveness: Double // >= 0.0
+  public let responsivenessCurveKFactor: Int // 1, 2, 3, or 4
+  public let longProbeDistance: Int // > 0
+  public let shortProbeBarrierDistance: Int // > 0
+  public let valenceSaturationMag: Double
+  public let saveVideo: Bool
+  public let videoStride: Int // > 0
+  public let videoSaveFirstFrames: Int // >= 0, overrides videoStride
+  public let displayScale: Int
+  public let agentSize: Int
+  public let genomeAnalysisStride: Int // > 0
+  public let displaySampleGenomes: Int // >= 0
+  public let genomeComparisonMethod: GenomeComparison
+  public let updateGraphLog: Bool
+  public let updateGraphLogStride: Int // > 0
+  public let challenge: Challenge?
+  public let barrierType: BarrierType?
+  public let replaceBarrier: (type: BarrierType, generation: Int)?
 
   // These must not change after initialization
-  var sizeX: Int // 2..0x10000
-  var sizeY: Int // 2..0x10000
-  let genomeInitialLengthMin: Int // > 0 and < genomeInitialLengthMax
-  let genomeInitialLengthMax: Int // > 0 and > genomeInitialLengthMin
-  let logDir: String
-  let imageDir: String
-  let graphLogUpdateCommand: String
+  public var sizeX: Int // 2..0x10000
+  public var sizeY: Int // 2..0x10000
+  public let genomeInitialLengthMin: Int // > 0 and < genomeInitialLengthMax
+  public let genomeInitialLengthMax: Int // > 0 and > genomeInitialLengthMin
+  public let logDir: String
+  public let imageDir: String
+  public let graphLogUpdateCommand: String
   
   static let defaults = Params(population: 400,
                                stepsPerGeneration: 100,

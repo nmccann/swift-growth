@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F6282102775855E00F31936 /* domain in Frameworks */ = {isa = PBXBuildFile; productRef = 4F62820F2775855E00F31936 /* domain */; };
 		4FD39BB92759BFCF006D5ED5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */; };
 		4FD39BBB2759BFCF006D5ED5 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */; };
 		4FD39BBD2759BFCF006D5ED5 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BBC2759BFCF006D5ED5 /* Actions.sks */; };
@@ -57,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F6282102775855E00F31936 /* domain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +79,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4F62820E2775855E00F31936 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4FD39BAC2759BFCF006D5ED5 = {
 			isa = PBXGroup;
 			children = (
@@ -84,6 +93,7 @@
 				4FD39BCF2759BFD0006D5ED5 /* swift-growth-swiftTests */,
 				4FD39BD92759BFD0006D5ED5 /* swift-growth-swiftUITests */,
 				4FD39BB62759BFCF006D5ED5 /* Products */,
+				4F62820E2775855E00F31936 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -146,6 +156,7 @@
 			);
 			name = "swift-growth";
 			packageProductDependencies = (
+				4F62820F2775855E00F31936 /* domain */,
 			);
 			productName = "biosim4-swift";
 			productReference = 4FD39BB52759BFCF006D5ED5 /* swift-growth.app */;
@@ -623,6 +634,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4F62820F2775855E00F31936 /* domain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = domain;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4FD39BAD2759BFCF006D5ED5 /* Project object */;
 }

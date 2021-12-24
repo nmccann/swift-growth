@@ -214,7 +214,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
   return result
 }
 
-struct ActionResult {
+public struct ActionResult {
   var indiv: Indiv
   var newLocation: Coord?
   var signalEmission: (layer: Int, location: Coord)?
