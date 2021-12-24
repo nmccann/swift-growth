@@ -2,10 +2,12 @@ import Foundation
 
 /// Survivors are those touching any wall at the end of the generation
 struct TouchAnyWallChallenge: Challenge {
+  private let againstAnyWall = AgainstAnyWallChallenge()
+
   func modify(_ result: ActionResult, at step: Int, on grid: Grid) -> ActionResult {
     // If the individual is touching any wall, we set its challengeFlag to true.
     // At the end of the generation, all those with the flag true will reproduce.
-    guard isOnEdge(indiv: result.indiv, of: grid) else {
+    guard againstAnyWall.test(result.indiv, on: grid).didPass else {
       return result
     }
 

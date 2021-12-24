@@ -11,15 +11,13 @@ extension Challenge {
   }
 }
 
-func isOnEdge(indiv: Indiv, of grid: Grid) -> Bool {
-  let onEdgeX = indiv.loc.x == 0 || indiv.loc.x == grid.size.x - 1
-  let onEdgeY = indiv.loc.y == 0 || indiv.loc.y == grid.size.y - 1
-  return onEdgeX || onEdgeY
-}
-
 public struct ChallengeResult {
   let didPass: Bool
   let score: Double
+
+  var didFail: Bool {
+    !didPass
+  }
 
   static func pass(_ score: Double) -> ChallengeResult {
     .init(didPass: true, score: score)

@@ -2,8 +2,10 @@ import Foundation
 
 /// Survivors are those not touching a border and with exactly one neighbor which has no other neighbor
 struct PairsChallenge: Challenge {
+  private let againstAnyWall = AgainstAnyWallChallenge()
+
   func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
-    guard !isOnEdge(indiv: individual, of: grid) else {
+    guard againstAnyWall.test(individual, on: grid).didFail else {
       return .fail(0)
     }
 
