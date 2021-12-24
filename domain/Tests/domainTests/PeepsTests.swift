@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import swift_growth
+@testable import domain
 
 class PeepsTests: XCTestCase {
   var parameters: Params!

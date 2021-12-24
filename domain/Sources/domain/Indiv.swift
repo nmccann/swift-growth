@@ -1,6 +1,6 @@
 import Foundation
 
-struct Indiv {
+public struct Indiv {
   var alive: Bool
   let index: Int // index into peeps[] container
   var loc: Coord // refers to a location in grid[][]

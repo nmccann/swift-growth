@@ -2,7 +2,7 @@ import Foundation
 
 let BARRIER = 0xffff
 
-class Grid {
+public class Grid {
   var data: [Column]
   var barrierLocations: [Coord] = []
   var barrierCenters: [Coord] = []

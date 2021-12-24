@@ -6,7 +6,7 @@ enum GenomeComparison {
   case hammingBytes
 }
 
-struct Params {
+public struct Params {
   let population: Int // >= 0
   let stepsPerGeneration: Int // > 0
   let maxGenerations: Int // >= 0

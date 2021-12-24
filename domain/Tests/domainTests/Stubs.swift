@@ -1,5 +1,5 @@
 import Foundation
-@testable import swift_growth
+@testable import domain
 
 extension Indiv {
   static func stub(index: Int = 0,

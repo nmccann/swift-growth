@@ -15,7 +15,7 @@ import Foundation
 // reserved, i.e., .individuals[0] is not a valid individual.
 // This class does not manage properties inside Indiv except for the
 // Indiv's location in the grid and its aliveness.
-class Peeps {
+public class Peeps {
   var individuals: [Indiv] = []
   var deathQueue: [Int] = []
   var moveQueue: [(Int, Coord)] = []

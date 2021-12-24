@@ -1,18 +1,18 @@
 import Foundation
 import CollectionConcurrencyKit
 
-enum RunMode {
+public enum RunMode {
   case stop, run, pause, abort
 }
 
-var runMode = RunMode.run
-var p = Params.defaults
-var grid = Grid(sizeX: p.sizeX, sizeY: p.sizeY) // 2D arena where the individuals live
-var signals = Signals(layers: p.signalLayers, sizeX: p.sizeX, sizeY: p.sizeY)  // pheromone layers
-var peeps = Peeps(individuals: [], on: grid) // container of all the individuals
-var generation = 0
-var murderCount = 0
-var simStep = 0
+public var runMode = RunMode.run
+public var p = Params.defaults
+public var grid = Grid(sizeX: p.sizeX, sizeY: p.sizeY) // 2D arena where the individuals live
+public var signals = Signals(layers: p.signalLayers, sizeX: p.sizeX, sizeY: p.sizeY)  // pheromone layers
+public var peeps = Peeps(individuals: [], on: grid) // container of all the individuals
+public var generation = 0
+public var murderCount = 0
+public var simStep = 0
 
 /********************************************************************************
  Start of simulator
@@ -44,7 +44,7 @@ var simStep = 0
  imageWriter - saves image frames used to make a movie (possibly not threaded
  due to unresolved bugs when threaded)
  ********************************************************************************/
-func initializeSimulator() {
+public func initializeSimulator() {
   printSensorsActions(); // show the agents' capabilities
   
   // Simulator parameters are available read-only through the global
@@ -65,7 +65,7 @@ func initializeSimulator() {
   initializeGeneration0(on: grid, with: p); // starting population
 }
 
-func advanceSimulator() async {
+public func advanceSimulator() async {
   let challenge = p.challenge ?? NoChallenge()
   let results: [ActionResult] = await peeps.individuals.concurrentMap {
     guard $0.alive else {

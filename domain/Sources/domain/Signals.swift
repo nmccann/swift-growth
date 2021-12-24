@@ -6,7 +6,7 @@ let SIGNAL_MIN = 0.0
 let SIGNAL_MAX = 255.0 // Equivalent to UInt8.max
 let SIGNAL_DAMPING = 1.0 - (1.0 / SIGNAL_MAX)
 
-struct Signals {
+public struct Signals {
   var layers: [Layer]
 
 

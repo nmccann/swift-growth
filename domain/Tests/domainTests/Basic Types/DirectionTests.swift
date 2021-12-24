@@ -1,5 +1,5 @@
 import XCTest
-@testable import swift_growth
+@testable import domain
 
 class DirectionTests: XCTestCase {
   func testRotate() {

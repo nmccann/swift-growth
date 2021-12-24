@@ -1,5 +1,6 @@
 import SpriteKit
 import GameplayKit
+import domain
 
 class GameScene: SKScene {
   private var gridNode = SKNode()
