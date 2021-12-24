@@ -81,14 +81,14 @@ func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with p
     // First, make a list of all the individuals who will become parents; save
     // their scores for later sorting. Indexes start at 1.
     for i in 0..<parameters.population {
-      let passed = challenge.test(peeps[i], on: grid)
+      let challengeResult = challenge.test(peeps[i], on: grid)
       
       // Save the parent genome if it results in valid neural connections
       // ToDo: if the parents no longer need their genome record, we could
       // possibly do a move here instead of copy, although it's doubtful that
       // the optimization would be noticeable.
-      if passed.0 && !peeps[i].nnet.connections.isEmpty {
-        parents.append((i, passed.1))
+      if challengeResult.didPass && !peeps[i].nnet.connections.isEmpty {
+        parents.append((i, challengeResult.score))
       }
     }
 //  }

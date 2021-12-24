@@ -31,12 +31,12 @@ struct LocationSequenceChallenge: Challenge {
     return result
   }
 
-  func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double) {
+  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
     let bits = individual.challengeBits
     let count = bits.nonzeroBitCount
     let maxNumberOfBits = MemoryLayout.size(ofValue: bits) * 8
 
-    return count > 0 ? (true, Double(count) / Double(maxNumberOfBits)) : (false, 0)
+    return count > 0 ? .pass(Double(count) / Double(maxNumberOfBits)) : .fail(0)
   }
 }
 

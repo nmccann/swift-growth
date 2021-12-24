@@ -9,7 +9,7 @@ struct CornerChallenge: Challenge {
 
   let scoring: Scoring
 
-  func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double) {
+  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
     switch scoring {
     case .weighted:
       return innerTest(indiv: individual, on: grid) { pass, radius, distance in pass ? (radius - distance) / radius : 0 }
@@ -29,35 +29,35 @@ private extension CornerChallenge {
   /// - Returns: An indication of whether the individual passed the challenge, and their accompanying score
   func innerTest(indiv: Indiv,
                   on grid: Grid,
-                  scoring: (_ pass: Bool, _ radius: Double, _ distance: Double) -> Double) -> (Bool, Double) {
+                  scoring: (_ pass: Bool, _ radius: Double, _ distance: Double) -> Double) -> ChallengeResult {
     assert(grid.size.x == grid.size.y)
     let radius = Double(grid.size.x) / 8.0
 
     let topLeftDistance = Double((Coord(x: 0, y: 0) - indiv.loc).length)
     if topLeftDistance <= radius
     {
-      return (true, scoring(true, radius, topLeftDistance))
+      return .pass(scoring(true, radius, topLeftDistance))
     }
 
     let bottomLeftDistance = Double((Coord(x: 0, y: grid.size.y - 1) - indiv.loc).length)
     if bottomLeftDistance <= radius
     {
-      return (true, scoring(true, radius, bottomLeftDistance))
+      return .pass(scoring(true, radius, bottomLeftDistance))
     }
 
     let topRightDistance = Double((Coord(x: grid.size.x - 1, y: 0) - indiv.loc).length)
     if topRightDistance <= radius
     {
-      return (true, scoring(true, radius, topRightDistance))
+      return .pass(scoring(true, radius, topRightDistance))
     }
 
     let bottomRightDistance = Double((Coord(x: grid.size.x - 1, y: grid.size.y - 1) - indiv.loc).length)
     if bottomRightDistance <= radius
     {
-      return (true, scoring(true, radius, bottomRightDistance))
+      return .pass(scoring(true, radius, bottomRightDistance))
     }
 
-    return (false, scoring(false, radius, topLeftDistance))
+    return .fail(scoring(false, radius, topLeftDistance))
   }
 }
 

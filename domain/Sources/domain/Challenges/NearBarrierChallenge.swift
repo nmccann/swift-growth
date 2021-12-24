@@ -2,7 +2,7 @@ import Foundation
 
 /// Survivors are those within radius of any barrier center. Weighted by distance.
 struct NearBarrierChallenge: Challenge {
-  func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double) {
+  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
     let radius = Double(grid.size.x / 2)
 
     let distance =
@@ -13,10 +13,10 @@ struct NearBarrierChallenge: Challenge {
       .min()
 
     guard let distance = distance else {
-      return (false, 0)
+      return .fail(0)
     }
 
-    return distance <= radius ? (true, 1.0 - (distance / radius)) : (false, 0)
+    return distance <= radius ? .pass(1.0 - (distance / radius)) : .fail(0)
   }
 }
 

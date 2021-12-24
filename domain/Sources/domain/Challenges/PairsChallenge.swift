@@ -2,9 +2,9 @@ import Foundation
 
 /// Survivors are those not touching a border and with exactly one neighbor which has no other neighbor
 struct PairsChallenge: Challenge {
-  func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double) {
+  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
     guard !isOnEdge(indiv: individual, of: grid) else {
-      return (false, 0)
+      return .fail(0)
     }
 
     var count = 0
@@ -20,18 +20,18 @@ struct PairsChallenge: Challenge {
               for y1 in ((tloc.y - 1)..<(tloc.y + 1)) {
                 let tloc1 = Coord(x: x1, y: y1)
                 if tloc1 != tloc && tloc1 != individual.loc && grid.isInBounds(loc: tloc1) && grid.isOccupiedAt(loc: tloc1) {
-                  return (false, 0)
+                  return .fail(0)
                 }
               }
             }
           } else {
-            return (false, 0)
+            return .fail(0)
           }
         }
       }
     }
 
-    return count == 1 ? (true, 1) : (false, 0)
+    return count == 1 ? .pass(1) : .fail(0)
   }
 }
 

@@ -3,13 +3,13 @@ import Foundation
 /// Survivors are those not touching the border and with exactly the number
 /// of neighbors defined by neighbors and radius, where neighbors includes self
 struct StringChallenge: Challenge {
-  func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double) {
+  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
     let minNeighbors = 22
     let maxNeighbors = 2
     let radius = 1.5
 
     guard !grid.isBorder(loc: individual.loc) else {
-      return (false, 0)
+      return .fail(0)
     }
 
     var count = 0
@@ -22,7 +22,7 @@ struct StringChallenge: Challenge {
 
     grid.visitNeighborhood(loc: individual.loc, radius: radius, f: occupancyCheck(loc2:))
 
-    return count >= minNeighbors && count <= maxNeighbors ? (true, 1) : (false, 0)
+    return count >= minNeighbors && count <= maxNeighbors ? .pass(1) : .fail(0)
   }
 }
 

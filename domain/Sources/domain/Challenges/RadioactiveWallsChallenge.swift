@@ -29,8 +29,8 @@ struct RadioactiveWallsChallenge: Challenge {
     return result
   }
 
-  func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double) {
-    (true, 1)
+  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+    .pass(1)
   }
 }
 

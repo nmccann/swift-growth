@@ -4,7 +4,7 @@ import Foundation
 /// the specified number of neighbors in the specified inner radius.
 /// The score is not weighted by distance from the center.
 struct CenterSparseChallenge: Challenge {
-  func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double) {
+  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
     let safeCenter = Coord(x: Int(Double(grid.size.x) / 2.0), y: Int(Double(grid.size.y) / 2.0))
     let outerRadius = Double(grid.size.x) / 4.0
     let innerRadius = 1.5
@@ -14,7 +14,7 @@ struct CenterSparseChallenge: Challenge {
     let distance = Double(offset.length)
 
     guard distance <= outerRadius else {
-      return (false, 0)
+      return .fail(0)
     }
 
     var count = 0
@@ -25,7 +25,7 @@ struct CenterSparseChallenge: Challenge {
     }
 
     grid.visitNeighborhood(loc: individual.loc, radius: innerRadius, f: occupancyCheck(loc2:))
-    return count >= minNeighbors && count <= maxNeighbors ? (true, 1) : (false, 0)
+    return count >= minNeighbors && count <= maxNeighbors ? .pass(1) : .fail(0)
   }
 }
 

@@ -14,8 +14,8 @@ struct TouchAnyWallChallenge: Challenge {
     return result
   }
 
-  func test(_ individual: Indiv, on grid: Grid) -> (Bool, Double) {
-    individual.challengeBits == 0 ? (false, 0) : (true, 1)
+  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+    individual.challengeBits == 0 ? .fail(0) : .pass(1)
   }
 }
 
