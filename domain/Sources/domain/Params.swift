@@ -1,11 +1,5 @@
 import Foundation
 
-public enum GenomeComparison {
-  case jaroWinkler
-  case hammingBits
-  case hammingBytes
-}
-
 public struct Params {
   public let population: Int // >= 0
   public let stepsPerGeneration: Int // > 0
@@ -50,44 +44,44 @@ public struct Params {
   public let imageDir: String
   public let graphLogUpdateCommand: String
   
-  static let defaults = Params(population: 400,
-                               stepsPerGeneration: 100,
-                               maxGenerations: 100,
-                               numThreads: 1,
-                               signalLayers: 1,
-                               genomeMaxLength: 20,
-                               maxNumberNeurons: 20 / 2,
-                               pointMutationRate: 0.0001,
-                               geneInsertionDeletionRate: 0, //Originally 0.0001, but currently can't support unequal length genes
-                               deletionRatio: 0.7,
-                               killEnable: false,
-                               sexualReproduction: true,
-                               chooseParentsByFitness: true,
-                               populationSensorRadius: 2.0,
-                               signalSensorRadius: 1,
-                               responsiveness: 0.5,
-                               responsivenessCurveKFactor: 2,
-                               longProbeDistance: 16,
-                               shortProbeBarrierDistance: 3,
-                               valenceSaturationMag: 0.5,
-                               saveVideo: true,
-                               videoStride: 1,
-                               videoSaveFirstFrames: 0,
-                               displayScale: 1,
-                               agentSize: 2,
-                               genomeAnalysisStride: 1,
-                               displaySampleGenomes: 0,
-                               genomeComparisonMethod: .hammingBits,
-                               updateGraphLog: false,
-                               updateGraphLogStride: 16,
-                               challenge: .corner(scoring: .weighted),
-                               barrierType: nil,
-                               replaceBarrier: nil,
-                               sizeX: 120,
-                               sizeY: 120,
-                               genomeInitialLengthMin: 16,
-                               genomeInitialLengthMax: 16,
-                               logDir: "./logs/",
-                               imageDir: "./images/",
-                               graphLogUpdateCommand: "/usr/bin/gnuplot --persist ./tools/graphlog.gp")
+  public static let defaults = Params(population: 200,
+                                      stepsPerGeneration: 100,
+                                      maxGenerations: 100,
+                                      numThreads: 1,
+                                      signalLayers: 1,
+                                      genomeMaxLength: 20,
+                                      maxNumberNeurons: 20 / 2,
+                                      pointMutationRate: 0.0001,
+                                      geneInsertionDeletionRate: 0, //Originally 0.0001, but currently can't support unequal length genes
+                                      deletionRatio: 0.7,
+                                      killEnable: false,
+                                      sexualReproduction: true,
+                                      chooseParentsByFitness: true,
+                                      populationSensorRadius: 2.0,
+                                      signalSensorRadius: 1,
+                                      responsiveness: 0.5,
+                                      responsivenessCurveKFactor: 2,
+                                      longProbeDistance: 16,
+                                      shortProbeBarrierDistance: 3,
+                                      valenceSaturationMag: 0.5,
+                                      saveVideo: true,
+                                      videoStride: 1,
+                                      videoSaveFirstFrames: 0,
+                                      displayScale: 1,
+                                      agentSize: 2,
+                                      genomeAnalysisStride: 1,
+                                      displaySampleGenomes: 0,
+                                      genomeComparisonMethod: .hammingBits,
+                                      updateGraphLog: false,
+                                      updateGraphLogStride: 16,
+                                      challenge: .corner(scoring: .weighted),
+                                      barrierType: nil,
+                                      replaceBarrier: nil,
+                                      sizeX: 120,
+                                      sizeY: 120,
+                                      genomeInitialLengthMin: 16,
+                                      genomeInitialLengthMax: 16,
+                                      logDir: "./logs/",
+                                      imageDir: "./images/",
+                                      graphLogUpdateCommand: "/usr/bin/gnuplot --persist ./tools/graphlog.gp")
 }

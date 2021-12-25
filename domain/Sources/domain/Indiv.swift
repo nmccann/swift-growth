@@ -151,7 +151,7 @@ public struct Indiv {
       if (grid.isInBounds(loc: loc2) && grid.isOccupiedAt(loc: loc2)) {
         let indiv2 = peeps.getIndiv(loc: loc2)
         if indiv2.alive {
-          sensorVal = genomeSimilarity(genome, indiv2.genome) // 0.0..1.0
+          sensorVal = parameters.genomeComparisonMethod.similarity(genome, indiv2.genome) // 0.0..1.0
         }
       }
     }
@@ -171,7 +171,7 @@ public struct Indiv {
   /// The responsiveness parameter will be initialized here to maximum value
   /// of 1.0, then depending on which action activation function is used,
   /// the default undriven value may be changed to 1.0 or action midrange.
-  init(index: Int, loc: Coord, genome: Genome) {
+  init(index: Int, loc: Coord, genome: Genome, longProbeDistance: Int, maxNumberOfNeurons: Int) {
     self.index = index
     self.loc = loc
     self.birthLoc = loc //commented out in original implementation
@@ -180,10 +180,10 @@ public struct Indiv {
     self.alive = true
     self.lastDirection = .random()
     self.responsiveness = 0.5 // range 0.0..1.0
-    self.longProbeDist = p.longProbeDistance //TODO: Avoid referencing global state
+    self.longProbeDist = longProbeDistance
     self.challengeBits = 0 // will be set true when some task gets accomplished
     self.genome = genome
-    self.nnet = createWiringFromGenome(genome)
+    self.nnet = createWiringFromGenome(genome, maxNumberNeurons: maxNumberOfNeurons)
   }
   
   func printNeuralNet() {

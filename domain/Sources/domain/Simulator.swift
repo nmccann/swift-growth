@@ -6,10 +6,9 @@ public enum RunMode {
 }
 
 public var runMode = RunMode.run
-public var p = Params.defaults
-public var grid = Grid(sizeX: p.sizeX, sizeY: p.sizeY) // 2D arena where the individuals live
-public var signals = Signals(layers: p.signalLayers, sizeX: p.sizeX, sizeY: p.sizeY)  // pheromone layers
-public var peeps = Peeps(individuals: [], on: grid) // container of all the individuals
+public var grid: Grid! // 2D arena where the individuals live
+public var signals: Signals! // pheromone layers
+public var peeps: Peeps! // container of all the individuals
 public var generation = 0
 public var murderCount = 0
 public var simStep = 0
@@ -44,35 +43,27 @@ public var simStep = 0
  imageWriter - saves image frames used to make a movie (possibly not threaded
  due to unresolved bugs when threaded)
  ********************************************************************************/
-public func initializeSimulator() {
+public func initializeSimulator(with parameters: Params) {
   printSensorsActions(); // show the agents' capabilities
-  
-  // Simulator parameters are available read-only through the global
-  // variable p after paramManager is initialized.
-  // Todo: remove the hardcoded parameter filename.
-  p = .defaults
-  //TODO: Support config files maybe?
-  //  paramManager.registerConfigFile(argc > 1 ? argv[1] : "biosim4.ini");
-  //  paramManager.updateFromConfigFile();
-  
+
   // Allocate container space. Once allocated, these container elements
   // will be reused in each new generation.
-  grid = .init(sizeX: p.sizeX, sizeY: p.sizeY) // the land on which the peeps live
-  //  signals.init(p.signalLayers, p.sizeX, p.sizeY);  // where the pheromones waft
+  grid = .init(sizeX: parameters.sizeX, sizeY: parameters.sizeY) // the land on which the peeps live
+  signals = .init(layers: parameters.signalLayers, sizeX: parameters.sizeX, sizeY: parameters.sizeY)
   peeps = .init(individuals: [], on: grid) // the peeps themselves (will be filled in when the first generation is initialized)
   
   generation = 0
-  initializeGeneration0(on: grid, with: p); // starting population
+  initializeGeneration0(on: grid, with: parameters); // starting population
 }
 
-public func advanceSimulator() async {
-  let challenge = p.challenge ?? NoChallenge()
+public func advanceSimulator(with parameters: Params) async {
+  let challenge = parameters.challenge ?? NoChallenge()
   let results: [ActionResult] = await peeps.individuals.concurrentMap {
     guard $0.alive else {
       return .init(indiv: $0, newLocation: nil, killed: [])
     }
 
-    let result = simStepOneIndiv(indiv: $0, simStep: simStep, on: grid, with: p)
+    let result = simStepOneIndiv(indiv: $0, simStep: simStep, on: grid, with: parameters)
     return challenge.modify(result, at: simStep, on: grid)
   }
 
@@ -97,20 +88,20 @@ public func advanceSimulator() async {
   // In single-thread mode: this executes deferred, queued deaths and movements,
   // updates signal layers (pheromone), etc.
   murderCount += peeps.deathQueueSize()
-  endOfSimStep(simStep, generation: generation, on: grid, with: p)
+  endOfSimStep(simStep, generation: generation, on: grid, with: parameters)
   
   simStep += 1
   
-  guard simStep >= p.stepsPerGeneration else {
+  guard simStep >= parameters.stepsPerGeneration else {
     return
   }
   
   endOfGeneration(generation)
-  let numberSurvivors = spawnNewGeneration(generation: generation, murderCount: murderCount, on: grid, with: p)
+  let numberSurvivors = spawnNewGeneration(generation: generation, murderCount: murderCount, on: grid, with: parameters)
   murderCount = 0
   simStep = 0
   
-  if numberSurvivors > 0 && generation % p.genomeAnalysisStride == 0 {
+  if numberSurvivors > 0 && generation % parameters.genomeAnalysisStride == 0 {
     //    TODO: displaySamplGenomes(p.displaySampleGenomes)
   }
   
@@ -119,7 +110,7 @@ public func advanceSimulator() async {
     print("No survivors, starting over")
   } else {
     generation += 1
-    print("Last Survival Percentage: \(Double(numberSurvivors) / Double(p.population)) Next Generation: \(generation)")
+    print("Last Survival Percentage: \(Double(numberSurvivors) / Double(parameters.population)) Next Generation: \(generation)")
   }
 }
 

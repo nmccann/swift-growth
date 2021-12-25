@@ -20,7 +20,10 @@ func initializeGeneration0(on grid: Grid, with parameters: Params) {
   // just clear and reuse it
   let individuals: [Indiv] = (0..<parameters.population).map { .init(index: $0,
                                                             loc: grid.findEmptyLocation(),
-                                                            genome: makeRandomGenome()) }
+                                                                     genome: makeRandomGenome(minLength: parameters.genomeInitialLengthMin,
+                                                                                              maxLength: parameters.genomeInitialLengthMax),
+                                                                     longProbeDistance: parameters.longProbeDistance,
+                                                                     maxNumberOfNeurons: parameters.maxNumberNeurons) }
 
   individuals.forEach { individual in
     grid.set(loc: individual.loc, val: individual.index)
@@ -50,7 +53,9 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
   // Spawn the population. This overwrites all the elements of peeps[]
   let individuals: [Indiv] = (0..<parameters.population).map { .init(index: $0,
                                                             loc: grid.findEmptyLocation(),
-                                                            genome: generateChildGenome(parentGenomes: parentGenomes)) }
+                                                                     genome: generateChildGenome(parentGenomes: parentGenomes, with: parameters),
+                                                                     longProbeDistance: parameters.longProbeDistance,
+                                                                     maxNumberOfNeurons: parameters.maxNumberNeurons) }
 
   individuals.forEach { individual in
     grid.set(loc: individual.loc, val: individual.index)

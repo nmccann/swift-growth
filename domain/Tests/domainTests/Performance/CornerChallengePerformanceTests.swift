@@ -8,10 +8,7 @@ class CornerChallengePerformanceTests: XCTestCase {
 
   override func setUp() {
     grid = .init(sizeX: 100, sizeY: 100)
-    individuals = (1...10).map { i in
-      Indiv(index: i, loc: .init(x: (grid.size.x - 1) / i, y: (grid.size.y - 1) / i), genome: [])
-    }
-
+    individuals = (1...10).map { .stub(index: $0, loc: .init(x: (grid.size.x - 1) / $0, y: (grid.size.y - 1) / $0)) }
     individuals.forEach { grid.set(loc: $0.loc, val: $0.index) }
   }
 

@@ -12,7 +12,7 @@ class RightHalfChallengeTests: XCTestCase {
   }
 
   func testLeftSideFails() {
-    individual = .init(index: 0, loc: .init(x: 1, y: 0), genome: [])
+    individual = .stub(loc: .init(x: 1, y: 0))
     grid.set(loc: individual.loc, val: individual.index)
     let result = sut.test(individual, on: grid)
     expect(result.didPass) == false
@@ -20,7 +20,7 @@ class RightHalfChallengeTests: XCTestCase {
   }
 
   func testMiddleFails() {
-    individual = .init(index: 0, loc: .init(x: 2, y: 0), genome: [])
+    individual = .stub(loc: .init(x: 2, y: 0))
     grid.set(loc: individual.loc, val: individual.index)
     let result = sut.test(individual, on: grid)
     expect(result.didPass) == false
@@ -28,7 +28,7 @@ class RightHalfChallengeTests: XCTestCase {
   }
 
   func testRightPasses() {
-    individual = .init(index: 0, loc: .init(x: 3, y: 0), genome: [])
+    individual = .stub(loc: .init(x: 3, y: 0))
     grid.set(loc: individual.loc, val: individual.index)
     let result = sut.test(individual, on: grid)
     expect(result.didPass) == true

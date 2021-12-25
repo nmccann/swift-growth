@@ -125,8 +125,9 @@ func makeRandomGene() -> Gene {
 }
 
 // Returns by value a single genome with random genes.
-func makeRandomGenome() -> Genome {
-  (0..<Int.random(in: p.genomeInitialLengthMin...p.genomeInitialLengthMax)).map { _ in
+//TODO: Change to accept range
+func makeRandomGenome(minLength: Int, maxLength: Int) -> Genome {
+  (0..<Int.random(in: minLength...maxLength)).map { _ in
     makeRandomGene()
   }
 }
@@ -136,17 +137,17 @@ func makeRandomGenome() -> Genome {
 // to the range 0..p.maxNumberNeurons - 1 by using a modulo operator.
 // Sensors are renumbered 0..Sensor::NUM_SENSES - 1
 // Actions are renumbered 0..Action::NUM_ACTIONS - 1
-func makeRenumberedConnectionList(genome: Genome) -> ConnectionList {
+func makeRenumberedConnectionList(genome: Genome, maxNumberNeurons: Int) -> ConnectionList {
   genome.map { gene in
     var gene = gene
     
     switch gene.sourceType {
-    case .neuron: gene.sourceNum %= p.maxNumberNeurons
+    case .neuron: gene.sourceNum %= maxNumberNeurons
     case .sensor: gene.sourceNum %= Sensor.enabled.count
     }
     
     switch gene.sinkType {
-    case .neuron: gene.sinkNum %= p.maxNumberNeurons
+    case .neuron: gene.sinkNum %= maxNumberNeurons
     case .action: gene.sinkNum %= Action.enabled.count
     }
     
@@ -157,11 +158,11 @@ func makeRenumberedConnectionList(genome: Genome) -> ConnectionList {
 // Scan the connections and make a list of all the neuron numbers
 // mentioned in the connections. Also keep track of how many inputs and
 // outputs each neuron has.
-func makeNodeMap(from connections: ConnectionList) -> NodeMap {
+func makeNodeMap(from connections: ConnectionList, maxNumberNeurons: Int) -> NodeMap {
   var nodeMap: NodeMap = [:]
   for connection in connections {
     if case .neuron = connection.sinkType {
-      assert(connection.sinkNum < p.maxNumberNeurons)
+      assert(connection.sinkNum < maxNumberNeurons)
       var it = nodeMap[connection.sinkNum] ?? .init(remappedNumber: 0,
                                               numOutputs: 0,
                                               numSelfInputs: 0,
@@ -177,7 +178,7 @@ func makeNodeMap(from connections: ConnectionList) -> NodeMap {
     }
 
     if case .neuron = connection.sourceType {
-      assert(connection.sourceNum < p.maxNumberNeurons)
+      assert(connection.sourceNum < maxNumberNeurons)
       var it = nodeMap[connection.sourceNum] ?? .init(remappedNumber: 0,
                                                 numOutputs: 0,
                                                 numSelfInputs: 0,
@@ -212,13 +213,13 @@ func removeConnectionsToNeuron(connections: inout ConnectionList, nodeMap: inout
 // remove it along with all connections that feed it. Reiterative, because
 // after we remove a connection to a useless neuron, it may result in a
 // different neuron having no outputs.
-func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMap) {
+func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMap, maxNumberNeurons: Int) {
   var allDone = false
   while !allDone {
     allDone = true
     var keysToRemove: [Int] = []
     for itNeuron in nodeMap {
-      assert(itNeuron.key < p.maxNumberNeurons)
+      assert(itNeuron.key < maxNumberNeurons)
       // We're looking for neurons with zero outputs, or neurons that feed itself
       // and nobody else:
       if itNeuron.value.numOutputs == itNeuron.value.numSelfInputs { // could be 0
@@ -246,24 +247,24 @@ func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMa
 ///    range 0..p.genomeMaxLength-1, keeping a count of outputs for each neuron.
 /// 2. Delete any referenced neuron index that has no outputs or only feeds itself.
 /// 3. Renumber the remaining neurons sequentially starting at 0.
-func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
+func createWiringFromGenome(_ genome: Genome, maxNumberNeurons: Int) -> NeuralNet {
   var nnet = NeuralNet(connections: [], neurons: [])
   
   // Convert the indiv's genome to a renumbered connection list
-  var connectionList = makeRenumberedConnectionList(genome: genome) // synaptic connections
+  var connectionList = makeRenumberedConnectionList(genome: genome, maxNumberNeurons: maxNumberNeurons) // synaptic connections
   
   // Make a node (neuron) map and their number of inputs and outputs from the renumbered connection list
-  var nodeMap = makeNodeMap(from: connectionList)
+  var nodeMap = makeNodeMap(from: connectionList, maxNumberNeurons: maxNumberNeurons)
   
   // Find and remove neurons that don't feed anything or only feed themself.
   // This reiteratively removes all connections to the useless neurons.
-  cullUselessNeurons(connections: &connectionList, nodeMap: &nodeMap)
+  cullUselessNeurons(connections: &connectionList, nodeMap: &nodeMap, maxNumberNeurons: maxNumberNeurons)
   
   // The neurons map now has all the referenced neurons, their neuron numbers, and
   // the number of outputs for each neuron. Now we'll renumber the neurons
   // starting at zero.
   
-  assert(nodeMap.count <= p.maxNumberNeurons)
+  assert(nodeMap.count <= maxNumberNeurons)
   var newNumber = 0;
 
   nodeMap = nodeMap.mapValues { node in
@@ -319,7 +320,7 @@ func createWiringFromGenome(_ genome: Genome) -> NeuralNet {
 // If the parameter p.sexualReproduction is true, two parents contribute
 // genes to the offspring. The new genome may undergo mutation.
 // Must be called in single-thread mode between generations
-func generateChildGenome(parentGenomes: [Genome]) -> Genome {
+func generateChildGenome(parentGenomes: [Genome], with parameters: Params) -> Genome {
   // random parent (or parents if sexual reproduction) with random
   // mutations
   var genome: Genome
@@ -333,7 +334,7 @@ func generateChildGenome(parentGenomes: [Genome]) -> Genome {
   // true, then we give preference to candidate parents according to their
   // score. Their score was computed by the survival/selection algorithm
   // in survival-criteria.cpp.
-  if p.chooseParentsByFitness && parentGenomes.count > 1 {
+  if parameters.chooseParentsByFitness && parentGenomes.count > 1 {
     parent1Idx = .random(in: 1..<parentGenomes.count)
     parent2Idx = .random(in: 0..<parent1Idx)
   } else {
@@ -358,7 +359,7 @@ func generateChildGenome(parentGenomes: [Genome]) -> Genome {
     genome.replaceSubrange(index0..<index1, with: gShorter[index0..<index1])
   }
   
-  if p.sexualReproduction {
+  if parameters.sexualReproduction {
     if g1.count > g2.count {
       genome = g1
       overlayWithSliceOf(gShorter: g2)
@@ -373,11 +374,11 @@ func generateChildGenome(parentGenomes: [Genome]) -> Genome {
     assert(!genome.isEmpty)
   }
   
-  genome = randomInsertDeletion(genome: genome)
+  genome = randomInsertDeletion(genome: genome, with: parameters)
   assert(!genome.isEmpty)
-  genome = applyPointMutations(genome: genome)
+  genome = applyPointMutations(genome: genome, with: parameters.pointMutationRate)
   assert(!genome.isEmpty)
-  assert(genome.count <= p.genomeMaxLength)
+  assert(genome.count <= parameters.genomeMaxLength)
   
   return genome
 }
@@ -424,19 +425,19 @@ func cropLength(genome: inout Genome, length: Int) {
 // Inserts or removes a single gene from the genome. This is
 // used only when the simulator is configured to allow genomes of
 // unequal lengths during a simulation.
-func randomInsertDeletion(genome: Genome) -> Genome {
-  guard Double.random(in: 0...1) < p.geneInsertionDeletionRate else {
+func randomInsertDeletion(genome: Genome, with parameters: Params) -> Genome {
+  guard Double.random(in: 0...1) < parameters.geneInsertionDeletionRate else {
     return genome
   }
 
   var genome = genome
 
-  if Double.random(in: 0...1) < p.deletionRatio {
+  if Double.random(in: 0...1) < parameters.deletionRatio {
     // deletion
     if genome.count > 1 {
       genome.remove(at: .random(in: 0..<genome.count))
     }
-  } else if genome.count < p.genomeMaxLength {
+  } else if genome.count < parameters.genomeMaxLength {
     // insertion
     //genome.insert(genome.begin() + randomUint(0, genome.size() - 1), makeRandomGene()); //In original implementation
     genome.append(makeRandomGene())
@@ -447,11 +448,11 @@ func randomInsertDeletion(genome: Genome) -> Genome {
 
 // This function causes point mutations in a genome with a probability defined
 // by the parameter p.pointMutationRate.
-func applyPointMutations(genome: Genome) -> Genome {
+func applyPointMutations(genome: Genome, with rate: Double) -> Genome {
   var genome = genome
 
   for _ in 0..<genome.count {
-    if Double.random(in: 0...1) < p.pointMutationRate {
+    if Double.random(in: 0...1) < rate {
       genome = randomBitFlip(genome: genome)
     }
   }
