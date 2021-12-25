@@ -88,8 +88,8 @@ private extension GameScene {
       return
     }
 
-    let exactFit = CGSize(width: (scene.size.width - padding) / Double(parameters.sizeX),
-                          height: (scene.size.height - padding) / Double(parameters.sizeY))
+    let exactFit = CGSize(width: (scene.size.width - padding) / Double(parameters.size.x),
+                          height: (scene.size.height - padding) / Double(parameters.size.y))
     let squareWidth = floor(min(exactFit.width, exactFit.height))
     cellSize = CGSize(width: squareWidth, height: squareWidth)
 
@@ -142,14 +142,14 @@ private extension GameScene {
   func updateCell(_ cell: SKShapeNode, indiv: Indiv, size: CGSize) {
     cell.fillColor = .green
     cell.isHidden = !indiv.alive
-    cell.position = .init(x: Double(indiv.loc.x - (parameters.sizeX/2)) * size.width,
-                          y: Double(indiv.loc.y - (parameters.sizeY/2)) * size.height)
+    cell.position = .init(x: Double(indiv.loc.x - (parameters.size.x/2)) * size.width,
+                          y: Double(indiv.loc.y - (parameters.size.y/2)) * size.height)
   }
 
   func updateBarrier(_ barrier: SKShapeNode, location: Coord, size: CGSize) {
     barrier.fillColor = .red
-    barrier.position = .init(x: Double(location.x - (parameters.sizeX/2)) * size.width,
-                             y: Double(location.y - (parameters.sizeY/2)) * size.height)
+    barrier.position = .init(x: Double(location.x - (parameters.size.x/2)) * size.width,
+                             y: Double(location.y - (parameters.size.y/2)) * size.height)
   }
 
   func handleKeyEvent(_ event: NSEvent, keyDown: Bool) {
@@ -161,7 +161,7 @@ private extension GameScene {
 
     switch (runMode, Int(keyChar)) {
     case (_, NSUpArrowFunctionKey) where !keyDown:
-      let diversity = parameters.genomeComparisonMethod.diversityFor(population: parameters.population)
+      let diversity = parameters.genomeComparisonMethod.diversityFor(peeps.individuals, initialPopulation: parameters.population)
       print("Genetic Diversity: \(diversity)")
 
     case (.run, NSDownArrowFunctionKey) where !keyDown:   runMode = .stop

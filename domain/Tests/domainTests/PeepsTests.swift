@@ -10,9 +10,9 @@ class PeepsTests: XCTestCase {
 
   override func setUp() {
     parameters = .defaults
-    parameters.sizeX = 4
-    parameters.sizeY = 4
-    grid = .init(sizeX: parameters.sizeX, sizeY: parameters.sizeY)
+    parameters.size.x = 4
+    parameters.size.y = 4
+    grid = .init(size: parameters.size)
     grid.nilFill()
     peeps = .init(individuals: [], on: grid)
   }

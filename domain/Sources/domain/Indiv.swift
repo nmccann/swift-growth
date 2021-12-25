@@ -12,7 +12,7 @@ public struct Indiv {
   var oscPeriod: Int // 2..4*p.stepsPerGeneration (TBD, see executeActions())
 
   /// Distance to check for obstructions with long forward probe
-  var longProbeDist: Int
+  var probeDistance: (short: Int, long: Int)
 
   /// Direction of last movement
   var lastDirection: Direction
@@ -77,18 +77,20 @@ public struct Indiv {
       // Measures the distance to the nearest other individual in the
       // forward direction. If non found, returns the maximum sensor value.
       // Maps the result to the sensor range 0.0..1.0.
+      let distance = probeDistance.long
       sensorVal = Double(longProbePopulationForward(loc: loc,
                                                     direction: lastDirection,
-                                                    distance: longProbeDist,
-                                                    on: grid)) / Double(longProbeDist)
+                                                    distance: distance,
+                                                    on: grid)) / Double(distance)
     case .longProbeBarrierForward:
       // Measures the distance to the nearest barrier in the forward
       // direction. If non found, returns the maximum sensor value.
       // Maps the result to the sensor range 0.0..1.0.
+      let distance = probeDistance.long
       sensorVal = Double(longProbeBarrierForward(loc: loc,
                                                  direction: lastDirection,
-                                                 distance: longProbeDist,
-                                                 on: grid)) / Double(longProbeDist)
+                                                 distance: distance,
+                                                 on: grid)) / Double(distance)
     case .population:
       // Returns population density in neighborhood converted linearly from
       // 0..100% to sensor range
@@ -122,14 +124,14 @@ public struct Indiv {
       // to sensor range 0.0..1.0
       sensorVal = getShortProbeBarrierDistance(loc: loc,
                                                direction: lastDirection,
-                                               distance: parameters.shortProbeBarrierDistance,
+                                               distance: probeDistance.short,
                                                on: grid)
     case .barrierLeftRight:
       // Sense the nearest barrier along axis perpendicular to last movement direction, mapped
       // to sensor range 0.0..1.0
       sensorVal = getShortProbeBarrierDistance(loc: loc,
                                                direction: lastDirection.rotate90DegreesClockwise(),
-                                               distance: parameters.shortProbeBarrierDistance,
+                                               distance: probeDistance.short,
                                                on: grid)
     case .random:
       // Returns a random sensor value in the range 0.0..1.0.
@@ -171,7 +173,7 @@ public struct Indiv {
   /// The responsiveness parameter will be initialized here to maximum value
   /// of 1.0, then depending on which action activation function is used,
   /// the default undriven value may be changed to 1.0 or action midrange.
-  init(index: Int, loc: Coord, genome: Genome, longProbeDistance: Int, maxNumberOfNeurons: Int) {
+  init(index: Int, loc: Coord, genome: Genome, probeDistance: (short: Int, long: Int), maxNumberOfNeurons: Int) {
     self.index = index
     self.loc = loc
     self.birthLoc = loc //commented out in original implementation
@@ -180,7 +182,7 @@ public struct Indiv {
     self.alive = true
     self.lastDirection = .random()
     self.responsiveness = 0.5 // range 0.0..1.0
-    self.longProbeDist = longProbeDistance
+    self.probeDistance = probeDistance
     self.challengeBits = 0 // will be set true when some task gets accomplished
     self.genome = genome
     self.nnet = createWiringFromGenome(genome, maxNumberNeurons: maxNumberOfNeurons)

@@ -8,7 +8,7 @@ class RightHalfChallengeTests: XCTestCase {
   var grid: Grid!
 
   override func setUp() {
-    grid = .init(sizeX: 4, sizeY: 4)
+    grid = .init(size: (x: 4, y: 4))
   }
 
   func testLeftSideFails() {

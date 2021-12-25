@@ -124,10 +124,11 @@ func makeRandomGene() -> Gene {
         weight: Gene.makeRandomWeight())
 }
 
-// Returns by value a single genome with random genes.
-//TODO: Change to accept range
-func makeRandomGenome(minLength: Int, maxLength: Int) -> Genome {
-  (0..<Int.random(in: minLength...maxLength)).map { _ in
+/// Create a sequence of random genes of random length based on provided range
+/// - Parameter range: Indicates the min/max length of resultant sequence
+/// - Returns: A sequence of random genes
+func makeRandomGenome(_ range: ClosedRange<Int>) -> Genome {
+  (0..<Int.random(in: range)).map { _ in
     makeRandomGene()
   }
 }

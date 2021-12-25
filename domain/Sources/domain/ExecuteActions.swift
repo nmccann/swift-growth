@@ -64,7 +64,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
   // For the rest of the action outputs, we'll apply an adjusted responsiveness
   // factor (see responseCurve() for more info). Range 0.0..1.0.
   let responsivenessAdjusted = responseCurve(result.indiv.responsiveness,
-                                             factor: parameters.responsivenessCurveKFactor)
+                                             factor: parameters.responsiveness.kFactor)
   
   // Oscillator period action - convert action level nonlinearly to
   // 2..4*parameters.stepsPerGeneration. If this action neuron is enabled but not driven,
@@ -83,7 +83,7 @@ func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with 
     let maxLongProbeDistance = 32
     level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
     level = 1 + level * Double(maxLongProbeDistance)
-    result.indiv.longProbeDist = Int(UInt(level))
+    result.indiv.probeDistance.long = Int(UInt(level))
   }
   
   // Emit signal0 - if this action value is below a threshold, nothing emitted.

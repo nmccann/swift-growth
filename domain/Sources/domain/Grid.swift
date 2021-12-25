@@ -8,9 +8,9 @@ public class Grid {
   var barrierCenters: [Coord] = []
   let size: (x: Int, y: Int)
 
-  init(sizeX: Int, sizeY: Int) {
-    data = .init(repeating: .init(numRows: sizeY), count: sizeX)
-    self.size = (x: sizeX, y: sizeY)
+  init(size: (x: Int, y: Int)) {
+    data = .init(repeating: .init(numRows: size.y), count: size.x)
+    self.size = size
   }
 
   func nilFill() {

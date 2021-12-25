@@ -11,10 +11,10 @@ class ExecuteActionsTests: XCTestCase {
 
   override func setUp() {
     parameters = .defaults
-    parameters.sizeX = 4
-    parameters.sizeY = 4
-    signals = .init(layers: parameters.signalLayers, sizeX: parameters.sizeX, sizeY: parameters.sizeY)
-    grid = .init(sizeX: parameters.sizeX, sizeY: parameters.sizeY)
+    parameters.size.x = 4
+    parameters.size.y = 4
+    signals = .init(layers: parameters.signalLayers, size: parameters.size)
+    grid = .init(size: parameters.size)
     grid.nilFill()
   }
 
@@ -207,12 +207,12 @@ class ExecuteActionsTests: XCTestCase {
 
   func testSetLongProbeDist() {
     var indiv = Indiv.stub(index: 0)
-    indiv.longProbeDist = 1
+    indiv.probeDistance.long = 1
     grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
     peeps = .init(individuals: [indiv], on: grid)
 
     let result = executeActions(indiv: indiv, levels: [.SET_LONGPROBE_DIST: 20], on: grid, with: parameters)
-    expect(result.indiv.longProbeDist) == 33
+    expect(result.indiv.probeDistance.long) == 33
   }
 
   func testEmitSignal() {

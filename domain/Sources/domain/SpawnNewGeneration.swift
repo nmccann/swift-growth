@@ -6,29 +6,28 @@ import Foundation
 func initializeGeneration0(on grid: Grid, with parameters: Params) {
   // The grid has already been allocated, just clear and reuse it
   grid.nilFill()
-
+  
   if let replaceBarrier = parameters.replaceBarrier, replaceBarrier.generation == 0 {
     grid.applyBarrier(replaceBarrier.type)
   } else {
     grid.applyBarrier(parameters.barrierType)
   }
-
+  
   // The signal layers have already been allocated, so just reuse them
   signals.zeroFill()
   
   // Spawn the population. The peeps container has already been allocated,
   // just clear and reuse it
   let individuals: [Indiv] = (0..<parameters.population).map { .init(index: $0,
-                                                            loc: grid.findEmptyLocation(),
-                                                                     genome: makeRandomGenome(minLength: parameters.genomeInitialLengthMin,
-                                                                                              maxLength: parameters.genomeInitialLengthMax),
-                                                                     longProbeDistance: parameters.longProbeDistance,
+                                                                     loc: grid.findEmptyLocation(),
+                                                                     genome: makeRandomGenome(parameters.genomeInitialLength),
+                                                                     probeDistance: parameters.probeDistance,
                                                                      maxNumberOfNeurons: parameters.maxNumberNeurons) }
-
+  
   individuals.forEach { individual in
     grid.set(loc: individual.loc, val: individual.index)
   }
-
+  
   peeps = .init(individuals: individuals, on: grid)
 }
 
@@ -41,22 +40,22 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
   // The grid, signals, and peeps containers have already been allocated, just
   // clear them if needed and reuse the elements
   grid.nilFill()
-
+  
   if let replaceBarrier = parameters.replaceBarrier, generation > replaceBarrier.generation {
     grid.applyBarrier(replaceBarrier.type)
   } else {
     grid.applyBarrier(parameters.barrierType)
   }
-
+  
   signals.zeroFill()
   
   // Spawn the population. This overwrites all the elements of peeps[]
   let individuals: [Indiv] = (0..<parameters.population).map { .init(index: $0,
-                                                            loc: grid.findEmptyLocation(),
+                                                                     loc: grid.findEmptyLocation(),
                                                                      genome: generateChildGenome(parentGenomes: parentGenomes, with: parameters),
-                                                                     longProbeDistance: parameters.longProbeDistance,
+                                                                     probeDistance: parameters.probeDistance,
                                                                      maxNumberOfNeurons: parameters.maxNumberNeurons) }
-
+  
   individuals.forEach { individual in
     grid.set(loc: individual.loc, val: individual.index)
   }
@@ -77,26 +76,26 @@ func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with p
   // This container will hold the indexes and survival scores (0.0..1.0)
   // of all the survivors who will provide genomes for repopulation.
   var parents: [(Int, Double)] = [] // <indiv index, score>
-
+  
   let challenge = parameters.challenge ?? NoChallenge()
-
-//  if case .altruism = parameters.challenge {
-    //TODO: Implement altruism challenge
-//  } else {
-    // First, make a list of all the individuals who will become parents; save
-    // their scores for later sorting. Indexes start at 1.
-    for i in 0..<parameters.population {
-      let challengeResult = challenge.test(peeps[i], on: grid)
-      
-      // Save the parent genome if it results in valid neural connections
-      // ToDo: if the parents no longer need their genome record, we could
-      // possibly do a move here instead of copy, although it's doubtful that
-      // the optimization would be noticeable.
-      if challengeResult.didPass && !peeps[i].nnet.connections.isEmpty {
-        parents.append((i, challengeResult.score))
-      }
+  
+  //  if case .altruism = parameters.challenge {
+  //TODO: Implement altruism challenge
+  //  } else {
+  // First, make a list of all the individuals who will become parents; save
+  // their scores for later sorting. Indexes start at 1.
+  for i in 0..<parameters.population {
+    let challengeResult = challenge.test(peeps[i], on: grid)
+    
+    // Save the parent genome if it results in valid neural connections
+    // ToDo: if the parents no longer need their genome record, we could
+    // possibly do a move here instead of copy, although it's doubtful that
+    // the optimization would be noticeable.
+    if challengeResult.didPass && !peeps[i].nnet.connections.isEmpty {
+      parents.append((i, challengeResult.score))
     }
-//  }
+  }
+  //  }
   
   // Sort the indexes of the parents by their fitness scores
   parents.sort { $0.1 > $1.1 }

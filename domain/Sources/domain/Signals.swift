@@ -10,8 +10,8 @@ public struct Signals {
   var layers: [Layer]
 
 
-  init(layers: Int, sizeX: Int, sizeY: Int) {
-    self.layers = .init(repeating: .init(numCols: sizeX, numRows: sizeY), count: layers)
+  init(layers: Int, size: (x: Int, y: Int)) {
+    self.layers = .init(repeating: .init(numCols: size.x, numRows: size.y), count: layers)
   }
 
   func getMagnitude(layer: Int, loc: Coord) -> Int {

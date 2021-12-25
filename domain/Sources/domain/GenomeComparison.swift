@@ -19,16 +19,16 @@ public enum GenomeComparison {
 
   /// returns 0.0..1.0
   /// Samples random pairs of individuals regardless if they are alive or not
-  public func diversityFor(population: Int) -> Double {
-    guard population >= 2 else {
+  public func diversityFor(_ individuals: [Indiv], initialPopulation: Int) -> Double {
+    guard initialPopulation >= 2 else {
       return 0
     }
 
     // count limits the number of genomes sampled for performance reasons.
-    let count = min(1000, population) // todo: !!! p.analysisSampleSize;
+    let count = min(1000, initialPopulation) // todo: !!! p.analysisSampleSize;
 
     let similaritySum = (0..<count).reduce(into: 0.0) { partialResult, _ in
-      let individuals = peeps.individuals.randomSample(count: 2)
+      let individuals = individuals.randomSample(count: 2)
       partialResult += similarity(individuals[0].genome, individuals[1].genome)
     }
 

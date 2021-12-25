@@ -48,8 +48,8 @@ public func initializeSimulator(with parameters: Params) {
 
   // Allocate container space. Once allocated, these container elements
   // will be reused in each new generation.
-  grid = .init(sizeX: parameters.sizeX, sizeY: parameters.sizeY) // the land on which the peeps live
-  signals = .init(layers: parameters.signalLayers, sizeX: parameters.sizeX, sizeY: parameters.sizeY)
+  grid = .init(size: parameters.size) // the land on which the peeps live
+  signals = .init(layers: parameters.signalLayers, size: parameters.size)
   peeps = .init(individuals: [], on: grid) // the peeps themselves (will be filled in when the first generation is initialized)
   
   generation = 0
@@ -100,10 +100,6 @@ public func advanceSimulator(with parameters: Params) async {
   let numberSurvivors = spawnNewGeneration(generation: generation, murderCount: murderCount, on: grid, with: parameters)
   murderCount = 0
   simStep = 0
-  
-  if numberSurvivors > 0 && generation % parameters.genomeAnalysisStride == 0 {
-    //    TODO: displaySamplGenomes(p.displaySampleGenomes)
-  }
   
   if numberSurvivors == 0 {
     generation = 0 // start over
