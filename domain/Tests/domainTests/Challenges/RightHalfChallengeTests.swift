@@ -1,4 +1,5 @@
 import XCTest
+import Nimble
 @testable import domain
 
 class RightHalfChallengeTests: XCTestCase {
@@ -14,23 +15,23 @@ class RightHalfChallengeTests: XCTestCase {
     individual = .init(index: 0, loc: .init(x: 1, y: 0), genome: [])
     grid.set(loc: individual.loc, val: individual.index)
     let result = sut.test(individual, on: grid)
-    XCTAssertFalse(result.didPass)
-    XCTAssertEqual(result.score, 0)
+    expect(result.didPass) == false
+    expect(result.score) == 0
   }
 
   func testMiddleFails() {
     individual = .init(index: 0, loc: .init(x: 2, y: 0), genome: [])
     grid.set(loc: individual.loc, val: individual.index)
     let result = sut.test(individual, on: grid)
-    XCTAssertFalse(result.didPass)
-    XCTAssertEqual(result.score, 0)
+    expect(result.didPass) == false
+    expect(result.score) == 0
   }
 
   func testRightPasses() {
     individual = .init(index: 0, loc: .init(x: 3, y: 0), genome: [])
     grid.set(loc: individual.loc, val: individual.index)
     let result = sut.test(individual, on: grid)
-    XCTAssertTrue(result.didPass)
-    XCTAssertEqual(result.score, 1)
+    expect(result.didPass) == true
+    expect(result.score) == 1
   }
 }

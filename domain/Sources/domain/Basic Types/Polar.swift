@@ -1,6 +1,6 @@
 import Foundation
 
-struct Polar {
+struct Polar: Equatable {
   let magnitude: Int
   let direction: Direction?
 

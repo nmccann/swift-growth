@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+import Nimble
 @testable import domain
 
 class PeepsTests: XCTestCase {
@@ -23,15 +24,15 @@ class PeepsTests: XCTestCase {
     
     peeps.queueForMove(indiv, newLoc: .init(x: 1, y: 0))
     
-    XCTAssertEqual(peeps[0].loc, .init(x: 0, y: 0))
-    XCTAssertTrue(grid.isOccupiedAt(loc: .init(x: 0, y: 0)))
-    XCTAssertFalse(grid.isOccupiedAt(loc: .init(x: 1, y: 0)))
+    expect(self.peeps[0].loc) == Coord(x: 0, y: 0)
+    expect(self.grid.isOccupiedAt(loc: .init(x: 0, y: 0))) == true
+    expect(self.grid.isOccupiedAt(loc: .init(x: 1, y: 0))) == false
     
     peeps.drainMoveQueue()
     
-    XCTAssertEqual(peeps[0].loc, .init(x: 1, y: 0))
-    XCTAssertFalse(grid.isOccupiedAt(loc: .init(x: 0, y: 0)))
-    XCTAssertTrue(grid.isOccupiedAt(loc: .init(x: 1, y: 0)))
+    expect(self.peeps[0].loc) == Coord(x: 1, y: 0)
+    expect(self.grid.isOccupiedAt(loc: .init(x: 0, y: 0))) == false
+    expect(self.grid.isOccupiedAt(loc: .init(x: 1, y: 0))) == true
   }
   
   func testQueueForDeath() {
@@ -41,14 +42,14 @@ class PeepsTests: XCTestCase {
     
     peeps.queueForDeath(indiv)
     
-    XCTAssertEqual(peeps.deathQueueSize(), 1)
-    XCTAssertTrue(peeps[0].alive)
-    XCTAssertTrue(grid.isOccupiedAt(loc: .init(x: 0, y: 0)))
+    expect(self.peeps.deathQueueSize()) == 1
+    expect(self.peeps[0].alive) == true
+    expect(self.grid.isOccupiedAt(loc: .init(x: 0, y: 0))) == true
     
     peeps.drainDeathQueue()
     
-    XCTAssertEqual(peeps.deathQueueSize(), 0)
-    XCTAssertFalse(peeps[0].alive)
-    XCTAssertFalse(grid.isOccupiedAt(loc: .init(x: 0, y: 0)))
+    expect(self.peeps.deathQueueSize()) == 0
+    expect(self.peeps[0].alive) == false
+    expect(self.grid.isOccupiedAt(loc: .init(x: 0, y: 0))) == false
   }
 }

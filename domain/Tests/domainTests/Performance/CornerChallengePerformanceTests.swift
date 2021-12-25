@@ -1,4 +1,5 @@
 import XCTest
+import Nimble
 @testable import domain
 
 class CornerChallengePerformanceTests: XCTestCase {
@@ -20,7 +21,7 @@ class CornerChallengePerformanceTests: XCTestCase {
     measure {
       let results = individuals.map { sut.test($0, on: grid) }
       let expectedResults: [ChallengeResult] = [.pass(1), .fail(0), .fail(0), .fail(0), .fail(0), .fail(0), .fail(0), .fail(0), .fail(0), .pass(0.04)]
-      XCTAssertEqual(results, expectedResults)
+      expect(results) == expectedResults
     }
   }
 
@@ -30,6 +31,7 @@ class CornerChallengePerformanceTests: XCTestCase {
     measure {
       let results = individuals.map { sut.test($0, on: grid) }
       let expectedResults: [ChallengeResult] = [.pass(1), .fail(0), .fail(0), .fail(0), .fail(0), .fail(0), .fail(0), .fail(0), .fail(0), .pass(1)]
-      XCTAssertEqual(results, expectedResults)
+      expect(results) == expectedResults
     }
   }
+}
