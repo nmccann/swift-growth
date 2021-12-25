@@ -14,6 +14,7 @@ class GameScene: SKScene {
   private var isStepReady = true
   private let padding: Double = 40
   private let parameters = Params.defaults
+  private var lastBarrierLocations: [Coord] = []
 
   override func sceneDidLoad() {
     super.sceneDidLoad()
@@ -80,7 +81,8 @@ private extension GameScene {
     guard peeps != nil else {
       return
     }
-    
+
+    lastBarrierLocations = []
     gridNode.removeFromParent()
     gridNode.removeAllChildren()
 
@@ -116,8 +118,11 @@ private extension GameScene {
       updateCell(cell, indiv: indiv, size: cellSize)
     }
 
-    zip(barrierNodes, grid.barrierLocations).forEach { barrier, location in
-      updateBarrier(barrier, location: location, size: cellSize)
+    if lastBarrierLocations != grid.barrierLocations {
+      zip(barrierNodes, grid.barrierLocations).forEach { barrier, location in
+        updateBarrier(barrier, location: location, size: cellSize)
+      }
+      lastBarrierLocations = grid.barrierLocations
     }
   }
 
