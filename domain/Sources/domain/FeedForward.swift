@@ -68,9 +68,13 @@ extension Indiv {
 
       // Obtain the connection's input value from a sensor neuron or other neuron
       // The values are summed for now, later passed through a transfer function
-      var inputVal: Double
+      var inputVal: Double = 0.0
+
       if case .sensor = conn.sourceType {
-        inputVal = getSensor(.init(rawValue: conn.sourceNum)!, simStep: simStep, on: grid, with: parameters)
+        if parameters.sensors.count > conn.sourceNum {
+          let sensor = parameters.sensors[conn.sourceNum]
+          inputVal = sensor.get(for: self, simStep: simStep, on: grid, with: parameters)
+        }
       } else {
         inputVal = nnet.neurons[conn.sourceNum].output;
       }

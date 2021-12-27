@@ -44,7 +44,7 @@ public var simStep = 0
  due to unresolved bugs when threaded)
  ********************************************************************************/
 public func initializeSimulator(with parameters: Params) {
-  printSensorsActions(); // show the agents' capabilities
+  //TODO: Restore ability to print agent capabilities
 
   // Allocate container space. Once allocated, these container elements
   // will be reused in each new generation.

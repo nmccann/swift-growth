@@ -1,5 +1,9 @@
 import Foundation
 
+let NEURON_MIN: Double = -1.0
+let NEURON_MAX: Double = 1.0
+let NEURON_RANGE: Double = NEURON_MAX - NEURON_MIN
+
 // Each gene specifies one synaptic connection in a neural net. Each
 // connection has an input (source) which is either a sensor or another neuron.
 // Each connection has an output, which is either an action or another neuron.
@@ -138,18 +142,18 @@ func makeRandomGenome(_ range: ClosedRange<Int>) -> Genome {
 // to the range 0..p.maxNumberNeurons - 1 by using a modulo operator.
 // Sensors are renumbered 0..Sensor::NUM_SENSES - 1
 // Actions are renumbered 0..Action::NUM_ACTIONS - 1
-func makeRenumberedConnectionList(genome: Genome, maxNumberNeurons: Int, actionsCount: Int) -> ConnectionList {
+func makeRenumberedConnectionList(genome: Genome, maxNumberNeurons: Int, actions: Int, sensors: Int) -> ConnectionList {
   genome.map { gene in
     var gene = gene
     
     switch gene.sourceType {
     case .neuron: gene.sourceNum %= maxNumberNeurons
-    case .sensor: gene.sourceNum %= Sensor.enabled.count
+    case .sensor: gene.sourceNum %= sensors
     }
     
     switch gene.sinkType {
     case .neuron: gene.sinkNum %= maxNumberNeurons
-    case .action: gene.sinkNum %= actionsCount
+    case .action: gene.sinkNum %= actions
     }
     
     return gene
@@ -248,11 +252,11 @@ func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMa
 ///    range 0..p.genomeMaxLength-1, keeping a count of outputs for each neuron.
 /// 2. Delete any referenced neuron index that has no outputs or only feeds itself.
 /// 3. Renumber the remaining neurons sequentially starting at 0.
-func createWiringFromGenome(_ genome: Genome, maxNumberNeurons: Int, actionsCount: Int) -> NeuralNet {
+func createWiringFromGenome(_ genome: Genome, maxNumberNeurons: Int, actions: Int, sensors: Int) -> NeuralNet {
   var nnet = NeuralNet(connections: [], neurons: [])
   
   // Convert the indiv's genome to a renumbered connection list
-  var connectionList = makeRenumberedConnectionList(genome: genome, maxNumberNeurons: maxNumberNeurons, actionsCount: actionsCount) // synaptic connections
+  var connectionList = makeRenumberedConnectionList(genome: genome, maxNumberNeurons: maxNumberNeurons, actions: actions, sensors: sensors) // synaptic connections
   
   // Make a node (neuron) map and their number of inputs and outputs from the renumbered connection list
   var nodeMap = makeNodeMap(from: connectionList, maxNumberNeurons: maxNumberNeurons)

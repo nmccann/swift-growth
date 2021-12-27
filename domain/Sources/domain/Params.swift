@@ -32,6 +32,8 @@ public struct Params {
   /// Minimum > 0
   public let genomeInitialLength: ClosedRange<Int> // > 0 and < genomeInitialLengthMax
 
+  public let sensors: [Sensor]
+
   /// Actions that are available for neurons to use as outputs.
   /// Applied in order from first to last.
   public let actions: [Action]
@@ -58,6 +60,26 @@ public struct Params {
                                       replaceBarrier: nil,
                                       size: (x: 120, y: 120),
                                       genomeInitialLength: 16...16,
+                                      sensors: [AgeSensor(),
+                                                BoundaryDistanceSensor(axis: .both),
+                                                BoundaryDistanceSensor(axis: .x),
+                                                BoundaryDistanceSensor(axis: .y),
+                                                LastMoveDirectionSensor(axis: .x),
+                                                LastMoveDirectionSensor(axis: .y),
+                                                LocationSensor(axis: .x),
+                                                LocationSensor(axis: .y),
+                                                OscillatorSensor(),
+                                                LongProbePopulationForwardSensor(),
+                                                LongProbeBarrierForwardSensor(),
+                                                PopulationSensor(kind: .forward),
+                                                PopulationSensor(kind: .leftRight),
+                                                BarrierSensor(kind: .forward),
+                                                BarrierSensor(kind: .leftRight),
+                                                RandomSensor(),
+                                                SignalSensor(kind: .neighborhood, layer: 0),
+                                                SignalSensor(kind: .forward, layer: 0),
+                                                SignalSensor(kind: .leftRight, layer: 0),
+                                                GeneticSimilaritySensor()],
                                       actions: [MoveXAction(),
                                                 MoveYAction(),
                                                 MoveAction { $0.indiv.lastDirection },
