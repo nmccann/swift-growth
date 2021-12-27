@@ -51,7 +51,9 @@ func responseCurve(_ r: Double, factor: Int) -> Double {
  evaluated multithreadedly.
  **********************************************************************************/
 func executeActions(indiv: Indiv, levels: [(Action, Double)], on grid: Grid, with parameters: Params) -> ActionResult {
-  var result = levels.reduce(into: ActionResult(indiv: indiv, killed: [])) { partialResult, actionAndLevel in
+  let curve: (Double) -> Double = { [kFactor=parameters.responsiveness.kFactor] value in responseCurve(value, factor: kFactor) }
+
+  var result = levels.reduce(into: ActionResult(indiv: indiv, killed: [], responseCurve: curve)) { partialResult, actionAndLevel in
     actionAndLevel.0.apply(to: &partialResult, level: actionAndLevel.1, on: grid, with: parameters)
   }
 
@@ -88,6 +90,12 @@ public struct ActionResult {
   var newLocation: Coord?
   var signalEmission: (layer: Int, location: Coord)?
   var killed: [Indiv]
-  var adjustedResponsiveness: Double = 0.0
+  let responseCurve: (Double) -> Double
   var movePotential: CGPoint = .zero
+
+  /// Range 0.0..1.0. Used for most actions other than those
+  /// that directly modify the responsiveness
+  var adjustedResponsiveness: Double {
+    responseCurve(indiv.responsiveness)
+  }
 }

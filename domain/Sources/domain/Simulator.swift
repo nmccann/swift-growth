@@ -59,8 +59,12 @@ public func initializeSimulator(with parameters: Params) {
 public func advanceSimulator(with parameters: Params) async {
   let challenge = parameters.challenge ?? NoChallenge()
   let results: [ActionResult] = await peeps.individuals.concurrentMap {
+    //TODO: Ignore dead individuals altogether
     guard $0.alive else {
-      return .init(indiv: $0, newLocation: nil, killed: [])
+      return .init(indiv: $0,
+                   newLocation: nil,
+                   killed: [],
+                   responseCurve: { [kFactor=parameters.responsiveness.kFactor] value in responseCurve(value, factor: kFactor) })
     }
 
     let result = simStepOneIndiv(indiv: $0, simStep: simStep, on: grid, with: parameters)

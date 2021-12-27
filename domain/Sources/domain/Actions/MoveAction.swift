@@ -23,8 +23,12 @@ import Foundation
 struct MoveAction: Action {
   let direction: (ActionResult) -> Direction
 
-  init(_ direction: @escaping (ActionResult) -> Direction) {
+  init(direction: @escaping (ActionResult) -> Direction) {
     self.direction = direction
+  }
+
+  init(direction: Direction) {
+    self.direction = { _ in direction }
   }
 
   func apply(to result: inout ActionResult, level: Double, on grid: Grid, with parameters: Params) {
