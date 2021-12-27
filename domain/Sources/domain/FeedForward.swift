@@ -1,4 +1,5 @@
 import Foundation
+import Surge
 
 /********************************************************************************
  This function does a neural net feed-forward operation, from sensor (input) neurons
@@ -37,7 +38,7 @@ extension Indiv {
     // contains one value per action neuron, which is the sum of all its weighted
     // input connections. The sum has an arbitrary range. Return by value assumes compiler
     // return value optimization.
-    var levels = Dictionary(uniqueKeysWithValues: parameters.actions.indices.map { ($0, 0.0) })
+    var levels: [Int: Double] = [:]
 
     // Weighted inputs to each neuron are summed in neuronAccumulators[]
     var neuronAccumulators: [Double] = .init(repeating: 0.0, count: nnet.neurons.count)
@@ -49,14 +50,17 @@ extension Indiv {
     // except for undriven neurons which act as bias feeds and don't change. The
     // transfer function will leave each neuron's output in the range -1.0..1.0.
     var neuronOutputsComputed = false
+    
     for conn in nnet.connections {
       if case .action = conn.sinkType, !neuronOutputsComputed {
         // We've handled all the connections from sensors and now we are about to
         // start on the connections to the action outputs, so now it's time to
         // update and latch all the neuron outputs to their proper range (-1.0..1.0)
-        for i in 0..<nnet.neurons.count {
+        let clampedNeuronAccumulators = Surge.tanh(neuronAccumulators)
+        
+        for i in nnet.neurons.indices {
           if nnet.neurons[i].driven {
-            nnet.neurons[i].output = tanh(neuronAccumulators[i])
+            nnet.neurons[i].output = clampedNeuronAccumulators[i]
           }
         }
         neuronOutputsComputed = true;
@@ -75,15 +79,12 @@ extension Indiv {
       // The action and neuron accumulators will therefore contain +- float values in
       // an arbitrary range.
       if case .action = conn.sinkType {
-        if var value = levels[conn.sinkNum] {
-          value += inputVal * conn.weightAsDouble()
-          levels[conn.sinkNum] = value
-        }
+        levels[conn.sinkNum, default: 0.0] += inputVal * conn.weightAsDouble()
       } else {
         neuronAccumulators[conn.sinkNum] += inputVal * conn.weightAsDouble()
       }
     }
 
-    return parameters.actions.enumerated().map { ($1, levels[$0] ?? 0.0) }
+    return parameters.actions.enumerated().map { ($1, levels[$0, default: 0.0]) }
   }
 }
