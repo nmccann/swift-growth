@@ -31,6 +31,10 @@ public struct Params {
 
   /// Minimum > 0
   public let genomeInitialLength: ClosedRange<Int> // > 0 and < genomeInitialLengthMax
+
+  /// Actions that are available for neurons to use as outputs.
+  /// Applied in order from first to last.
+  public let actions: [Action]
   
   public static let defaults = Params(population: 200,
                                       stepsPerGeneration: 100,
@@ -49,9 +53,26 @@ public struct Params {
                                       responsiveness: (value: 0.5, kFactor: 2),
                                       probeDistance: (short: 3, long: 16),
                                       genomeComparisonMethod: .hammingBits,
-                                      challenge: .corner(scoring: .weighted),
+                                      challenge: .rightQuarter(),
                                       barrierType: nil,
                                       replaceBarrier: nil,
                                       size: (x: 120, y: 120),
-                                      genomeInitialLength: 16...16)
+                                      genomeInitialLength: 16...16,
+                                      actions: [MoveXAction(),
+                                                MoveYAction(),
+                                                MoveAction { $0.indiv.lastDirection },
+                                                MoveAction { $0.indiv.lastDirection.rotate90DegreesClockwise() },
+                                                MoveAction { _ in .random() },
+                                                OscillatorPeriodAction(),
+                                                LongProbeDistanceAction(),
+                                                ResponsivenessAction(),
+                                                EmitSignalAction(layer: 0),
+                                                MoveAction { _ in .east},
+                                                MoveAction { _ in .west },
+                                                MoveAction { _ in .north },
+                                                MoveAction { _ in .south },
+                                                MoveAction { $0.indiv.lastDirection.rotate90DegreesCounterClockwise() },
+                                                MoveAction { $0.indiv.lastDirection.rotate90DegreesClockwise() },
+                                                MoveAction { $0.indiv.lastDirection.rotate180Degrees() },
+                                                KillAction()])
 }

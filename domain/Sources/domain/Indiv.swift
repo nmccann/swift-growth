@@ -135,7 +135,7 @@ public struct Indiv {
                                                on: grid)
     case .random:
       // Returns a random sensor value in the range 0.0..1.0.
-      sensorVal = Double.random(in: 0...1)
+      sensorVal = .random(in: 0...1)
     case .signal0:
       // Returns magnitude of signal0 in the local neighborhood, with
       // 0.0..maxSignalSum converted to sensorRange 0.0..1.0
@@ -173,7 +173,12 @@ public struct Indiv {
   /// The responsiveness parameter will be initialized here to maximum value
   /// of 1.0, then depending on which action activation function is used,
   /// the default undriven value may be changed to 1.0 or action midrange.
-  init(index: Int, loc: Coord, genome: Genome, probeDistance: (short: Int, long: Int), maxNumberOfNeurons: Int) {
+  init(index: Int,
+       loc: Coord,
+       genome: Genome,
+       probeDistance: (short: Int, long: Int),
+       maxNumberOfNeurons: Int,
+       actionsCount: Int) {
     self.index = index
     self.loc = loc
     self.birthLoc = loc //commented out in original implementation
@@ -185,7 +190,7 @@ public struct Indiv {
     self.probeDistance = probeDistance
     self.challengeBits = 0 // will be set true when some task gets accomplished
     self.genome = genome
-    self.nnet = createWiringFromGenome(genome, maxNumberNeurons: maxNumberOfNeurons)
+    self.nnet = createWiringFromGenome(genome, maxNumberNeurons: maxNumberOfNeurons, actionsCount: actionsCount)
   }
   
   func printNeuralNet() {

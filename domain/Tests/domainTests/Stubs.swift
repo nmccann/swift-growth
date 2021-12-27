@@ -6,11 +6,13 @@ extension Indiv {
                    loc: Coord = .init(x: 0, y: 0),
                    genome: Genome = makeRandomGenome(10...10),
                    probeDistance: (short: Int, long: Int) = (short: 3, long: 16),
-                   maxNumberOfNeurons: Int = 10) -> Self {
+                   maxNumberOfNeurons: Int = 10,
+                   actionsCount: Int = 17) -> Self {
     .init(index: index,
           loc: loc,
           genome: genome,
           probeDistance: probeDistance,
-          maxNumberOfNeurons: maxNumberOfNeurons)
+          maxNumberOfNeurons: maxNumberOfNeurons,
+          actionsCount: actionsCount)
   }
 }

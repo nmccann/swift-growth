@@ -22,7 +22,8 @@ func initializeGeneration0(on grid: Grid, with parameters: Params) {
                                                                      loc: grid.findEmptyLocation(),
                                                                      genome: makeRandomGenome(parameters.genomeInitialLength),
                                                                      probeDistance: parameters.probeDistance,
-                                                                     maxNumberOfNeurons: parameters.maxNumberNeurons) }
+                                                                     maxNumberOfNeurons: parameters.maxNumberNeurons,
+                                                                     actionsCount: parameters.actions.count) }
   
   individuals.forEach { individual in
     grid.set(loc: individual.loc, val: individual.index)
@@ -54,7 +55,8 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
                                                                      loc: grid.findEmptyLocation(),
                                                                      genome: generateChildGenome(parentGenomes: parentGenomes, with: parameters),
                                                                      probeDistance: parameters.probeDistance,
-                                                                     maxNumberOfNeurons: parameters.maxNumberNeurons) }
+                                                                     maxNumberOfNeurons: parameters.maxNumberNeurons,
+                                                                     actionsCount: parameters.actions.count) }
   
   individuals.forEach { individual in
     grid.set(loc: individual.loc, val: individual.index)

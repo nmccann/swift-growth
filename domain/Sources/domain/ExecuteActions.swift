@@ -50,163 +50,32 @@ func responseCurve(_ r: Double, factor: Int) -> Double {
  simulator step by endOfSimStep() in a single thread after all individuals have been
  evaluated multithreadedly.
  **********************************************************************************/
-func executeActions(indiv: Indiv, levels: [Action: Double], on grid: Grid, with parameters: Params) -> ActionResult {
-  var result = ActionResult(indiv: indiv, killed: [])
+func executeActions(indiv: Indiv, levels: [(Action, Double)], on grid: Grid, with parameters: Params) -> ActionResult {
+  var result = levels.reduce(into: ActionResult(indiv: indiv, killed: [])) { partialResult, actionAndLevel in
+    actionAndLevel.0.apply(to: &partialResult, level: actionAndLevel.1, on: grid, with: parameters)
+  }
 
-  // Responsiveness action - convert neuron action level from arbitrary float range
-  // to the range 0.0..1.0. If this action neuron is enabled but not driven, will
-  // default to mid-level 0.5.
-  if var level = levels[.SET_RESPONSIVENESS] {
-    level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
-    result.indiv.responsiveness = level
-  }
-  
-  // For the rest of the action outputs, we'll apply an adjusted responsiveness
-  // factor (see responseCurve() for more info). Range 0.0..1.0.
-  let responsivenessAdjusted = responseCurve(result.indiv.responsiveness,
-                                             factor: parameters.responsiveness.kFactor)
-  
-  // Oscillator period action - convert action level nonlinearly to
-  // 2..4*parameters.stepsPerGeneration. If this action neuron is enabled but not driven,
-  // will default to 1.5 + e^(3.5) = a period of 34 simSteps.
-  if let periodf = levels[.SET_OSCILLATOR_PERIOD] {
-    let newPeriodf01 = (tanh(periodf) + 1.0) / 2.0 // convert to 0.0..1.0
-    let newPeriod = 1 + Int(1.5 + exp(7.0 * newPeriodf01))
-    assert(newPeriod >= 2 && newPeriod <= 2048)
-    result.indiv.oscPeriod = newPeriod
-  }
-  
-  // Set longProbeDistance - convert action level to 1..maxLongProbeDistance.
-  // If this action neuron is enabled but not driven, will default to
-  // mid-level period of 17 simSteps.
-  if var level = levels[.SET_LONGPROBE_DIST] {
-    let maxLongProbeDistance = 32
-    level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
-    level = 1 + level * Double(maxLongProbeDistance)
-    result.indiv.probeDistance.long = Int(UInt(level))
-  }
-  
-  // Emit signal0 - if this action value is below a threshold, nothing emitted.
-  // Otherwise convert the action value to a probability of emitting one unit of
-  // signal (pheromone).
-  // Pheromones may be emitted immediately (see signals.cpp). If this action neuron
-  // is enabled but not driven, nothing will be emitted.
-  if var level = levels[.EMIT_SIGNAL0] {
-    let emitThreshold = 0.5  // 0.0..1.0; 0.5 is midlevel
-    level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
-    level *= responsivenessAdjusted
-    
-    if level > emitThreshold && prob2bool(level) {
-      result.signalEmission = (layer: 0, location: result.indiv.loc)
-    }
-  }
-  
-  // Kill forward -- if this action value is > threshold, value is converted to probability
-  // of an attempted murder. Probabilities under the threshold are considered 0.0.
-  // If this action neuron is enabled but not driven, the neighbors are safe.
-  if var level = levels[.KILL_FORWARD], parameters.killEnable {
-    let killThreshold = 0.5  // 0.0..1.0; 0.5 is midlevel
-    level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
-    level *= responsivenessAdjusted
-    
-    if level > killThreshold && prob2bool((level - ACTION_MIN) / ACTION_RANGE) {
-      let otherLoc = result.indiv.loc + result.indiv.lastDirection
-      
-      if grid.isInBounds(loc: otherLoc) && grid.isOccupiedAt(loc: otherLoc) {
-        let indiv2 = peeps.getIndiv(loc: otherLoc)
-        let distance = (result.indiv.loc - indiv2.loc).length
-        assert(distance == 1)
-        result.killed.append(indiv2)
-      }
-    }
-  }
-  
-  // ------------- Movement action neurons ---------------
-  
-  // There are multiple action neurons for movement. Each type of movement neuron
-  // urges the individual to move in some specific direction. We sum up all the
-  // X and Y components of all the movement urges, then pass the X and Y sums through
-  // a transfer function (tanh()) to get a range -1.0..1.0. The absolute values of the
-  // X and Y values are passed through prob2bool() to convert to -1, 0, or 1, then
-  // multiplied by the component's signum. This results in the x and y components of
-  // a normalized movement offset. I.e., the probability of movement in either
-  // dimension is the absolute value of tanh of the action level X,Y components and
-  // the direction is the sign of the X, Y components. For example, for a particular
-  // action neuron:
-  //     X, Y == -5.9, +0.3 as raw action levels received here
-  //     X, Y == -0.999, +0.29 after passing raw values through tanh()
-  //     Xprob, Yprob == 99.9%, 29% probability of X and Y becoming 1 (or -1)
-  //     X, Y == -1, 0 after applying the sign and probability
-  //     The agent will then be moved West (an offset of -1, 0) if it's a legal move.
-
-  var offset: Coord
-  let lastMoveOffset = result.indiv.lastDirection.asNormalizedCoord()
-  
-  // moveX,moveY will be the accumulators that will hold the sum of all the
-  // urges to move along each axis. (+- floating values of arbitrary range)
-  var moveX = levels[.MOVE_X] ?? 0.0
-  var moveY = levels[.MOVE_Y] ?? 0.0
-  
-  moveX += levels[.MOVE_EAST] ?? 0
-  moveX -= levels[.MOVE_WEST] ?? 0
-  moveY += levels[.MOVE_NORTH] ?? 0
-  moveY -= levels[.MOVE_SOUTH] ?? 0
-  
-  if let level = levels[.MOVE_FORWARD] {
-    moveX += Double(lastMoveOffset.x) * level
-    moveY += Double(lastMoveOffset.y) * level
-  }
-  
-  if let level = levels[.MOVE_REVERSE] {
-    moveX -= Double(lastMoveOffset.x) * level
-    moveY -= Double(lastMoveOffset.y) * level
-  }
-  
-  if let level = levels[.MOVE_LEFT] {
-    offset = result.indiv.lastDirection.rotate90DegreesCounterClockwise().asNormalizedCoord()
-    moveX += Double(offset.x) * level
-    moveY += Double(offset.y) * level
-  }
-  
-  if let level = levels[.MOVE_RIGHT] {
-    offset = result.indiv.lastDirection.rotate90DegreesClockwise().asNormalizedCoord()
-    moveX += Double(offset.x) * level
-    moveY += Double(offset.y) * level
-  }
-  
-  if let level = levels[.MOVE_RL] {
-    offset = result.indiv.lastDirection.rotate90DegreesClockwise().asNormalizedCoord()
-    moveX += Double(offset.x) * level
-    moveY += Double(offset.y) * level
-  }
-  
-  if let level = levels[.MOVE_RANDOM] {
-    offset = Direction.random().asNormalizedCoord()
-    moveX += Double(offset.x) * level
-    moveY += Double(offset.y) * level
-  }
-  
   // Convert the accumulated X, Y sums to the range -1.0..1.0 and scale by the
   // individual's responsiveness (0.0..1.0) (adjusted by a curve)
-  moveX = tanh(moveX);
-  moveY = tanh(moveY);
-  moveX *= responsivenessAdjusted;
-  moveY *= responsivenessAdjusted;
-  
+  var moveX = tanh(result.movePotential.x)
+  var moveY = tanh(result.movePotential.y)
+  moveX *= result.adjustedResponsiveness
+  moveY *= result.adjustedResponsiveness
+
   // The probability of movement along each axis is the absolute value
   let probX = prob2bool(abs(moveX)) ? 1 : 0 // convert abs(level) to 0 or 1
   let probY = prob2bool(abs(moveY)) ? 1 : 0 // convert abs(level) to 0 or 1
-  
+
   // The direction of movement (if any) along each axis is the sign
   let signumX = moveX < 0.0 ? -1 : 1
   let signumY = moveY < 0.0 ? -1 : 1
-  
+
   // Generate a normalized movement offset, where each component is -1, 0, or 1
   let movementOffset = Coord(x: Int(probX * signumX), y: Int(probY * signumY))
-  
+
   // Move there if it's a valid location
   let proposedLocation = result.indiv.loc + movementOffset
-  
+
   if grid.isInBounds(loc: proposedLocation) && grid.isEmptyAt(loc: proposedLocation) {
     result.newLocation = proposedLocation
   }
@@ -219,4 +88,6 @@ public struct ActionResult {
   var newLocation: Coord?
   var signalEmission: (layer: Int, location: Coord)?
   var killed: [Indiv]
+  var adjustedResponsiveness: Double = 0.0
+  var movePotential: CGPoint = .zero
 }

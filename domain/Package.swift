@@ -14,13 +14,15 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-algorithms.git", .exact("1.0.0")),
     .package(url: "https://github.com/johnsundell/collectionconcurrencykit", .exact("0.2.0")),
     .package(url: "https://github.com/Jounce/Surge", .exact("2.3.2")),
-    .package(url: "https://github.com/Quick/Nimble", .exact("9.2.1"))
+    .package(url: "https://github.com/Quick/Nimble", .exact("9.2.1")),
+    .package(url: "https://github.com/pointfreeco/swift-custom-dump", .exact("0.3.0"))
   ],
   targets: [
     .target(name: "domain",
             dependencies: [.byName(name: "Surge"),
                            .product(name: "Algorithms", package: "swift-algorithms"),
-                           .product(name: "CollectionConcurrencyKit", package: "collectionconcurrencykit")]),
+                           .product(name: "CollectionConcurrencyKit", package: "collectionconcurrencykit"),
+                           .product(name: "CustomDump", package: "swift-custom-dump")]),
     .testTarget(name: "domainTests",
                 dependencies: ["domain", "Nimble"]),
   ]

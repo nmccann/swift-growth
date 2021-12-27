@@ -32,17 +32,16 @@ import Foundation
  actionLevels[] which is returned to the caller by value (thanks RVO).
  ********************************************************************************/
 extension Indiv {
-  mutating func feedForward(simStep: Int, on grid: Grid, with parameters: Params) -> [Action: Double] {
+  mutating func feedForward(simStep: Int, on grid: Grid, with parameters: Params) -> [(Action, Double)] {
     // This container is used to return values for all the action outputs. This array
     // contains one value per action neuron, which is the sum of all its weighted
     // input connections. The sum has an arbitrary range. Return by value assumes compiler
     // return value optimization.
-    var levels: [Action: Double] = [:]
-    Action.enabled.forEach { levels[$0] = 0.0 } // undriven actions default to value 0.0
-    
+    var levels = Dictionary(uniqueKeysWithValues: parameters.actions.indices.map { ($0, 0.0) })
+
     // Weighted inputs to each neuron are summed in neuronAccumulators[]
     var neuronAccumulators: [Double] = .init(repeating: 0.0, count: nnet.neurons.count)
-    
+
     // Connections were ordered at birth so that all connections to neurons get
     // processed here before any connections to actions. As soon as we encounter the
     // first connection to an action, we'll pass all the neuron input accumulators
@@ -62,7 +61,7 @@ extension Indiv {
         }
         neuronOutputsComputed = true;
       }
-      
+
       // Obtain the connection's input value from a sensor neuron or other neuron
       // The values are summed for now, later passed through a transfer function
       var inputVal: Double
@@ -71,21 +70,20 @@ extension Indiv {
       } else {
         inputVal = nnet.neurons[conn.sourceNum].output;
       }
-      
+
       // Weight the connection's value and add to neuron accumulator or action accumulator.
       // The action and neuron accumulators will therefore contain +- float values in
       // an arbitrary range.
       if case .action = conn.sinkType {
-        let action = Action(rawValue: conn.sinkNum)!
-        if var value = levels[action] {
+        if var value = levels[conn.sinkNum] {
           value += inputVal * conn.weightAsDouble()
-          levels[action] = value
+          levels[conn.sinkNum] = value
         }
       } else {
         neuronAccumulators[conn.sinkNum] += inputVal * conn.weightAsDouble()
       }
     }
-    
-    return levels
+
+    return parameters.actions.enumerated().map { ($1, levels[$0] ?? 0.0) }
   }
 }
