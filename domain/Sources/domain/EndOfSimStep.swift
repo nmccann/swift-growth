@@ -16,7 +16,9 @@ import Foundation
 func endOfSimStep(_ simStep: Int, generation: Int, on grid: Grid, with parameters: Params) {
   peeps.drainDeathQueue()
   peeps.drainMoveQueue()
-  signals.fade(layer: 0, by: SIGNAL_DAMPING) // takes layerNum
   
+  signals.layers.indices.forEach { index in
+    signals.fade(layer: index, by: SIGNAL_DAMPING)
+  }
   //TODO: Support saving video?
 }
