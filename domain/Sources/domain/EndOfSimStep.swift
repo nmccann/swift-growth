@@ -14,8 +14,8 @@ import Foundation
  p.saveVideo is true).
  */
 func endOfSimStep(_ simStep: Int, generation: Int, on grid: Grid, with parameters: Params) {
-  peeps.drainDeathQueue()
-  peeps.drainMoveQueue()
+  grid.drainDeathQueue()
+  grid.drainMoveQueue()
   
   signals.layers.indices.forEach { index in
     signals.fade(layer: index, by: SIGNAL_DAMPING)

@@ -10,7 +10,7 @@ struct GeneticSimilaritySensor: Sensor {
       return 0.0
     }
 
-    let indiv2 = peeps.getIndiv(loc: loc2)
+    let indiv2 = grid.getIndiv(loc: loc2)
 
     guard indiv2.alive else {
       return 0.0

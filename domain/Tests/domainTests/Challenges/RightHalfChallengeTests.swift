@@ -13,7 +13,7 @@ class RightHalfChallengeTests: XCTestCase {
 
   func testLeftSideFails() {
     individual = .stub(loc: .init(x: 1, y: 0))
-    grid.set(loc: individual.loc, val: individual.index)
+    grid[individual.loc] = .occupied(by: individual)
     let result = sut.test(individual, on: grid)
     expect(result.didPass) == false
     expect(result.score) == 0
@@ -21,7 +21,7 @@ class RightHalfChallengeTests: XCTestCase {
 
   func testMiddleFails() {
     individual = .stub(loc: .init(x: 2, y: 0))
-    grid.set(loc: individual.loc, val: individual.index)
+    grid[individual.loc] = .occupied(by: individual)
     let result = sut.test(individual, on: grid)
     expect(result.didPass) == false
     expect(result.score) == 0
@@ -29,7 +29,7 @@ class RightHalfChallengeTests: XCTestCase {
 
   func testRightPasses() {
     individual = .stub(loc: .init(x: 3, y: 0))
-    grid.set(loc: individual.loc, val: individual.index)
+    grid[individual.loc] = .occupied(by: individual)
     let result = sut.test(individual, on: grid)
     expect(result.didPass) == true
     expect(result.score) == 1

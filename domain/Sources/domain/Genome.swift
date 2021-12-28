@@ -73,11 +73,11 @@ typealias Genome = [Gene]
 // In the neural net, the neurons that end up connected get new indices
 // assigned sequentially starting at 0.
 
-struct NeuralNet {
+struct NeuralNet: Equatable {
   var connections: [Gene] // connections are equivalent to genes
   var neurons: [Neuron]
   
-  struct Neuron {
+  struct Neuron: Equatable {
     var output: Double
     let driven: Bool // undriven neurons have fixed output values
   }

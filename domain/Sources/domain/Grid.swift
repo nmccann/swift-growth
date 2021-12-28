@@ -1,32 +1,116 @@
 import Foundation
 
-let BARRIER = 0xffff
-
 public class Grid {
-  var data: [Column]
+  public enum Kind: Equatable {
+    case occupied(by: Indiv)
+    case barrier
+  }
+
+  private var data: [Coord: Kind] = [:]
+  public private(set) var dead: [Indiv] = []
   public var barrierLocations: [Coord] = []
   var barrierCenters: [Coord] = []
+  private(set) var deathQueue: [Coord] = []
+  private(set) var moveQueue: [(old: Coord, new: Coord)] = []
   let size: (x: Int, y: Int)
 
+  subscript(location: Coord) -> Kind? {
+    get {
+      data[location]
+    }
+
+    set {
+      data[location] = newValue
+    }
+  }
+
+  subscript(x: Int, y: Int) -> Kind? {
+    get {
+      data[.init(x: x, y: y)]
+    }
+
+    set {
+      data[.init(x: x, y: y)] = newValue
+    }
+  }
+
+  public var living: [Indiv] {
+    data.values.compactMap {
+      switch $0 {
+      case .occupied(by: let individual): return individual
+      case .barrier: return nil
+      }
+    }
+  }
+
+  /// Safe to call during multithread mode.
+  /// Indiv will remain alive and in-world until end of sim step when
+  /// drainDeathQueue() is called. It's ok if the same agent gets
+  /// queued for death multiple times. It does not make sense to
+  /// call this function for agents already dead.
+  func queueForDeath(at location: Coord) {
+    deathQueue.append(location)
+  }
+
+  /// Called in single-thread mode at end of sim step. This executes all the
+  /// queued deaths, removing the dead agents from the grid.
+  func drainDeathQueue() {
+    for location in deathQueue {
+      guard case .occupied(by: let individual) = data.removeValue(forKey: location) else {
+        continue
+      }
+
+      dead.append(individual)
+    }
+    deathQueue.removeAll()
+  }
+
+
+  /// Safe to call during multithread mode. Indiv won't move until end
+  /// of sim step when drainMoveQueue() is called. Should only be called
+  /// for living agents. It's ok if multiple agents are queued to move
+  /// to the same location; only the first one will actually get moved.
+  func queueForMove(from location: Coord, to newLocation: Coord) {
+    moveQueue.append((location, newLocation))
+  }
+
+  /// Called in single-thread mode at end of sim step. This executes all the
+  /// queued movements. Each movement is typically one 8-neighbor cell distance
+  /// but this function can move an individual any arbitrary distance. It is
+  // possible that an agent queued for movement was recently killed when the
+  // death queue was drained, so we'll ignore already-dead agents.
+  func drainMoveQueue() {
+    for moveRecord in moveQueue {
+      guard case .occupied(by: var indiv) = data[moveRecord.old], indiv.alive else {
+        continue
+      }
+
+      if let moveDirection = (moveRecord.new - indiv.loc).asDir(), isEmptyAt(loc: moveRecord.new) {
+        indiv.loc = moveRecord.new
+        indiv.lastDirection = moveDirection
+        data[moveRecord.old] = nil
+        data[moveRecord.new] = .occupied(by: indiv)
+      }
+    }
+
+    moveQueue.removeAll()
+  }
+
+  /// Does no error checking -- check first that loc is occupied
+  func getIndiv(loc: Coord) -> Indiv {
+    guard case .occupied(by: let individual) = data[loc] else {
+      fatalError("Location is not occupied")
+    }
+
+    return individual
+  }
+
   init(size: (x: Int, y: Int)) {
-    data = .init(repeating: .init(numRows: size.y), count: size.x)
     self.size = size
   }
 
   func nilFill() {
-    data = data.map {
-      var temp = $0
-      temp.nilFill()
-      return temp
-    }
-  }
-
-  func randomFill() {
-    data = data.map {
-      var temp = $0
-      temp.randomFill()
-      return temp
-    }
+    data.removeAll()
   }
 
   func isInBounds(loc: Coord) -> Bool {
@@ -38,42 +122,41 @@ public class Grid {
   }
 
   func isBarrierAt(loc: Coord) -> Bool {
-    at(loc) == BARRIER
+    if case .barrier = at(loc) {
+      return true
+    } else {
+      return false
+    }
   }
 
   /// Occupied means an agent is living there.
   func isOccupiedAt(loc: Coord) -> Bool {
-    let value = at(loc)
-    return value != nil && value != BARRIER
+    if case .occupied(by: _) = at(loc) {
+      return true
+    } else {
+      return false
+    }
   }
 
   func isBorder(loc: Coord) -> Bool {
     loc.x == 0 || loc.x == size.x - 1 || loc.y == 0 || loc.y == size.y - 1
   }
 
-  func at(_ loc: Coord) -> Int? {
-    data[loc.x][loc.y]
+  func at(_ loc: Coord) -> Kind? {
+    data[loc]
   }
 
-  func at(x: Int, y: Int) -> Int? {
-    data[x][y]
-  }
-
-  func set(loc: Coord, val: Int?) {
-    data[loc.x][loc.y] = val
-  }
-
-  func set(x: Int, y: Int, val: Int?) {
-    data[x][y] = val
+  func at(x: Int, y: Int) -> Kind? {
+    data[.init(x: x, y: y)]
   }
 
   func findEmptyLocation() -> Coord {
     while true {
-      let loc = Coord(x: .random(in: 0..<size.x),
-                      y: .random(in: 0..<size.y))
+      let location = Coord(x: .random(in: 0..<size.x),
+                           y: .random(in: 0..<size.y))
 
-      if isEmptyAt(loc: loc) {
-        return loc
+      if isEmptyAt(loc: location) {
+        return location
       }
     }
   }
@@ -98,7 +181,7 @@ public class Grid {
     func drawBox(min: (x: Int, y: Int), max: (x: Int, y: Int)) {
       for x in min.x...max.x {
         for y in min.y...max.y {
-          set(x: x, y: y, val: BARRIER)
+          data[.init(x: x, y: y)] = .barrier
           barrierLocations.append(.init(x: x, y: y))
         }
       }
@@ -124,7 +207,7 @@ public class Grid {
       for _ in 0..<numberOfLocations {
         let loc = Coord(x: .random(in: 0..<size.x), y: .random(in: 0..<size.y))
         visitNeighborhood(loc: loc, radius: radius) {
-          set(loc: $0, val: BARRIER)
+          data[$0] = .barrier
           barrierLocations.append($0)
         }
       }
@@ -150,54 +233,6 @@ public class Grid {
         assert(y >= 0 && y < size.y)
         f(.init(x: x, y: y))
       }
-    }
-  }
-
-  subscript(columnXNum: Int) -> Column {
-    get {
-      data[columnXNum]
-    }
-
-    set {
-      data[columnXNum] = newValue
-    }
-  }
-}
-
-extension Grid {
-  struct Column {
-    var data: [Int?]
-
-    init(numRows: Int) {
-      data = .init(repeating: nil, count: numRows)
-    }
-
-    mutating func nilFill() {
-      data = data.map { _ in nil }
-    }
-
-    mutating func randomFill() {
-      data = data.map { _ in
-        if Bool.random() == false {
-          return nil
-        } else {
-          return Bool.random() == false ? BARRIER : 1
-        }
-      }
-    }
-
-    subscript(rowNum: Int) -> Int? {
-      get {
-        data[rowNum]
-      }
-
-      set {
-        data[rowNum] = newValue
-      }
-    }
-
-    func size() -> Int {
-      data.count
     }
   }
 }

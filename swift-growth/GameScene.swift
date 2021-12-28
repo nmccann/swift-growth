@@ -78,7 +78,7 @@ class GameScene: SKScene {
 
 private extension GameScene {
   func generateGrid() {
-    guard peeps != nil else {
+    guard grid != nil else {
       return
     }
 
@@ -95,7 +95,7 @@ private extension GameScene {
     let squareWidth = floor(min(exactFit.width, exactFit.height))
     cellSize = CGSize(width: squareWidth, height: squareWidth)
 
-    cellNodes = peeps.individuals.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
+    cellNodes = grid.living.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
     cellNodes.forEach { gridNode.addChild($0) }
 
     generateBarriers()
@@ -114,8 +114,8 @@ private extension GameScene {
       generateGrid()
     }
 
-    zip(cellNodes, peeps.individuals).forEach { cell, indiv in
-      updateCell(cell, indiv: indiv, size: cellSize)
+    zip(cellNodes, grid.living).forEach { cell, individual in
+      updateCell(cell, indiv: individual, size: cellSize)
     }
 
     if lastBarrierLocations != grid.barrierLocations {
@@ -134,11 +134,14 @@ private extension GameScene {
     didStartAdvancing()
 
     Task.detached(priority: .high) {
+      let before = Date().timeIntervalSince1970
       for _ in 0..<steps {
         await self.didStartStep()
         await advanceSimulator(with: self.parameters)
         await self.didFinishStep()
       }
+      let after = Date().timeIntervalSince1970
+      print("Delta: \(after - before)")
 
       await self.didFinishAdvancing()
     }
@@ -166,7 +169,8 @@ private extension GameScene {
 
     switch (runMode, Int(keyChar)) {
     case (_, NSUpArrowFunctionKey) where !keyDown:
-      let diversity = parameters.genomeComparisonMethod.diversityFor(peeps.individuals, initialPopulation: parameters.population)
+      let living: [Indiv] = grid.living + grid.dead
+      let diversity = parameters.genomeComparisonMethod.diversityFor(living, initialPopulation: parameters.population)
       print("Genetic Diversity: \(diversity)")
 
     case (.run, NSDownArrowFunctionKey) where !keyDown:   runMode = .stop

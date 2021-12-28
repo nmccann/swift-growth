@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Coord: Equatable {
+public struct Coord: Equatable, Hashable {
   public let x: Int
   public let y: Int
 

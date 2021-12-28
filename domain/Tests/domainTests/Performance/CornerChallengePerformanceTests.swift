@@ -9,7 +9,7 @@ class CornerChallengePerformanceTests: XCTestCase {
   override func setUp() {
     grid = .init(size: (x: 100, y: 100))
     individuals = (1...10).map { .stub(index: $0, loc: .init(x: (grid.size.x - 1) / $0, y: (grid.size.y - 1) / $0)) }
-    individuals.forEach { grid.set(loc: $0.loc, val: $0.index) }
+    individuals.forEach { grid[$0.loc] = .occupied(by: $0) }
   }
 
   func testWeightedPerformance() {

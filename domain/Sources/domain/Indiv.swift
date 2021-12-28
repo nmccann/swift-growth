@@ -1,8 +1,12 @@
 import Foundation
 
-public struct Indiv {
+public struct Indiv: Equatable {
+  struct ProbeDistance: Equatable {
+    var short: Int
+    var long: Int
+  }
   public var alive: Bool
-  let index: Int // index into peeps[] container
+  let index: Int
   public var loc: Coord // refers to a location in grid[][]
   let birthLoc: Coord
   var age: Int
@@ -12,7 +16,7 @@ public struct Indiv {
   var oscPeriod: Int // 2..4*p.stepsPerGeneration (TBD, see executeActions())
 
   /// Distance to check for obstructions with long forward probe
-  var probeDistance: (short: Int, long: Int)
+  var probeDistance: ProbeDistance
 
   /// Direction of last movement
   var lastDirection: Direction
@@ -54,7 +58,7 @@ public struct Indiv {
     self.alive = true
     self.lastDirection = .random()
     self.responsiveness = 0.5 // range 0.0..1.0
-    self.probeDistance = probeDistance
+    self.probeDistance = .init(short: probeDistance.short, long: probeDistance.long)
     self.challengeBits = 0 // will be set true when some task gets accomplished
     self.genome = genome
     self.nnet = createWiringFromGenome(genome, maxNumberNeurons: maxNumberOfNeurons, actions: actions, sensors: sensors)

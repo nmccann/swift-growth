@@ -11,7 +11,7 @@ class ResponsivenessActionTests: XCTestCase {
   override func setUp() {
     grid = .init(size: (x: 4, y: 4))
     individual = .stub()
-    grid.set(loc: individual.loc, val: individual.index)
+    grid[individual.loc] = .occupied(by: individual)
   }
 
   func testUndriven() {

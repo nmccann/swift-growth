@@ -5,7 +5,6 @@ import Nimble
 
 class ExecuteActionsTests: XCTestCase {
   var parameters: Params!
-  var peeps: Peeps!
   var signals: Signals!
   var grid: Grid!
 
@@ -13,14 +12,12 @@ class ExecuteActionsTests: XCTestCase {
     parameters = .stub(size: (4, 4))
     signals = .init(layers: parameters.signalLayers, size: parameters.size)
     grid = .init(size: parameters.size)
-    grid.nilFill()
   }
 
   func testMoveEast() {
     let initial = Coord(x: 2, y: 2)
     let indiv = Indiv.stub(index: 0, loc: initial)
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
-    peeps = .init(individuals: [indiv], on: grid)
+    grid[indiv.loc] = .occupied(by: indiv)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
     while grid.isOccupiedAt(loc: initial) {
@@ -28,8 +25,7 @@ class ExecuteActionsTests: XCTestCase {
                                   levels: [(MoveAction(direction: .east), .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
-      applyResult(result, to: peeps, signals: &signals)
-      peeps.drainMoveQueue()
+      applyResult(result, to: grid, signals: &signals)
     }
     expect(self.grid.isOccupiedAt(loc: .init(x: 3, y: 2))) == true
   }
@@ -37,8 +33,7 @@ class ExecuteActionsTests: XCTestCase {
   func testMoveNorth() {
     let initial = Coord(x: 2, y: 2)
     let indiv = Indiv.stub(index: 0, loc: initial)
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
-    peeps = .init(individuals: [indiv], on: grid)
+    grid[indiv.loc] = .occupied(by: indiv)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
     while grid.isOccupiedAt(loc: initial) {
@@ -46,8 +41,7 @@ class ExecuteActionsTests: XCTestCase {
                                   levels: [(MoveAction(direction: .north), .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
-      applyResult(result, to: peeps, signals: &signals)
-      peeps.drainMoveQueue()
+      applyResult(result, to: grid, signals: &signals)
     }
     expect(self.grid.isOccupiedAt(loc: .init(x: 2, y: 3))) == true
   }
@@ -56,8 +50,7 @@ class ExecuteActionsTests: XCTestCase {
     let initial = Coord(x: 2, y: 2)
     var indiv = Indiv.stub(index: 0, loc: initial)
     indiv.lastDirection = .east
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
-    peeps = .init(individuals: [indiv], on: grid)
+    grid[indiv.loc] = .occupied(by: indiv)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
     while grid.isOccupiedAt(loc: initial) {
@@ -65,8 +58,7 @@ class ExecuteActionsTests: XCTestCase {
                                   levels: [(MoveAction { $0.indiv.lastDirection }, .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
-      applyResult(result, to: peeps, signals: &signals)
-      peeps.drainMoveQueue()
+      applyResult(result, to: grid, signals: &signals)
     }
     expect(self.grid.isOccupiedAt(loc: .init(x: 3, y: 2))) == true
   }
@@ -75,8 +67,7 @@ class ExecuteActionsTests: XCTestCase {
     let initial = Coord(x: 2, y: 2)
     var indiv = Indiv.stub(index: 0, loc: initial)
     indiv.lastDirection = .east
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
-    peeps = .init(individuals: [indiv], on: grid)
+    grid[indiv.loc] = .occupied(by: indiv)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
     while grid.isOccupiedAt(loc: initial) {
@@ -84,8 +75,7 @@ class ExecuteActionsTests: XCTestCase {
                                   levels: [(MoveAction { $0.indiv.lastDirection.rotate180Degrees() }, .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
-      applyResult(result, to: peeps, signals: &signals)
-      peeps.drainMoveQueue()
+      applyResult(result, to: grid, signals: &signals)
     }
     expect(self.grid.isOccupiedAt(loc: .init(x: 1, y: 2))) == true
   }
@@ -93,8 +83,7 @@ class ExecuteActionsTests: XCTestCase {
   func testSetResponsiveness() {
     var indiv = Indiv.stub(index: 0)
     indiv.responsiveness = 1.0
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
-    peeps = .init(individuals: [indiv], on: grid)
+    grid[indiv.loc] = .occupied(by: indiv)
 
     let result = executeActions(indiv: indiv, levels: [(ResponsivenessAction(), 10)], on: grid, with: parameters)
     expect(result.indiv.responsiveness) ≈ 0.9999
@@ -103,8 +92,7 @@ class ExecuteActionsTests: XCTestCase {
   func testSetOscillatorPeriod() {
     var indiv = Indiv.stub(index: 0)
     indiv.oscPeriod = 1
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
-    peeps = .init(individuals: [indiv], on: grid)
+    grid[indiv.loc] = .occupied(by: indiv)
 
     let result = executeActions(indiv: indiv, levels: [(OscillatorPeriodAction(), 5)], on: grid, with: parameters)
     expect(result.indiv.oscPeriod) == 1098
@@ -113,53 +101,52 @@ class ExecuteActionsTests: XCTestCase {
   func testSetLongProbeDist() {
     var indiv = Indiv.stub(index: 0)
     indiv.probeDistance.long = 1
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
-    peeps = .init(individuals: [indiv], on: grid)
+    grid[indiv.loc] = .occupied(by: indiv)
 
     let result = executeActions(indiv: indiv, levels: [(LongProbeDistanceAction(), 20)], on: grid, with: parameters)
     expect(result.indiv.probeDistance.long) == 33
   }
 
   func testEmitSignalOverThreshold() {
-    var indiv = Indiv.stub(index: 0, loc: .init(x: 2, y: 2))
-    indiv.responsiveness = 1
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
-    peeps = .init(individuals: [indiv], on: grid)
+    var individual = Indiv.stub(index: 0, loc: .init(x: 2, y: 2))
+    individual.responsiveness = 1
+    grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(indiv: indiv, levels: [(EmitSignalAction(layer: 0), 2)], on: grid, with: parameters)
-    expect(result.signalEmission) == (layer: 0, location: indiv.loc)
+    let result = executeActions(indiv: individual, levels: [(EmitSignalAction(layer: 0), 2)], on: grid, with: parameters)
+    expect(result.signalEmission) == (layer: 0, location: individual.loc)
   }
 
   func testKillForward() {
-    //TODO: Fix this test - failing because `KillAction` makes use of global state
-    var indiv = Indiv.stub(index: 0, loc: .init(x: 2, y: 2))
-    indiv.lastDirection = .east
-    indiv.responsiveness = 1
-    grid.set(loc: indiv.loc, val: indiv.alive ? indiv.index : nil)
+    var individual = Indiv.stub(index: 0, loc: .init(x: 2, y: 2))
+    individual.lastDirection = .east
+    individual.responsiveness = 1
+    grid[individual.loc] = .occupied(by: individual)
 
-    let otherIndiv = Indiv.stub(index: 0, loc: .init(x: 3, y: 2))
-    grid.set(loc: otherIndiv.loc, val: otherIndiv.alive ? otherIndiv.index : nil)
+    let other = Indiv.stub(index: 0, loc: .init(x: 3, y: 2))
+    grid[other.loc] = .occupied(by: other)
 
-    peeps = .init(individuals: [indiv, otherIndiv], on: grid)
-
-    let result = executeActions(indiv: indiv, levels: [(KillAction(), 2)], on: grid, with: parameters)
+    let result = executeActions(indiv: individual, levels: [(KillAction(), 2)], on: grid, with: parameters)
     expect(result.killed).to(haveCount(1))
-    expect(result.killed.first?.index) == otherIndiv.index
+    expect(result.killed.first?.index) == other.index
+
+    applyResult(result, to: grid, signals: &signals)
+    expect(self.grid[other.loc]).to(beNil())
   }
 }
 
-private func applyResult(_ result: ActionResult, to peeps: Peeps, signals: inout Signals) {
-  peeps.individuals.append(result.indiv)
-
+private func applyResult(_ result: ActionResult, to grid: Grid, signals: inout Signals) {
   if let signal = result.signalEmission {
     signals.increment(layer: signal.layer, loc: signal.location)
   }
 
   if let newLocation = result.newLocation {
-    peeps.queueForMove(result.indiv, newLoc: newLocation)
+    grid.queueForMove(from: result.indiv.loc, to: newLocation)
   }
 
   result.killed.forEach {
-    peeps.queueForDeath($0)
+    grid.queueForDeath(at: $0.loc)
   }
+
+  grid.drainDeathQueue()
+  grid.drainMoveQueue()
 }

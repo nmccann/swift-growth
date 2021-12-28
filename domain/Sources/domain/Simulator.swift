@@ -8,7 +8,6 @@ public enum RunMode {
 public var runMode = RunMode.run
 public var grid: Grid! // 2D arena where the individuals live
 public var signals: Signals! // pheromone layers
-public var peeps: Peeps! // container of all the individuals
 public var generation = 0
 public var murderCount = 0
 public var simStep = 0
@@ -50,7 +49,6 @@ public func initializeSimulator(with parameters: Params) {
   // will be reused in each new generation.
   grid = .init(size: parameters.size) // the land on which the peeps live
   signals = .init(layers: parameters.signalLayers, size: parameters.size)
-  peeps = .init(individuals: [], on: grid) // the peeps themselves (will be filled in when the first generation is initialized)
   
   generation = 0
   initializeGeneration0(on: grid, with: parameters); // starting population
@@ -58,40 +56,30 @@ public func initializeSimulator(with parameters: Params) {
 
 public func advanceSimulator(with parameters: Params) async {
   let challenge = parameters.challenge ?? NoChallenge()
-  let results: [ActionResult] = await peeps.individuals.concurrentMap {
-    //TODO: Ignore dead individuals altogether
-    guard $0.alive else {
-      return .init(indiv: $0,
-                   newLocation: nil,
-                   killed: [],
-                   responseCurve: { [kFactor=parameters.responsiveness.kFactor] value in responseCurve(value, factor: kFactor) })
-    }
-
+  let results: [ActionResult] = await grid.living.concurrentMap {
     let result = simStepOneIndiv(indiv: $0, simStep: simStep, on: grid, with: parameters)
     return challenge.modify(result, at: simStep, on: grid)
   }
 
-  peeps.individuals.removeAll()
-
   results.forEach { result in
-    peeps.individuals.append(result.indiv)
+    grid[result.indiv.loc] = .occupied(by: result.indiv)
 
     if let signal = result.signalEmission {
       signals.increment(layer: signal.layer, loc: signal.location)
     }
 
     if let newLocation = result.newLocation {
-      peeps.queueForMove(result.indiv, newLoc: newLocation)
+      grid.queueForMove(from: result.indiv.loc, to: newLocation)
     }
 
     result.killed.forEach {
-      peeps.queueForDeath($0)
+      grid.queueForDeath(at: $0.loc)
     }
   }
   
   // In single-thread mode: this executes deferred, queued deaths and movements,
   // updates signal layers (pheromone), etc.
-  murderCount += peeps.deathQueueSize()
+  murderCount += grid.deathQueue.count
   endOfSimStep(simStep, generation: generation, on: grid, with: parameters)
   
   simStep += 1

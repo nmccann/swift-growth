@@ -19,7 +19,7 @@ struct KillAction: Action {
       return
     }
 
-    let indiv2 = peeps.getIndiv(loc: otherLoc)
+    let indiv2 = grid.getIndiv(loc: otherLoc)
     let distance = (result.indiv.loc - indiv2.loc).length
     assert(distance == 1)
     result.killed.append(indiv2)

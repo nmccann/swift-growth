@@ -27,10 +27,8 @@ func initializeGeneration0(on grid: Grid, with parameters: Params) {
                                                                      sensors: parameters.sensors.count) }
   
   individuals.forEach { individual in
-    grid.set(loc: individual.loc, val: individual.index)
+    grid[individual.loc] = .occupied(by: individual)
   }
-  
-  peeps = .init(individuals: individuals, on: grid)
 }
 
 // Requires a container with one or more parent genomes to choose from.
@@ -61,9 +59,8 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
                                                                      sensors: parameters.sensors.count) }
   
   individuals.forEach { individual in
-    grid.set(loc: individual.loc, val: individual.index)
+    grid[individual.loc] = .occupied(by: individual)
   }
-  peeps = .init(individuals: individuals, on: grid)
 }
 
 // At this point, the deferred death queue and move queue have been processed
@@ -79,7 +76,7 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
 func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with parameters: Params) -> Int {
   // This container will hold the indexes and survival scores (0.0..1.0)
   // of all the survivors who will provide genomes for repopulation.
-  var parents: [(Int, Double)] = [] // <indiv index, score>
+//  var parents: [(Int, Double)] = [] // <indiv index, score>
   
   let challenge = parameters.challenge ?? NoChallenge()
   
@@ -88,16 +85,18 @@ func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with p
   //  } else {
   // First, make a list of all the individuals who will become parents; save
   // their scores for later sorting. Indexes start at 1.
-  for i in 0..<parameters.population {
-    let challengeResult = challenge.test(peeps[i], on: grid)
-    
+  var parents: [(Genome, Double)] = grid.living.compactMap { individual in
+    let challengeResult = challenge.test(individual, on: grid)
+
     // Save the parent genome if it results in valid neural connections
     // ToDo: if the parents no longer need their genome record, we could
     // possibly do a move here instead of copy, although it's doubtful that
     // the optimization would be noticeable.
-    if challengeResult.didPass && !peeps[i].nnet.connections.isEmpty {
-      parents.append((i, challengeResult.score))
+    guard challengeResult.didPass && !individual.nnet.connections.isEmpty else {
+      return nil
     }
+
+    return (individual.genome, challengeResult.score)
   }
   //  }
   
@@ -106,7 +105,7 @@ func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with p
   
   // Assemble a list of all the parent genomes. These will be ordered by their
   // scores if the parents[] container was sorted by score
-  let parentGenomes = parents.map { peeps[$0.0].genome }
+  let parentGenomes = parents.map { $0.0 }
   
   // Now we have a container of zero or more parents' genomes
   if !parentGenomes.isEmpty {

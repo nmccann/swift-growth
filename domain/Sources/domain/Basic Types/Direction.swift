@@ -1,6 +1,6 @@
 import Foundation
 
-enum Direction: CaseIterable {
+enum Direction: CaseIterable, Equatable {
   case southWest, south, southEast, west, east, northWest, north, northEast
 
   static func random() -> Direction {
