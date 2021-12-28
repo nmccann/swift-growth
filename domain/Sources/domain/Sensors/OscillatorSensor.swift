@@ -6,7 +6,7 @@ struct OscillatorSensor: Sensor {
     var sensorVal = 0.0
 
     // Maps the oscillator sine wave to sensor range 0.0..1.0;
-    // cycles starts at simStep 0 for everbody.
+    // cycles starts at simStep 0 for everybody.
     let phase = Double(simStep % individual.oscPeriod) / Double(individual.oscPeriod) // 0.0..1.0
     var factor = -cos(phase * 2.0 * Double.pi)
     assert(factor >= -1.0 && factor <= 1.0)

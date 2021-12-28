@@ -4,6 +4,6 @@ import Foundation
 /// linearly to normalized sensor range 0.0..1.0
 struct AgeSensor: Sensor {
   func get(for individual: Indiv, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
-    Double(individual.age) / Double(parameters.stepsPerGeneration)
+    min(max(0.0, Double(individual.age) / Double(parameters.stepsPerGeneration)), 1.0)
   }
 }

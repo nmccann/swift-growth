@@ -10,9 +10,7 @@ class ExecuteActionsTests: XCTestCase {
   var grid: Grid!
 
   override func setUp() {
-    parameters = .defaults
-    parameters.size.x = 4
-    parameters.size.y = 4
+    parameters = .stub(size: (4, 4))
     signals = .init(layers: parameters.signalLayers, size: parameters.size)
     grid = .init(size: parameters.size)
     grid.nilFill()
