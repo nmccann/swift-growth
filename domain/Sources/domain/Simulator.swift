@@ -64,8 +64,8 @@ public func advanceSimulator(with parameters: Params) async {
   results.forEach { result in
     grid[result.indiv.loc] = .occupied(by: result.indiv)
 
-    if let signal = result.signalEmission {
-      signals.increment(layer: signal.layer, loc: signal.location)
+    if let layer = result.signalToLayer {
+      signals.increment(layer: layer, loc: result.indiv.loc)
     }
 
     if let newLocation = result.newLocation {
@@ -76,7 +76,7 @@ public func advanceSimulator(with parameters: Params) async {
       grid.queueForDeath(at: $0.loc)
     }
   }
-  
+
   // In single-thread mode: this executes deferred, queued deaths and movements,
   // updates signal layers (pheromone), etc.
   murderCount += grid.deathQueue.count

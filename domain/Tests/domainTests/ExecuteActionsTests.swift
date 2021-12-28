@@ -113,7 +113,7 @@ class ExecuteActionsTests: XCTestCase {
     grid[individual.loc] = .occupied(by: individual)
 
     let result = executeActions(indiv: individual, levels: [(EmitSignalAction(layer: 0), 2)], on: grid, with: parameters)
-    expect(result.signalEmission) == (layer: 0, location: individual.loc)
+    expect(result.signalToLayer) == 0
   }
 
   func testKillForward() {
@@ -135,8 +135,8 @@ class ExecuteActionsTests: XCTestCase {
 }
 
 private func applyResult(_ result: ActionResult, to grid: Grid, signals: inout Signals) {
-  if let signal = result.signalEmission {
-    signals.increment(layer: signal.layer, loc: signal.location)
+  if let layer = result.signalToLayer {
+    signals.increment(layer: layer, loc: result.indiv.loc)
   }
 
   if let newLocation = result.newLocation {

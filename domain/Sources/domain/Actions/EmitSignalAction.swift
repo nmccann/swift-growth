@@ -17,6 +17,6 @@ struct EmitSignalAction: Action {
       return
     }
 
-    result.signalEmission = (layer: layer, location: result.indiv.loc)
+    result.signalToLayer = layer
   }
 }

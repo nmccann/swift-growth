@@ -88,7 +88,7 @@ func executeActions(indiv: Indiv, levels: [(Action, Double)], on grid: Grid, wit
 public struct ActionResult {
   var indiv: Indiv
   var newLocation: Coord?
-  var signalEmission: (layer: Int, location: Coord)?
+  var signalToLayer: Int?
   var killed: [Indiv]
   let responseCurve: (Double) -> Double
   var movePotential: CGPoint = .zero
