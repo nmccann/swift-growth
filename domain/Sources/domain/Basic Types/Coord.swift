@@ -4,23 +4,28 @@ public struct Coord: Equatable, Hashable {
   public let x: Int
   public let y: Int
 
-  static var zero: Coord {
+  public init(x: Int, y: Int) {
+    self.x = x
+    self.y = y
+  }
+
+  public static var zero: Coord {
     .init(x: 0, y: 0)
   }
 
-  var isNormalized: Bool {
+  public var isNormalized: Bool {
     x >= -1 && x <= 1 && y >= -1 && y <= 1
   }
 
-  var length: Int {
+  public var length: Int {
     .init(floatingLength)
   }
 
-  func normalize() -> Coord {
+  public func normalize() -> Coord {
     asDir()?.asNormalizedCoord() ?? .zero
   }
 
-  func asDir() -> Direction? {
+  public func asDir() -> Direction? {
     if x == 0 && y == 0 {
       return nil
     }
@@ -55,56 +60,27 @@ public struct Coord: Equatable, Hashable {
     return mapping[slice]
   }
 
-  func asPolar() -> Polar {
+  public func asPolar() -> Polar {
     .init(magnitude: length, direction: asDir())
   }
 
-  // returns -1.0 (opposite directions) .. +1.0 (same direction)
-  // returns 1.0 if either vector is (0,0)
-  func raySameness(other: Coord) -> Double {
-    let mag1 = floatingLength
-    let mag2 = other.floatingLength
-
-    if mag1 == 0.0 || mag2 == 0.0 {
-      return 1 // anything is "same" as zero vector
-    }
-
-    let dot = Double(x * other.x + y * other.y)
-    let cos = dot / (mag1 * mag2)
-
-    //TODO: Don't print
-    if cos >= -1.0001 && cos <= 1.0001 {
-      print("Within valid range")
-    } else {
-      print("Outside valid range")
-    }
-
-    return min(max(cos, -1), 1)
-  }
-
-  // returns -1.0 (opposite directions) .. +1.0 (same direction)
-  // returns 1.0 if self is (0,0)
-  func raySameness(other: Direction) -> Double {
-    raySameness(other: other.asNormalizedCoord())
-  }
-
-  static func +(lhs: Coord, rhs: Coord) -> Coord {
+  public static func +(lhs: Coord, rhs: Coord) -> Coord {
     .init(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
   }
 
-  static func -(lhs: Coord, rhs: Coord) -> Coord {
+  public static func -(lhs: Coord, rhs: Coord) -> Coord {
     .init(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
   }
 
-  static func *(lhs: Coord, rhs: Int) -> Coord {
+  public static func *(lhs: Coord, rhs: Int) -> Coord {
     .init(x: lhs.x * rhs, y: lhs.y * rhs)
   }
 
-  static func +(lhs: Coord, rhs: Direction) -> Coord {
+  public static func +(lhs: Coord, rhs: Direction) -> Coord {
     lhs + rhs.asNormalizedCoord()
   }
 
-  static func -(lhs: Coord, rhs: Direction) -> Coord {
+  public static func -(lhs: Coord, rhs: Direction) -> Coord {
     lhs - rhs.asNormalizedCoord()
   }
 }

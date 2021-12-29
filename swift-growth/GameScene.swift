@@ -4,6 +4,7 @@ import domain
 
 class GameScene: SKScene {
   private var gridNode = SKNode()
+  private var statsNode = SKLabelNode()
   private var cellNodes: [SKShapeNode] = []
   private var barrierNodes: [SKShapeNode] = []
   private var cellSize: CGSize = .init(width: 1, height: 1)
@@ -21,18 +22,27 @@ class GameScene: SKScene {
 
     initializeSimulator(with: parameters)
     generateGrid()
+
+    statsNode.fontSize = 16
+    scene?.addChild(statsNode)
   }
 
   override func didMove(to view: SKView) {
   }
 
-  func touchDown(atPoint pos : CGPoint) {
+  func touchDown(atPoint position: CGPoint) {
+    if let coord = positionToCoord(position) {
+      #if DEBUG
+      print("Killing at: \(coord)")
+      #endif
+      grid.queueForDeath(at: coord)
+    }
   }
 
-  func touchMoved(toPoint pos : CGPoint) {
+  func touchMoved(toPoint position: CGPoint) {
   }
 
-  func touchUp(atPoint pos : CGPoint) {
+  func touchUp(atPoint position: CGPoint) {
   }
 
   override func mouseDown(with event: NSEvent) {
@@ -56,6 +66,8 @@ class GameScene: SKScene {
   }
 
   override func update(_ currentTime: TimeInterval) {
+    statsNode.position = .init(x: -((scene?.size.width ?? 0)/2) + (statsNode.frame.width / 2), y: -((scene?.size.height ?? 0)/2) + (statsNode.frame.height / 2))
+    statsNode.text = "Step: \(simStep) Gen: \(generation) Survival: \(survivalPercentage) SPR: \(simulatorStepsPerRefresh)"
     let delta = currentTime - previousTime
 
     guard case .run = runMode, delta >= simulatorRefreshRate else {
@@ -134,14 +146,11 @@ private extension GameScene {
     didStartAdvancing()
 
     Task.detached(priority: .high) {
-      let before = Date().timeIntervalSince1970
       for _ in 0..<steps {
         await self.didStartStep()
         await advanceSimulator(with: self.parameters)
         await self.didFinishStep()
       }
-      let after = Date().timeIntervalSince1970
-      print("Delta: \(after - before)")
 
       await self.didFinishAdvancing()
     }
@@ -171,7 +180,9 @@ private extension GameScene {
     case (_, NSUpArrowFunctionKey) where !keyDown:
       let living: [Indiv] = grid.living + grid.dead
       let diversity = parameters.genomeComparisonMethod.diversityFor(living, initialPopulation: parameters.population)
+      #if DEBUG
       print("Genetic Diversity: \(diversity)")
+      #endif
 
     case (.run, NSDownArrowFunctionKey) where !keyDown:   runMode = .stop
     case (.stop, NSDownArrowFunctionKey) where !keyDown:  runMode = .run
@@ -200,6 +211,13 @@ private extension GameScene {
 
   func adjustStepsPerRefresh(by amount: Int) {
     simulatorStepsPerRefresh = max(1, simulatorStepsPerRefresh + amount)
-    print("Steps per refresh: \(simulatorStepsPerRefresh)")
+  }
+
+
+  /// Converts a given screen position to a coordinate in the grid,
+  /// or nil if resulting coordinate lies outside of the grid
+  func positionToCoord(_ position: CGPoint) -> Coord? {
+    let result = Coord(x: Int(round(position.x / cellSize.width)) + (grid.size.x / 2), y: (Int(round(position.y / cellSize.height)) + (grid.size.y / 2)))
+    return grid.isInBounds(loc: result) ? result : nil
   }
 }

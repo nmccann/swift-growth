@@ -182,32 +182,4 @@ class CoordTests: XCTestCase {
     result = .init(x: 0, y: 0) - .southWest
     expect(result) == Coord(x: 1, y: 1)
   }
-  
-  func testRaySameness() {
-    var first: Coord
-    var second: Coord
-    
-    first = .init(x: 0, y: 0)
-    second = .init(x: 10, y: 11)
-    expect(first.raySameness(other: second)) == 1.0 // special case - zero vector
-    expect(second.raySameness(other: first)) == 1.0 // special case - zero vector
-    
-    first = second
-    expect(first.raySameness(other: second)) ≈ 1.0
-
-    expect(Coord(x: -10, y: -10).raySameness(other: .init(x: 10, y: 10))) ≈ -1.0
-    
-    first = .init(x: 0, y: 11)
-    second = .init(x: 20, y: 0)
-    expect(first.raySameness(other: second)) ≈ 0.0
-    expect(second.raySameness(other: first)) ≈ 0.0
-    
-    first = .init(x: 0, y: 444)
-    second = .init(x: 113, y: 113)
-    expect(first.raySameness(other: second)) ≈ 0.7071
-
-    
-    second = .init(x: 113, y: -113)
-    expect(first.raySameness(other: second)) ≈ -0.7071
-  }
 }

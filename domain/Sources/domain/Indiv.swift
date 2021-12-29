@@ -26,16 +26,7 @@ public struct Indiv: Equatable {
   
   /// Returned sensor values range SENSOR_MIN...SENSOR_MAX
   func getSensor(_ sensor: Sensor, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
-    var value = sensor.get(for: self, simStep: simStep, on: grid, with: parameters)
-    
-    if value.isNaN || value < -0.01 || value > 1.01 {
-      print("Clipping sensor value of \(value) for \(sensor)")
-      value = max(0.0, min(value, 1.0))
-    }
-    
-    assert(!value.isNaN && value >= -0.01 && value <= 1.01)
-    
-    return value
+    sensor.get(for: self, simStep: simStep, on: grid, with: parameters).clamped(to: 0.0...1.0)
   }
   
   

@@ -12,9 +12,9 @@ public class Grid {
   var barrierCenters: [Coord] = []
   private(set) var deathQueue: [Coord] = []
   private(set) var moveQueue: [(old: Coord, new: Coord)] = []
-  let size: (x: Int, y: Int)
+  public let size: (x: Int, y: Int)
 
-  subscript(location: Coord) -> Kind? {
+  public subscript(location: Coord) -> Kind? {
     get {
       data[location]
     }
@@ -24,7 +24,7 @@ public class Grid {
     }
   }
 
-  subscript(x: Int, y: Int) -> Kind? {
+  public subscript(x: Int, y: Int) -> Kind? {
     get {
       data[.init(x: x, y: y)]
     }
@@ -48,7 +48,7 @@ public class Grid {
   /// drainDeathQueue() is called. It's ok if the same agent gets
   /// queued for death multiple times. It does not make sense to
   /// call this function for agents already dead.
-  func queueForDeath(at location: Coord) {
+  public func queueForDeath(at location: Coord) {
     deathQueue.append(location)
   }
 
@@ -113,7 +113,7 @@ public class Grid {
     data.removeAll()
   }
 
-  func isInBounds(loc: Coord) -> Bool {
+  public func isInBounds(loc: Coord) -> Bool {
     loc.x >= 0 && loc.x < size.x && loc.y >= 0 && loc.y < size.y
   }
 

@@ -11,6 +11,7 @@ public var signals: Signals! // pheromone layers
 public var generation = 0
 public var murderCount = 0
 public var simStep = 0
+public var survivalPercentage = 0.0
 
 /********************************************************************************
  Start of simulator
@@ -95,10 +96,10 @@ public func advanceSimulator(with parameters: Params) async {
   
   if numberSurvivors == 0 {
     generation = 0 // start over
-    print("No survivors, starting over")
+    survivalPercentage = 0
   } else {
     generation += 1
-    print("Last Survival Percentage: \(Double(numberSurvivors) / Double(parameters.population)) Next Generation: \(generation)")
+    survivalPercentage = Double(numberSurvivors) / Double(parameters.population)
   }
 }
 
