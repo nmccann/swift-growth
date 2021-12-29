@@ -45,8 +45,67 @@ private extension GenomeComparison {
   /// tolerant of gaps, relocations, and genomes of unequal lengths.
   ///
   func jaroWinklerDistance(_ lhs: Genome, _ rhs: Genome) -> Double {
-    //TODO
-    return 0
+    //TODO: This has been cleaned up a little from the
+    //original implementation, but could be greatly improved
+    guard !lhs.isEmpty && !rhs.isEmpty else {
+      return 0
+    }
+
+    var matches = 0
+    var transpositions = 0
+    let maxNumberOfGenesToCompare = 20
+
+    let lhsLength = min(maxNumberOfGenesToCompare, lhs.count) //optimization: approximate for long genomes
+    let rhsLength = min(maxNumberOfGenesToCompare, rhs.count)
+
+    var lhsFlags: [Int] = .init(repeating: 0, count: lhsLength)
+    var rhsFlags: [Int] = .init(repeating: 0, count: rhsLength)
+    let range = max(0, max(lhsLength, rhsLength) / 2 - 1)
+
+    // calculate matching characters
+    for i in 0..<rhsLength {
+      for j in max(i - range, 0)..<(min(i + range + 1, lhsLength)) {
+        guard lhs[j] == rhs[i] else {
+          continue
+        }
+
+        lhsFlags[j] = 1
+        rhsFlags[i] = 1
+        matches += 1
+        break
+      }
+    }
+
+    guard matches > 0 else {
+      return 0
+    }
+
+    // calculate character transpositions
+    var l = 0
+    for i in 0..<rhsLength {
+      guard rhsFlags[i] == 1 else {
+        continue
+      }
+
+      for j in l..<lhsLength {
+        guard lhsFlags[j] == 1 else {
+          continue
+        }
+
+        l = j + 1
+        transpositions += lhs[j] != rhs[i] ? 1 : 0
+        break
+      }
+    }
+
+    transpositions /= 2
+
+    // Jaro distance
+    let lhsMatchPercent = Double(matches) / Double(lhsLength)
+    let rhsMatchPercent = Double(matches) / Double(rhsLength)
+    let transposedMatchPercent = Double(matches - transpositions) / Double(matches)
+    let components = [lhsMatchPercent, rhsMatchPercent, transposedMatchPercent]
+    return components.reduce(0, +) / Double(components.count)
   }
 
   /// Works only for genomes of equal length

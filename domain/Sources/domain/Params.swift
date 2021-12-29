@@ -45,7 +45,7 @@ public struct Params {
                                       genomeMaxLength: 20,
                                       maxNumberNeurons: 20 / 2,
                                       pointMutationRate: 0.0001,
-                                      geneInsertionDeletionRate: 0, //Originally 0.0001, but currently can't support unequal length genes
+                                      geneInsertionDeletionRate: 0.0001,
                                       deletionRatio: 0.7,
                                       killEnable: false,
                                       sexualReproduction: true,
@@ -54,7 +54,7 @@ public struct Params {
                                       signalSensorRadius: 1,
                                       responsiveness: (value: 0.5, kFactor: 2),
                                       probeDistance: (short: 3, long: 16),
-                                      genomeComparisonMethod: .hammingBits,
+                                      genomeComparisonMethod: .jaroWinkler,
                                       challenge: .rightQuarter(),
                                       barrierType: nil,
                                       replaceBarrier: nil,
