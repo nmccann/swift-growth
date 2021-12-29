@@ -8,10 +8,11 @@ let SIGNAL_DAMPING = 1.0 - (1.0 / SIGNAL_MAX)
 
 public struct Signals {
   var layers: [Layer]
-
+  let size: (x: Int, y: Int)
 
   init(layers: Int, size: (x: Int, y: Int)) {
     self.layers = .init(repeating: .init(numCols: size.x, numRows: size.y), count: layers)
+    self.size = size
   }
 
   func getMagnitude(layer: Int, loc: Coord) -> Int {
@@ -40,11 +41,7 @@ public struct Signals {
   }
 
   mutating func zeroFill() {
-    layers = layers.map {
-      var result = $0
-      result.zeroFill()
-      return result
-    }
+    layers = .init(repeating: .init(numCols: size.x, numRows: size.y), count: layers.count)
   }
 
   mutating func fade(layer: Int, by damping: Double) {
@@ -66,10 +63,6 @@ public struct Signals {
 
     init(numCols: Int, numRows: Int) {
       data = .init(rows: numRows, columns: numCols, repeatedValue: 0)
-    }
-
-    mutating func zeroFill() {
-      data = .init(rows: data.rows, columns: data.columns, repeatedValue: 0)
     }
 
     mutating func fade(by damping: Double) {

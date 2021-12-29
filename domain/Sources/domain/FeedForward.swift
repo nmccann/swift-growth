@@ -89,6 +89,6 @@ extension Indiv {
       }
     }
 
-    return parameters.actions.enumerated().map { ($1, levels[$0, default: 0.0]) }
+    return parameters.actions.lazy.enumerated().map { ($1, levels[$0, default: 0.0]) }
   }
 }
