@@ -8,8 +8,6 @@ public class Grid {
 
   private var data: [Coord: Kind] = [:]
   public private(set) var dead: [Indiv] = []
-  public var barrierLocations: [Coord] = []
-  var barrierCenters: [Coord] = []
   private(set) var deathQueue: [Coord] = []
   private(set) var moveQueue: [(old: Coord, new: Coord)] = []
   public let size: (x: Int, y: Int)
@@ -39,6 +37,15 @@ public class Grid {
       switch $0 {
       case .occupied(by: let individual): return individual
       case .barrier: return nil
+      }
+    }
+  }
+
+  public var barriers: [Coord] {
+    data.compactMap { coord, kind in
+      switch kind {
+      case .occupied(by: _): return nil
+      case .barrier: return coord
       }
     }
   }
@@ -118,11 +125,11 @@ public class Grid {
   }
 
   func isEmptyAt(loc: Coord) -> Bool {
-    at(loc) == nil
+    data[loc] == nil
   }
 
   func isBarrierAt(loc: Coord) -> Bool {
-    if case .barrier = at(loc) {
+    if case .barrier = data[loc] {
       return true
     } else {
       return false
@@ -131,7 +138,7 @@ public class Grid {
 
   /// Occupied means an agent is living there.
   func isOccupiedAt(loc: Coord) -> Bool {
-    if case .occupied(by: _) = at(loc) {
+    if case .occupied(by: _) = data[loc] {
       return true
     } else {
       return false
@@ -140,14 +147,6 @@ public class Grid {
 
   func isBorder(loc: Coord) -> Bool {
     loc.x == 0 || loc.x == size.x - 1 || loc.y == 0 || loc.y == size.y - 1
-  }
-
-  func at(_ loc: Coord) -> Kind? {
-    data[loc]
-  }
-
-  func at(x: Int, y: Int) -> Kind? {
-    data[.init(x: x, y: y)]
   }
 
   func findEmptyLocation() -> Coord {
@@ -161,19 +160,9 @@ public class Grid {
     }
   }
 
-  // This generates barrier points, which are grid locations with value
-  // BARRIER. A list of barrier locations is saved in private member
-  // Grid::barrierLocations and, for some scenarios, Grid::barrierCenters.
-  // Those members are available read-only with Grid::getBarrierLocations().
-  // This function assumes an empty grid. This is typically called by
-  // the main simulator thread after Grid::init() or Grid::zeroFill().
-
-  // This file typically is under constant development and change for
-  // specific scenarios.
+  /// Generates a series of barrier locations based on the provided barrier type.
+  /// - Parameter type: Type of barrier to construct
   func applyBarrier(_ type: BarrierType?) {
-    barrierLocations.removeAll()
-    barrierCenters.removeAll() // used only for some barrier types
-
     guard let type = type else {
       return
     }
@@ -182,7 +171,6 @@ public class Grid {
       for x in min.x...max.x {
         for y in min.y...max.y {
           data[.init(x: x, y: y)] = .barrier
-          barrierLocations.append(.init(x: x, y: y))
         }
       }
     }
@@ -208,18 +196,9 @@ public class Grid {
         let loc = Coord(x: .random(in: 0..<size.x), y: .random(in: 0..<size.y))
         visitNeighborhood(loc: loc, radius: radius) {
           data[$0] = .barrier
-          barrierLocations.append($0)
         }
       }
     }
-  }
-
-  func getBarrierLocations() -> [Coord] {
-    barrierLocations
-  }
-
-  func getBarrierCenters() -> [Coord] {
-    barrierCenters
   }
 
   func visitNeighborhood(loc: Coord, radius: Double, f: (Coord) -> Void) {

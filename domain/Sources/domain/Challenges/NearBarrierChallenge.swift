@@ -1,12 +1,12 @@
 import Foundation
 
-/// Survivors are those within radius of any barrier center. Weighted by distance.
+/// Survivors are those within radius of any barrier. Weighted by distance.
 struct NearBarrierChallenge: Challenge {
   func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
     let radius = Double(grid.size.x / 2)
 
     let distance =
-    grid.getBarrierCenters().lazy
+    grid.barriers.lazy
       .map { individual.loc - $0 }
       .map(\.length)
       .map(Double.init)

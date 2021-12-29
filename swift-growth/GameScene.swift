@@ -117,12 +117,13 @@ private extension GameScene {
 
   func generateBarriers() {
     gridNode.removeChildren(in: barrierNodes)
-    barrierNodes = grid.barrierLocations.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
+    barrierNodes = grid.barriers.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
     barrierNodes.forEach { gridNode.addChild($0) }
   }
 
   func updateNodes() {
-    if grid.barrierLocations.count != barrierNodes.count {
+    let barriers = grid.barriers
+    if barriers.count != barrierNodes.count {
       generateGrid()
     }
 
@@ -130,11 +131,11 @@ private extension GameScene {
       updateCell(cell, indiv: individual, size: cellSize)
     }
 
-    if lastBarrierLocations != grid.barrierLocations {
-      zip(barrierNodes, grid.barrierLocations).forEach { barrier, location in
+    if lastBarrierLocations != barriers {
+      zip(barrierNodes, barriers).forEach { barrier, location in
         updateBarrier(barrier, location: location, size: cellSize)
       }
-      lastBarrierLocations = grid.barrierLocations
+      lastBarrierLocations = barriers
     }
   }
 

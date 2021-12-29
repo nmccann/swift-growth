@@ -15,7 +15,11 @@ struct LocationSequenceChallenge: Challenge {
 
     //TODO: Possible performance improvement, use challenge bits to skip barriers
     //on subsequent iterations
-    for (n, center) in grid.getBarrierCenters().enumerated() {
+    //TODO: Restore the sequential nature of this challenge, cannot currently do this as
+    //the barriers have no specific order. Perhaps introduce a new kind like "Flag" or "Objective"
+    let sorted = grid.barriers.sorted { $0.x < $1.x }
+
+    for (n, center) in sorted.enumerated() {
       let bit = 1 << n
 
       if result.indiv.challengeBits & bit == 0 {

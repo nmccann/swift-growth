@@ -7,15 +7,7 @@ import Foundation
 /// their life will become parents.
 struct AgainstAnyWallChallenge: Challenge {
   func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
-    isOnEdge(indiv: individual, of: grid) ? .pass(1) : .fail(0)
-  }
-}
-
-private extension AgainstAnyWallChallenge {
-  func isOnEdge(indiv: Indiv, of grid: Grid) -> Bool {
-    let onEdgeX = indiv.loc.x == 0 || indiv.loc.x == grid.size.x - 1
-    let onEdgeY = indiv.loc.y == 0 || indiv.loc.y == grid.size.y - 1
-    return onEdgeX || onEdgeY
+    grid.isBorder(loc: individual.loc) ? .pass(1) : .fail(0)
   }
 }
 
