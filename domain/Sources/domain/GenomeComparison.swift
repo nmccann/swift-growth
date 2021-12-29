@@ -11,7 +11,12 @@ public enum GenomeComparison {
   /// ToDo: optimize by approximation for long genomes
   func similarity(_ lhs: Genome, _ rhs: Genome) -> Double {
     switch self {
-    case .jaroWinkler: return jaroWinklerDistance(lhs, rhs)
+    case .jaroWinkler:
+      if lhs.count > rhs.count {
+        return jaroWinklerDistance(lhs, rhs)
+      } else {
+        return jaroWinklerDistance(rhs, lhs)
+      }
     case .hammingBits: return hammingDistanceBits(lhs, rhs)
     case .hammingBytes: return hammingDistanceBytes(lhs, rhs)
     }
