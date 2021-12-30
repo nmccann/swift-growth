@@ -10,7 +10,6 @@ public struct Params {
   public let pointMutationRate: Double // 0.0..1.0
   public let geneInsertionDeletionRate: Double // 0.0..1.0
   public let deletionRatio: Double // 0.0..1.0
-  public let killEnable: Bool
   public let sexualReproduction: Bool
   public let chooseParentsByFitness: Bool
   public let populationSensorRadius: Double // > 0.0
@@ -47,7 +46,6 @@ public struct Params {
                                       pointMutationRate: 0.0001,
                                       geneInsertionDeletionRate: 0.0001,
                                       deletionRatio: 0.7,
-                                      killEnable: false,
                                       sexualReproduction: true,
                                       chooseParentsByFitness: true,
                                       populationSensorRadius: 2.0,
