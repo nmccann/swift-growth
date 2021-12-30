@@ -95,7 +95,7 @@ class ExecuteActionsTests: XCTestCase {
     grid[individual.loc] = .occupied(by: individual)
 
     let result = executeActions(for: individual, levels: [(OscillatorPeriodAction(), 5)], on: grid, with: parameters)
-    expect(result.individual.oscPeriod) == 1098
+    expect(result.individual.oscPeriod) == 400
   }
 
   func testSetLongProbeDist() {
