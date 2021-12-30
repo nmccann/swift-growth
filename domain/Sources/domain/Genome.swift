@@ -14,10 +14,26 @@ let NEURON_RANGE: Double = NEURON_MAX - NEURON_MIN
 struct Gene: Equatable {
   enum Source: CaseIterable {
     case sensor, neuron
+
+    /// Results in a new value, different from the first
+    mutating func mutate() {
+      switch self {
+      case .sensor: self = .neuron
+      case .neuron: self = .sensor
+      }
+    }
   }
   
   enum Sink: CaseIterable {
     case action, neuron
+
+    /// Results in a new value, different from the first
+    mutating func mutate() {
+      switch self {
+      case .action: self = .neuron
+      case .neuron: self = .action
+      }
+    }
   }
   
   var sourceType: Source
@@ -169,9 +185,9 @@ func makeNodeMap(from connections: ConnectionList, maxNumberNeurons: Int) -> Nod
     if case .neuron = connection.sinkType {
       assert(connection.sinkNum < maxNumberNeurons)
       var it = nodeMap[connection.sinkNum] ?? .init(remappedNumber: 0,
-                                              numOutputs: 0,
-                                              numSelfInputs: 0,
-                                              numInputsFromSensorsOrOtherNeurons: 0)
+                                                    numOutputs: 0,
+                                                    numSelfInputs: 0,
+                                                    numInputsFromSensorsOrOtherNeurons: 0)
 
       if case .neuron = connection.sourceType, connection.sourceNum == connection.sinkNum {
         it.numSelfInputs += 1
@@ -185,9 +201,9 @@ func makeNodeMap(from connections: ConnectionList, maxNumberNeurons: Int) -> Nod
     if case .neuron = connection.sourceType {
       assert(connection.sourceNum < maxNumberNeurons)
       var it = nodeMap[connection.sourceNum] ?? .init(remappedNumber: 0,
-                                                numOutputs: 0,
-                                                numSelfInputs: 0,
-                                                numInputsFromSensorsOrOtherNeurons: 0)
+                                                      numOutputs: 0,
+                                                      numSelfInputs: 0,
+                                                      numInputsFromSensorsOrOtherNeurons: 0)
 
 
       it.numOutputs += 1
@@ -374,6 +390,17 @@ func generateChildGenome(parentGenomes: [Genome], with parameters: Params) -> Ge
       overlayWithSliceOf(gShorter: g1)
       assert(!genome.isEmpty)
     }
+
+    // Trim to length = average length of parents
+    var sum = g1.count + g2.count
+
+    // If sum is not evenly divisible, add one half the time
+    // so that the rounding error is accounted for over time
+    if sum % 2 == 1 && Bool.random() {
+      sum += 1
+    }
+
+    cropLength(genome: &genome, length: sum / 2)
   } else {
     genome = g2
     assert(!genome.isEmpty)
@@ -401,13 +428,10 @@ func randomBitFlip(genome: Genome) -> Genome {
   case 0: fatalError()
     //TODO: Not sure how to do method 0 in Swift
   case 1:
-    //TODO: Update source/sink type to work as expected - currently it isn't a single bit flip
-    //and it's possible to randomly select the original source/sink (ex. no change), which the
-    //original implementation wouldn't allow
     let chance = Double.random(in: 0...1)
     switch chance {
-    case 0.0..<0.2: genome[elementIndex].sourceType = Gene.Source.allCases.randomElement() ?? .neuron
-    case 0.2..<0.4: genome[elementIndex].sinkType = Gene.Sink.allCases.randomElement() ?? .neuron
+    case 0.0..<0.2: genome[elementIndex].sourceType.mutate()
+    case 0.2..<0.4: genome[elementIndex].sinkType.mutate()
     case 0.4..<0.6: genome[elementIndex].sourceNum ^= bitIndex8
     case 0.6..<0.8: genome[elementIndex].sinkNum ^= bitIndex8
     default: genome[elementIndex].weight ^= 1 << Int.random(in: 1...15)
@@ -424,7 +448,14 @@ func randomBitFlip(genome: Genome) -> Genome {
 // used only when the simulator is configured to allow genomes of
 // unequal lengths during a simulation.
 func cropLength(genome: inout Genome, length: Int) {
-  //TODO
+  guard genome.count > length && length > 0 else {
+    return
+  }
+
+  switch Bool.random() {
+  case true: genome.removeFirst(length)
+  case false: genome.removeLast(length)
+  }
 }
 
 // Inserts or removes a single gene from the genome. This is
