@@ -12,7 +12,6 @@ class GameScene: SKScene {
   private let simulatorRefreshRate: TimeInterval = 1.0 / 60.0
   private var simulatorStepsPerRefresh = 1
   private var isAdvancing = false
-  private var isStepReady = true
   private let padding: Double = 40
   private let parameters = Params.defaults
   private var lastBarrierLocations: [Coord] = []
@@ -66,19 +65,16 @@ class GameScene: SKScene {
   }
 
   override func update(_ currentTime: TimeInterval) {
-    statsNode.position = .init(x: -((scene?.size.width ?? 0)/2) + (statsNode.frame.width / 2), y: -((scene?.size.height ?? 0)/2) + (statsNode.frame.height / 2))
-    statsNode.text = "Step: \(simStep) Gen: \(generation) Survival: \(survivalPercentage) SPR: \(simulatorStepsPerRefresh)"
     let delta = currentTime - previousTime
 
     guard case .run = runMode, delta >= simulatorRefreshRate else {
       return
     }
 
-    previousTime = currentTime
+    statsNode.position = .init(x: -((scene?.size.width ?? 0)/2) + (statsNode.frame.width / 2), y: -((scene?.size.height ?? 0)/2) + (statsNode.frame.height / 2))
+    statsNode.text = "Step: \(simStep) Gen: \(generation) Survival: \(survivalPercentage) SPR: \(simulatorStepsPerRefresh)"
 
-    if isStepReady {
-      updateNodes()
-    }
+    previousTime = currentTime
 
     advanceBySteps(simulatorStepsPerRefresh)
   }
@@ -148,9 +144,7 @@ private extension GameScene {
 
     Task.detached(priority: .high) {
       for _ in 0..<steps {
-        await self.didStartStep()
         await advanceSimulator(with: self.parameters)
-        await self.didFinishStep()
       }
 
       await self.didFinishAdvancing()
@@ -194,19 +188,12 @@ private extension GameScene {
     }
   }
 
-  func didStartStep() {
-    isStepReady = false
-  }
-
-  func didFinishStep() {
-    isStepReady = true
-  }
-
   func didStartAdvancing() {
     isAdvancing = true
   }
 
   func didFinishAdvancing() {
+    updateNodes()
     isAdvancing = false
   }
 
