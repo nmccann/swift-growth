@@ -3,7 +3,7 @@ import Nimble
 @testable import domain
 
 class CornerChallengePerformanceTests: XCTestCase {
-  var individuals: [Indiv] = []
+  var individuals: [Individual] = []
   var grid: Grid!
 
   override func setUp() {

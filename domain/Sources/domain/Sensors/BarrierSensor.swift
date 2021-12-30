@@ -14,7 +14,7 @@ struct BarrierSensor: Sensor {
 
   let kind: Kind
 
-  func get(for individual: Indiv, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
     switch kind {
     case .forward:
       return barrierDistance(around: individual.loc,

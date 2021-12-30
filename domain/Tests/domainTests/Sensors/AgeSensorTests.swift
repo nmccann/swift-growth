@@ -4,7 +4,7 @@ import Nimble
 
 class AgeSensorTests: XCTestCase {
   let sut = AgeSensor()
-  var individual: Indiv!
+  var individual: Individual!
   var grid: Grid!
   var parameters: Params!
 

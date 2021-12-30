@@ -3,7 +3,7 @@ import Nimble
 @testable import domain
 
 class GridTests: XCTestCase {
-  var individuals: [Indiv] = []
+  var individuals: [Individual] = []
   var sut: Grid!
 
   override func setUp() {
@@ -11,7 +11,7 @@ class GridTests: XCTestCase {
   }
 
   func testQueueForMove() {
-    let individual = Indiv.stub(index: 0, loc: .init(x: 0, y: 0))
+    let individual = Individual.stub(index: 0, loc: .init(x: 0, y: 0))
     sut[individual.loc] = .occupied(by: individual)
 
     sut.queueForMove(from: individual.loc, to: .init(x: 1, y: 0))
@@ -31,7 +31,7 @@ class GridTests: XCTestCase {
   }
 
   func testQueueForDeath() {
-    let individual = Indiv.stub(index: 0, loc: .init(x: 0, y: 0))
+    let individual = Individual.stub(index: 0, loc: .init(x: 0, y: 0))
     sut[individual.loc] = .occupied(by: individual)
 
     sut.queueForDeath(at: individual.loc)

@@ -3,7 +3,7 @@ import Nimble
 @testable import domain
 
 class GridPerformanceTests: XCTestCase {
-  var individuals: [Indiv] = []
+  var individuals: [Individual] = []
   var sut: Grid!
 
   override func setUp() {

@@ -17,7 +17,7 @@ struct PopulationSensor: Sensor {
 
   let kind: Kind
   
-  func get(for individual: Indiv, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
     switch kind {
     case .neighborhood:
       return density(around: individual.loc, distance: parameters.populationSensorRadius)

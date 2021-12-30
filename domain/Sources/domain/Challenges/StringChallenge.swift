@@ -3,7 +3,7 @@ import Foundation
 /// Survivors are those not touching the border and with exactly the number
 /// of neighbors defined by neighbors and radius, where neighbors includes self
 struct StringChallenge: Challenge {
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     let minNeighbors = 22
     let maxNeighbors = 2
     let radius = 1.5

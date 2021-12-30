@@ -22,9 +22,9 @@ struct LocationSequenceChallenge: Challenge {
     for (n, center) in sorted.enumerated() {
       let bit = 1 << n
 
-      if result.indiv.challengeBits & bit == 0 {
-        if Double((result.indiv.loc - center).length) <= radius {
-          result.indiv.challengeBits |= bit
+      if result.individual.challengeBits & bit == 0 {
+        if Double((result.individual.loc - center).length) <= radius {
+          result.individual.challengeBits |= bit
         }
 
         //Break out of loop so additional barriers are ignored until next iteration
@@ -35,7 +35,7 @@ struct LocationSequenceChallenge: Challenge {
     return result
   }
 
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     let bits = individual.challengeBits
     let count = bits.nonzeroBitCount
     let maxNumberOfBits = MemoryLayout.size(ofValue: bits) * 8

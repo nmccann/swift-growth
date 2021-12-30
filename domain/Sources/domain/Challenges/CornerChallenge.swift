@@ -9,10 +9,10 @@ struct CornerChallenge: Challenge {
 
   let scoring: Scoring
 
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     switch scoring {
-    case .weighted: return innerTest(indiv: individual, on: grid)
-    case .unweighted:  return innerTest(indiv: individual, on: grid)
+    case .weighted: return innerTest(individual, on: grid)
+    case .unweighted:  return innerTest(individual, on: grid)
     }
   }
 }
@@ -28,15 +28,15 @@ private extension CornerChallenge {
   /// Survivors are those within the specified radius of any corner.
   /// Assumes square arena.
   /// - Parameters:
-  ///   - indiv: The individual being scored
+  ///   - individual: The individual being scored
   /// - Returns: An indication of whether the individual passed the challenge, and their accompanying score
-  func innerTest(indiv: Indiv,
+  func innerTest(_ individual: Individual,
                   on grid: Grid) -> ChallengeResult {
     assert(grid.size.x == grid.size.y)
     let radius = Double(grid.size.x) / 8.0
 
     return allCorners(with: radius, on: grid).lazy
-      .map { $0.test(indiv, on: grid) }
+      .map { $0.test(individual, on: grid) }
       .first(where: \.didPass) ?? .fail(0)
   }
 

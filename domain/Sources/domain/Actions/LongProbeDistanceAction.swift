@@ -8,6 +8,6 @@ struct LongProbeDistanceAction: Action {
       let maxLongProbeDistance = 32
       var level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
       level = 1 + level * Double(maxLongProbeDistance)
-      result.indiv.probeDistance.long = Int(UInt(level))
+      result.individual.probeDistance.long = Int(UInt(level))
   }
 }

@@ -16,12 +16,12 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveEast() {
     let initial = Coord(x: 2, y: 2)
-    let indiv = Indiv.stub(index: 0, loc: initial)
-    grid[indiv.loc] = .occupied(by: indiv)
+    let individual = Individual.stub(index: 0, loc: initial)
+    grid[individual.loc] = .occupied(by: individual)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
     while grid.isOccupiedAt(loc: initial) {
-      let result = executeActions(indiv: indiv,
+      let result = executeActions(for: individual,
                                   levels: [(MoveAction(direction: .east), .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
@@ -32,12 +32,12 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveNorth() {
     let initial = Coord(x: 2, y: 2)
-    let indiv = Indiv.stub(index: 0, loc: initial)
-    grid[indiv.loc] = .occupied(by: indiv)
+    let individual = Individual.stub(index: 0, loc: initial)
+    grid[individual.loc] = .occupied(by: individual)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
     while grid.isOccupiedAt(loc: initial) {
-      let result = executeActions(indiv: indiv,
+      let result = executeActions(for: individual,
                                   levels: [(MoveAction(direction: .north), .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
@@ -48,14 +48,14 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveForward() {
     let initial = Coord(x: 2, y: 2)
-    var indiv = Indiv.stub(index: 0, loc: initial)
-    indiv.lastDirection = .east
-    grid[indiv.loc] = .occupied(by: indiv)
+    var individual = Individual.stub(index: 0, loc: initial)
+    individual.lastDirection = .east
+    grid[individual.loc] = .occupied(by: individual)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
     while grid.isOccupiedAt(loc: initial) {
-      let result = executeActions(indiv: indiv,
-                                  levels: [(MoveAction { $0.indiv.lastDirection }, .greatestFiniteMagnitude)],
+      let result = executeActions(for: individual,
+                                  levels: [(MoveAction { $0.individual.lastDirection }, .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
       applyResult(result, to: grid, signals: &signals)
@@ -65,14 +65,14 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveReverse() {
     let initial = Coord(x: 2, y: 2)
-    var indiv = Indiv.stub(index: 0, loc: initial)
-    indiv.lastDirection = .east
-    grid[indiv.loc] = .occupied(by: indiv)
+    var individual = Individual.stub(index: 0, loc: initial)
+    individual.lastDirection = .east
+    grid[individual.loc] = .occupied(by: individual)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
     while grid.isOccupiedAt(loc: initial) {
-      let result = executeActions(indiv: indiv,
-                                  levels: [(MoveAction { $0.indiv.lastDirection.rotate180Degrees() }, .greatestFiniteMagnitude)],
+      let result = executeActions(for: individual,
+                                  levels: [(MoveAction { $0.individual.lastDirection.rotate180Degrees() }, .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
       applyResult(result, to: grid, signals: &signals)
@@ -81,51 +81,51 @@ class ExecuteActionsTests: XCTestCase {
   }
 
   func testSetResponsiveness() {
-    var indiv = Indiv.stub(index: 0)
-    indiv.responsiveness = 1.0
-    grid[indiv.loc] = .occupied(by: indiv)
+    var individual = Individual.stub(index: 0)
+    individual.responsiveness = 1.0
+    grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(indiv: indiv, levels: [(ResponsivenessAction(), 10)], on: grid, with: parameters)
-    expect(result.indiv.responsiveness) ≈ 0.9999
+    let result = executeActions(for: individual, levels: [(ResponsivenessAction(), 10)], on: grid, with: parameters)
+    expect(result.individual.responsiveness) ≈ 0.9999
   }
 
   func testSetOscillatorPeriod() {
-    var indiv = Indiv.stub(index: 0)
-    indiv.oscPeriod = 1
-    grid[indiv.loc] = .occupied(by: indiv)
+    var individual = Individual.stub(index: 0)
+    individual.oscPeriod = 1
+    grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(indiv: indiv, levels: [(OscillatorPeriodAction(), 5)], on: grid, with: parameters)
-    expect(result.indiv.oscPeriod) == 1098
+    let result = executeActions(for: individual, levels: [(OscillatorPeriodAction(), 5)], on: grid, with: parameters)
+    expect(result.individual.oscPeriod) == 1098
   }
 
   func testSetLongProbeDist() {
-    var indiv = Indiv.stub(index: 0)
-    indiv.probeDistance.long = 1
-    grid[indiv.loc] = .occupied(by: indiv)
+    var individual = Individual.stub(index: 0)
+    individual.probeDistance.long = 1
+    grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(indiv: indiv, levels: [(LongProbeDistanceAction(), 20)], on: grid, with: parameters)
-    expect(result.indiv.probeDistance.long) == 33
+    let result = executeActions(for: individual, levels: [(LongProbeDistanceAction(), 20)], on: grid, with: parameters)
+    expect(result.individual.probeDistance.long) == 33
   }
 
   func testEmitSignalOverThreshold() {
-    var individual = Indiv.stub(index: 0, loc: .init(x: 2, y: 2))
+    var individual = Individual.stub(index: 0, loc: .init(x: 2, y: 2))
     individual.responsiveness = 1
     grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(indiv: individual, levels: [(EmitSignalAction(layer: 0), 2)], on: grid, with: parameters)
+    let result = executeActions(for: individual, levels: [(EmitSignalAction(layer: 0), 2)], on: grid, with: parameters)
     expect(result.signalToLayer) == 0
   }
 
   func testKillForward() {
-    var individual = Indiv.stub(index: 0, loc: .init(x: 2, y: 2))
+    var individual = Individual.stub(index: 0, loc: .init(x: 2, y: 2))
     individual.lastDirection = .east
     individual.responsiveness = 1
     grid[individual.loc] = .occupied(by: individual)
 
-    let other = Indiv.stub(index: 0, loc: .init(x: 3, y: 2))
+    let other = Individual.stub(index: 0, loc: .init(x: 3, y: 2))
     grid[other.loc] = .occupied(by: other)
 
-    let result = executeActions(indiv: individual, levels: [(KillAction(), 2)], on: grid, with: parameters)
+    let result = executeActions(for: individual, levels: [(KillAction(), 2)], on: grid, with: parameters)
     expect(result.killed).to(haveCount(1))
     expect(result.killed.first?.index) == other.index
 
@@ -136,11 +136,11 @@ class ExecuteActionsTests: XCTestCase {
 
 private func applyResult(_ result: ActionResult, to grid: Grid, signals: inout Signals) {
   if let layer = result.signalToLayer {
-    signals.increment(layer: layer, loc: result.indiv.loc)
+    signals.increment(layer: layer, loc: result.individual.loc)
   }
 
   if let newLocation = result.newLocation {
-    grid.queueForMove(from: result.indiv.loc, to: newLocation)
+    grid.queueForMove(from: result.individual.loc, to: newLocation)
   }
 
   result.killed.forEach {

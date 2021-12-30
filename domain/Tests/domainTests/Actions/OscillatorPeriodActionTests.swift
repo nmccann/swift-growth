@@ -4,7 +4,7 @@ import Nimble
 
 class OscillatorPeriodActionTests: XCTestCase {
   let sut = OscillatorPeriodAction()
-  var individual: Indiv!
+  var individual: Individual!
   var grid: Grid!
   var parameters: Params!
 
@@ -16,32 +16,32 @@ class OscillatorPeriodActionTests: XCTestCase {
   }
 
   func testUndriven() {
-    var result = ActionResult(indiv: individual, killed: [], responseCurve: { $0 * 2 })
+    var result = ActionResult(individual: individual, killed: [], responseCurve: { $0 * 2 })
     sut.apply(to: &result, level: 0.0, on: grid, with: parameters)
-    expect(result.indiv.oscPeriod) == 35
+    expect(result.individual.oscPeriod) == 35
   }
 
   func testPositiveHigh() {
-    var result = ActionResult(indiv: individual, killed: [], responseCurve: { $0 * 2 })
+    var result = ActionResult(individual: individual, killed: [], responseCurve: { $0 * 2 })
     sut.apply(to: &result, level: 50, on: grid, with: parameters)
-    expect(result.indiv.oscPeriod) == 400
+    expect(result.individual.oscPeriod) == 400
   }
 
   func testPositiveLow() {
-    var result = ActionResult(indiv: individual, killed: [], responseCurve: { $0 * 2 })
+    var result = ActionResult(individual: individual, killed: [], responseCurve: { $0 * 2 })
     sut.apply(to: &result, level: 0.5, on: grid, with: parameters)
-    expect(result.indiv.oscPeriod) == 169
+    expect(result.individual.oscPeriod) == 169
   }
 
   func testNegativeHigh() {
-    var result = ActionResult(indiv: individual, killed: [], responseCurve: { $0 * 2 })
+    var result = ActionResult(individual: individual, killed: [], responseCurve: { $0 * 2 })
     sut.apply(to: &result, level: -50, on: grid, with: parameters)
-    expect(result.indiv.oscPeriod) == 3
+    expect(result.individual.oscPeriod) == 3
   }
 
   func testNegativeLow() {
-    var result = ActionResult(indiv: individual, killed: [], responseCurve: { $0 * 2 })
+    var result = ActionResult(individual: individual, killed: [], responseCurve: { $0 * 2 })
     sut.apply(to: &result, level: -0.5, on: grid, with: parameters)
-    expect(result.indiv.oscPeriod) == 9
+    expect(result.individual.oscPeriod) == 9
   }
 }

@@ -153,7 +153,7 @@ func makeRandomGenome(_ range: ClosedRange<Int>) -> Genome {
   }
 }
 
-// Convert the indiv's genome to a renumbered connection list.
+// Convert the individual's genome to a renumbered connection list.
 // This renumbers the neurons from their uint16_t values in the genome
 // to the range 0..p.maxNumberNeurons - 1 by using a modulo operator.
 // Sensors are renumbered 0..Sensor::NUM_SENSES - 1
@@ -271,7 +271,7 @@ func cullUselessNeurons(connections: inout ConnectionList, nodeMap: inout NodeMa
 func createWiringFromGenome(_ genome: Genome, maxNumberNeurons: Int, actions: Int, sensors: Int) -> NeuralNet {
   var nnet = NeuralNet(connections: [], neurons: [])
   
-  // Convert the indiv's genome to a renumbered connection list
+  // Convert the individual's genome to a renumbered connection list
   var connectionList = makeRenumberedConnectionList(genome: genome, maxNumberNeurons: maxNumberNeurons, actions: actions, sensors: sensors) // synaptic connections
   
   // Make a node (neuron) map and their number of inputs and outputs from the renumbered connection list
@@ -296,7 +296,7 @@ func createWiringFromGenome(_ genome: Genome, maxNumberNeurons: Int, actions: In
     return node
   }
 
-  // Create the indiv's connection list in two passes:
+  // Create the individual's connection list in two passes:
   // First the connections to neurons, then the connections to actions.
   // This ordering optimizes the feed-forward function in feedForward.cpp.
   
@@ -328,7 +328,7 @@ func createWiringFromGenome(_ genome: Genome, maxNumberNeurons: Int, actions: In
     }
   }
   
-  // Create the indiv's neural node list
+  // Create the individual's neural node list
   nnet.neurons = (0..<nodeMap.count).map {
     .init(output: initialNeuronOutput(),
           driven: nodeMap[$0]?.numInputsFromSensorsOrOtherNeurons != 0)

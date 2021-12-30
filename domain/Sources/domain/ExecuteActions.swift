@@ -36,10 +36,10 @@ func responseCurve(_ r: Double, factor: Int) -> Double {
  
  MOVE_* actions- queue our agent for deferred movement with peeps.queueForMove(); the
  queue will be executed at the end of the multithreaded loop in a single thread.
- SET_RESPONSIVENESS action - immediately change indiv.responsiveness to the action
+ SET_RESPONSIVENESS action - immediately change individual.responsiveness to the action
  level scaled to 0.0..1.0 (because we have exclusive access to this member in
  our own individual during this function)
- SET_OSCILLATOR_PERIOD action - immediately change our individual's indiv.oscPeriod
+ SET_OSCILLATOR_PERIOD action - immediately change our individual's individual.oscPeriod
  to the action level exponentially scaled to 2..2048 (TBD)
  EMIT_SIGNALn action(s) - immediately increment the signal level at our agent's
  location using signals.increment() (using a thread-safe call)
@@ -50,10 +50,10 @@ func responseCurve(_ r: Double, factor: Int) -> Double {
  simulator step by endOfSimStep() in a single thread after all individuals have been
  evaluated multithreadedly.
  **********************************************************************************/
-func executeActions(indiv: Indiv, levels: [(Action, Double)], on grid: Grid, with parameters: Params) -> ActionResult {
+func executeActions(for individual: Individual, levels: [(Action, Double)], on grid: Grid, with parameters: Params) -> ActionResult {
   let curve: (Double) -> Double = { [kFactor=parameters.responsiveness.kFactor] value in responseCurve(value, factor: kFactor) }
 
-  var result = levels.reduce(into: ActionResult(indiv: indiv, killed: [], responseCurve: curve)) { partialResult, actionAndLevel in
+  var result = levels.reduce(into: ActionResult(individual: individual, killed: [], responseCurve: curve)) { partialResult, actionAndLevel in
     actionAndLevel.0.apply(to: &partialResult, level: actionAndLevel.1, on: grid, with: parameters)
   }
 
@@ -76,7 +76,7 @@ func executeActions(indiv: Indiv, levels: [(Action, Double)], on grid: Grid, wit
   let movementOffset = Coord(x: Int(probX * signumX), y: Int(probY * signumY))
 
   // Move there if it's a valid location
-  let proposedLocation = result.indiv.loc + movementOffset
+  let proposedLocation = result.individual.loc + movementOffset
 
   if grid.isInBounds(loc: proposedLocation) && grid.isEmptyAt(loc: proposedLocation) {
     result.newLocation = proposedLocation
@@ -86,16 +86,16 @@ func executeActions(indiv: Indiv, levels: [(Action, Double)], on grid: Grid, wit
 }
 
 public struct ActionResult {
-  var indiv: Indiv
+  var individual: Individual
   var newLocation: Coord?
   var signalToLayer: Int?
-  var killed: [Indiv]
+  var killed: [Individual]
   let responseCurve: (Double) -> Double
   var movePotential: CGPoint = .zero
 
   /// Range 0.0..1.0. Used for most actions other than those
   /// that directly modify the responsiveness
   var adjustedResponsiveness: Double {
-    responseCurve(indiv.responsiveness)
+    responseCurve(individual.responsiveness)
   }
 }

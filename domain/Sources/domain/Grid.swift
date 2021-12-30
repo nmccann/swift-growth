@@ -2,12 +2,12 @@ import Foundation
 
 public class Grid {
   public enum Kind: Equatable {
-    case occupied(by: Indiv)
+    case occupied(by: Individual)
     case barrier
   }
 
   private var data: [Coord: Kind] = [:]
-  public private(set) var dead: [Indiv] = []
+  public private(set) var dead: [Individual] = []
   private(set) var deathQueue: [Coord] = []
   private(set) var moveQueue: [(old: Coord, new: Coord)] = []
   public let size: (x: Int, y: Int)
@@ -32,7 +32,7 @@ public class Grid {
     }
   }
 
-  public var living: [Indiv] {
+  public var living: [Individual] {
     data.values.compactMap {
       switch $0 {
       case .occupied(by: let individual): return individual
@@ -73,7 +73,7 @@ public class Grid {
   }
 
 
-  /// Safe to call during multithread mode. Indiv won't move until end
+  /// Safe to call during multithread mode. individual won't move until end
   /// of sim step when drainMoveQueue() is called. Should only be called
   /// for living agents. It's ok if multiple agents are queued to move
   /// to the same location; only the first one will actually get moved.
@@ -88,28 +88,19 @@ public class Grid {
   // death queue was drained, so we'll ignore already-dead agents.
   func drainMoveQueue() {
     for moveRecord in moveQueue {
-      guard case .occupied(by: var indiv) = data[moveRecord.old], indiv.alive else {
+      guard case .occupied(by: var individual) = data[moveRecord.old], individual.alive else {
         continue
       }
 
-      if let moveDirection = (moveRecord.new - indiv.loc).asDir(), isEmptyAt(loc: moveRecord.new) {
-        indiv.loc = moveRecord.new
-        indiv.lastDirection = moveDirection
+      if let moveDirection = (moveRecord.new - individual.loc).asDir(), isEmptyAt(loc: moveRecord.new) {
+        individual.loc = moveRecord.new
+        individual.lastDirection = moveDirection
         data[moveRecord.old] = nil
-        data[moveRecord.new] = .occupied(by: indiv)
+        data[moveRecord.new] = .occupied(by: individual)
       }
     }
 
     moveQueue.removeAll()
-  }
-
-  /// Does no error checking -- check first that loc is occupied
-  func getIndiv(loc: Coord) -> Indiv {
-    guard case .occupied(by: let individual) = data[loc] else {
-      fatalError("Location is not occupied")
-    }
-
-    return individual
   }
 
   init(size: (x: Int, y: Int)) {

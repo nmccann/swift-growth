@@ -18,7 +18,7 @@ func initializeGeneration0(on grid: Grid, with parameters: Params) {
   
   // Spawn the population. The peeps container has already been allocated,
   // just clear and reuse it
-  let individuals: [Indiv] = (0..<parameters.population).map { .init(index: $0,
+  let individuals: [Individual] = (0..<parameters.population).map { .init(index: $0,
                                                                      loc: grid.findEmptyLocation(),
                                                                      genome: makeRandomGenome(parameters.genomeInitialLength),
                                                                      probeDistance: parameters.probeDistance,
@@ -50,7 +50,7 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
   signals.zeroFill()
   
   // Spawn the population. This overwrites all the elements of peeps[]
-  let individuals: [Indiv] = (0..<parameters.population).map { .init(index: $0,
+  let individuals: [Individual] = (0..<parameters.population).map { .init(index: $0,
                                                                      loc: grid.findEmptyLocation(),
                                                                      genome: generateChildGenome(parentGenomes: parentGenomes, with: parameters),
                                                                      probeDistance: parameters.probeDistance,

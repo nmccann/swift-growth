@@ -124,7 +124,7 @@ private extension GameScene {
     }
 
     zip(cellNodes, grid.living).forEach { cell, individual in
-      updateCell(cell, indiv: individual, size: cellSize)
+      updateCell(cell, individual: individual, size: cellSize)
     }
 
     if lastBarrierLocations != barriers {
@@ -151,11 +151,11 @@ private extension GameScene {
     }
   }
 
-  func updateCell(_ cell: SKShapeNode, indiv: Indiv, size: CGSize) {
+  func updateCell(_ cell: SKShapeNode, individual: Individual, size: CGSize) {
     cell.fillColor = .green
-    cell.isHidden = !indiv.alive
-    cell.position = .init(x: Double(indiv.loc.x - (parameters.size.x/2)) * size.width,
-                          y: Double(indiv.loc.y - (parameters.size.y/2)) * size.height)
+    cell.isHidden = !individual.alive
+    cell.position = .init(x: Double(individual.loc.x - (parameters.size.x/2)) * size.width,
+                          y: Double(individual.loc.y - (parameters.size.y/2)) * size.height)
   }
 
   func updateBarrier(_ barrier: SKShapeNode, location: Coord, size: CGSize) {
@@ -173,7 +173,7 @@ private extension GameScene {
 
     switch (runMode, Int(keyChar)) {
     case (_, NSUpArrowFunctionKey) where !keyDown:
-      let living: [Indiv] = grid.living + grid.dead
+      let living: [Individual] = grid.living + grid.dead
       let diversity = parameters.genomeComparisonMethod.diversityFor(living, initialPopulation: parameters.population)
       #if DEBUG
       print("Genetic Diversity: \(diversity)")

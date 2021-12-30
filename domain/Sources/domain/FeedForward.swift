@@ -32,7 +32,7 @@ import Surge
  The values of the action neurons are saved in local container
  actionLevels[] which is returned to the caller by value (thanks RVO).
  ********************************************************************************/
-extension Indiv {
+extension Individual {
   mutating func feedForward(simStep: Int, on grid: Grid, with parameters: Params) -> [(Action, Double)] {
     // This container is used to return values for all the action outputs. This array
     // contains one value per action neuron, which is the sum of all its weighted
@@ -46,7 +46,7 @@ extension Indiv {
     // Connections were ordered at birth so that all connections to neurons get
     // processed here before any connections to actions. As soon as we encounter the
     // first connection to an action, we'll pass all the neuron input accumulators
-    // through a transfer function and update the neuron outputs in the indiv,
+    // through a transfer function and update the neuron outputs in the individual,
     // except for undriven neurons which act as bias feeds and don't change. The
     // transfer function will leave each neuron's output in the range -1.0..1.0.
     var neuronOutputsComputed = false

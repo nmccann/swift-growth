@@ -4,7 +4,7 @@ import Foundation
 // direction. If non found, returns the maximum sensor value.
 // Maps the result to the sensor range 0.0..1.0.
 struct LongProbePopulationForwardSensor: Sensor {
-  func get(for individual: Indiv, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
     let distance = individual.probeDistance.long
     return populationCount(from: individual.loc, in: individual.lastDirection, for: distance, on: grid) / Double(distance)
   }

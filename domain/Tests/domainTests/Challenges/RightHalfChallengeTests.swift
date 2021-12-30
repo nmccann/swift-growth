@@ -4,7 +4,7 @@ import Nimble
 
 class RightHalfChallengeTests: XCTestCase {
   let sut = RightHalfChallenge()
-  var individual: Indiv!
+  var individual: Individual!
   var grid: Grid!
 
   override func setUp() {

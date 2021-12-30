@@ -24,7 +24,7 @@ public enum GenomeComparison {
 
   /// returns 0.0..1.0
   /// Samples random pairs of individuals regardless if they are alive or not
-  public func diversityFor(_ individuals: [Indiv], initialPopulation: Int) -> Double {
+  public func diversityFor(_ individuals: [Individual], initialPopulation: Int) -> Double {
     guard initialPopulation >= 2 else {
       return 0
     }

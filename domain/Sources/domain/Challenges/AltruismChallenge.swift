@@ -3,7 +3,7 @@ import Foundation
 /// Survivors are those inside the circular area defined by
 /// safeCenter and radius
 struct AltruismChallenge: Challenge {
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     let size = CGSize(width: grid.size.x, height: grid.size.y)
     let safeCenter = Coord(x: Int(size.width / 4.0), y: Int(size.height / 4.0))
     let radius = size.width / 4.0 // in a 128^2 world, holds 3216

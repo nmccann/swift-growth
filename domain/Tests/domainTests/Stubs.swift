@@ -1,7 +1,7 @@
 import Foundation
 @testable import domain
 
-extension Indiv {
+extension Individual {
   static func stub(index: Int = 0,
                    loc: Coord = .init(x: 0, y: 0),
                    genome: Genome = makeRandomGenome(10...10),

@@ -4,7 +4,7 @@ import Nimble
 
 class OscillatorSensorTests: XCTestCase {
   let sut = OscillatorSensor()
-  var individual: Indiv!
+  var individual: Individual!
   var grid: Grid!
   var parameters: Params!
 

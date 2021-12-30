@@ -12,7 +12,7 @@ struct RadioactiveWallsChallenge: Challenge {
     // radioactive, where X = the area width - 1. There's an exponential
     // falloff of the danger, falling off to zero at the arena half line.
     let radioactiveX = step < flipAtStep ? 0 : grid.size.x - 1
-    let distanceFromRadioactiveWall = Double(abs(result.indiv.loc.x - radioactiveX))
+    let distanceFromRadioactiveWall = Double(abs(result.individual.loc.x - radioactiveX))
 
     guard distanceFromRadioactiveWall < Double(grid.size.x / 2) else {
       return result
@@ -25,11 +25,11 @@ struct RadioactiveWallsChallenge: Challenge {
     }
 
     var result = result
-    result.killed.append(result.indiv)
+    result.killed.append(result.individual)
     return result
   }
 
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     .pass(1)
   }
 }

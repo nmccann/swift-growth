@@ -6,7 +6,7 @@ import Foundation
 /// never touch a wall will die. All that touched a wall at any time during
 /// their life will become parents.
 struct AgainstAnyWallChallenge: Challenge {
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     grid.isBorder(loc: individual.loc) ? .pass(1) : .fail(0)
   }
 }

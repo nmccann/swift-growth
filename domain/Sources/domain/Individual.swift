@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Indiv: Equatable {
+public struct Individual: Equatable {
   struct ProbeDistance: Equatable {
     var short: Int
     var long: Int

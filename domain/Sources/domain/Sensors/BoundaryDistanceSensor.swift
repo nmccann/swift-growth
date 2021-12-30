@@ -8,7 +8,7 @@ struct BoundaryDistanceSensor: Sensor {
   
   let axis: Axis
   
-  func get(for individual: Indiv, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
     switch axis {
     case .x:
       // Measures the distance to nearest boundary in the east-west axis,

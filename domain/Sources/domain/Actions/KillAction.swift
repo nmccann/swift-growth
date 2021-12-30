@@ -13,15 +13,18 @@ struct KillAction: Action {
       return
     }
 
-    let otherLoc = result.indiv.loc + result.indiv.lastDirection
+    let otherLoc = result.individual.loc + result.individual.lastDirection
 
     guard grid.isInBounds(loc: otherLoc) && grid.isOccupiedAt(loc: otherLoc) else {
       return
     }
 
-    let indiv2 = grid.getIndiv(loc: otherLoc)
-    let distance = (result.indiv.loc - indiv2.loc).length
+    guard case .occupied(by: let other) = grid[otherLoc] else {
+      return
+    }
+
+    let distance = (result.individual.loc - other.loc).length
     assert(distance == 1)
-    result.killed.append(indiv2)
+    result.killed.append(other)
   }
 }

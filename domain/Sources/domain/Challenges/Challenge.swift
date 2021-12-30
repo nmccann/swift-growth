@@ -2,7 +2,7 @@ import Foundation
 
 public protocol Challenge {
   func modify(_ result: ActionResult, at step: Int, on grid: Grid) -> ActionResult
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult
 }
 
 extension Challenge {

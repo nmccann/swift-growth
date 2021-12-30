@@ -11,7 +11,7 @@ struct CircleChallenge: Challenge {
   let location: Coord
   let scoring: Scoring
 
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     switch scoring {
     case .weighted:
       return innerTest(individual, on: grid) { pass, radius, distance in pass ? (radius - distance) / radius : 0 }
@@ -22,7 +22,7 @@ struct CircleChallenge: Challenge {
 }
 
 private extension CircleChallenge {
-  func innerTest(_ individual: Indiv,
+  func innerTest(_ individual: Individual,
                  on grid: Grid,
                  scoreFunction: (_ pass: Bool, _ radius: Double, _ distance: Double) -> Double) -> ChallengeResult {
     let offset = location - individual.loc

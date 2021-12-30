@@ -5,6 +5,6 @@ import Foundation
 /// default to mid-level 0.5.
 struct ResponsivenessAction: Action {
   func apply(to result: inout ActionResult, level: Double, on grid: Grid, with parameters: Params) {
-    result.indiv.responsiveness = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
+    result.individual.responsiveness = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
   }
 }

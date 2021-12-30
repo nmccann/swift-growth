@@ -4,7 +4,7 @@ import Foundation
 struct PairsChallenge: Challenge {
   private let againstAnyWall = AgainstAnyWallChallenge()
 
-  func test(_ individual: Indiv, on grid: Grid) -> ChallengeResult {
+  func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     guard againstAnyWall.test(individual, on: grid).didFail else {
       return .fail(0)
     }

@@ -80,8 +80,8 @@ public struct Params {
                                                 GeneticSimilaritySensor()],
                                       actions: [MoveXAction(),
                                                 MoveYAction(),
-                                                MoveAction { $0.indiv.lastDirection },
-                                                MoveAction { $0.indiv.lastDirection.rotate90DegreesClockwise() },
+                                                MoveAction { $0.individual.lastDirection },
+                                                MoveAction { $0.individual.lastDirection.rotate90DegreesClockwise() },
                                                 MoveAction { _ in .random() },
                                                 OscillatorPeriodAction(),
                                                 LongProbeDistanceAction(),
@@ -91,8 +91,8 @@ public struct Params {
                                                 MoveAction(direction: .west),
                                                 MoveAction(direction: .north),
                                                 MoveAction(direction: .south),
-                                                MoveAction { $0.indiv.lastDirection.rotate90DegreesCounterClockwise() },
-                                                MoveAction { $0.indiv.lastDirection.rotate90DegreesClockwise() },
-                                                MoveAction { $0.indiv.lastDirection.rotate180Degrees() },
+                                                MoveAction { $0.individual.lastDirection.rotate90DegreesCounterClockwise() },
+                                                MoveAction { $0.individual.lastDirection.rotate90DegreesClockwise() },
+                                                MoveAction { $0.individual.lastDirection.rotate180Degrees() },
                                                 KillAction()])
 }

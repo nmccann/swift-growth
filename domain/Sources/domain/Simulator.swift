@@ -30,7 +30,6 @@ public var survivalPercentage = 0.0
  The main simulator-wide data structures are:
  grid - where the agents live (identified by their non-zero index). 0 means empty.
  signals - multiple layers overlay the grid, hold pheromones
- peeps - an indexed set of agents of type Indiv; indexes start at 1
  
  The important simulator-wide variables are:
  generation - starts at 0, then increments every time the agents die and reproduce.
@@ -39,7 +38,7 @@ public var survivalPercentage = 0.0
  
  The threads are:
  main thread - simulator
- simStepOneIndiv() - child threads created by the main simulator thread
+ simStepOneIndividual() - child threads created by the main simulator thread
  imageWriter - saves image frames used to make a movie (possibly not threaded
  due to unresolved bugs when threaded)
  ********************************************************************************/
@@ -58,19 +57,19 @@ public func initializeSimulator(with parameters: Params) {
 public func advanceSimulator(with parameters: Params) async {
   let challenge = parameters.challenge ?? NoChallenge()
   let results: [ActionResult] = await grid.living.concurrentMap {
-    let result = simStepOneIndiv(indiv: $0, simStep: simStep, on: grid, with: parameters)
+    let result = executeStep(for: $0, simStep: simStep, on: grid, with: parameters)
     return challenge.modify(result, at: simStep, on: grid)
   }
 
   results.forEach { result in
-    grid[result.indiv.loc] = .occupied(by: result.indiv)
+    grid[result.individual.loc] = .occupied(by: result.individual)
 
     if let layer = result.signalToLayer {
-      signals.increment(layer: layer, loc: result.indiv.loc)
+      signals.increment(layer: layer, loc: result.individual.loc)
     }
 
     if let newLocation = result.newLocation {
-      grid.queueForMove(from: result.indiv.loc, to: newLocation)
+      grid.queueForMove(from: result.individual.loc, to: newLocation)
     }
 
     result.killed.forEach {
@@ -107,7 +106,7 @@ public func advanceSimulator(with parameters: Params) async {
  Execute one simStep for one individual.
  
  This executes in its own thread, invoked from the main simulator thread. First we execute
- indiv.feedForward() which computes action values to be executed here. Some actions such as
+ individual.feedForward() which computes action values to be executed here. Some actions such as
  signal emission(s) (pheromones), agent movement, or deaths will have been queued for
  later execution at the end of the generation in single-threaded mode (the deferred queues
  allow the main data structures (e.g., grid, signals) to be freely accessed read-only in all threads).
@@ -124,14 +123,14 @@ public func advanceSimulator(with parameters: Params) async {
  The other important variables are:
  
  simStep - the current age of our agent, reset to 0 at the start of each generation.
- For many simulation scenarios, this matches our indiv.age member.
+ For many simulation scenarios, this matches our individual.age member.
  randomUint - global random number generator, a private instance is given to each thread
  **********************************************************************************************/
-func simStepOneIndiv(indiv: Indiv, simStep: Int, on grid: Grid, with parameters: Params) -> ActionResult {
-  var indiv = indiv
-  indiv.age += 1 // for this implementation, tracks simStep
-  let actionLevels = indiv.feedForward(simStep: simStep, on: grid, with: parameters)
-  return executeActions(indiv: indiv, levels: actionLevels, on: grid, with: parameters)
+func executeStep(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> ActionResult {
+  var individual = individual
+  individual.age += 1 // for this implementation, tracks simStep
+  let actionLevels = individual.feedForward(simStep: simStep, on: grid, with: parameters)
+  return executeActions(for: individual, levels: actionLevels, on: grid, with: parameters)
 }
 
 
