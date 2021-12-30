@@ -51,11 +51,16 @@ struct Gene: Equatable {
   //  }
   
   func weightAsDouble() -> Double {
-    Double(weight) / 8192.0
+    Double(weight) / Double(Gene.weightDivisor)
   }
   
   static func makeRandomWeight() -> Int {
     .random(in: 0...0xffff) - 0x8000
+  }
+
+  /// Used in converting integral weights into floating point values
+  static var weightDivisor: Int {
+    8192
   }
 }
 
