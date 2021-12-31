@@ -127,6 +127,10 @@ struct Node {
   var numOutputs: Int
   var numSelfInputs: Int
   var numInputsFromSensorsOrOtherNeurons: Int
+
+  static var empty: Node {
+    .init(remappedNumber: 0, numOutputs: 0, numSelfInputs: 0, numInputsFromSensorsOrOtherNeurons: 0)
+  }
 }
 
 // Two neuron renumberings occur: The original genome uses a uint16_t for
@@ -189,30 +193,16 @@ func makeNodeMap(from connections: ConnectionList, maxNumberNeurons: Int) -> Nod
   for connection in connections {
     if case .neuron = connection.sinkType {
       assert(connection.sinkNum < maxNumberNeurons)
-      var it = nodeMap[connection.sinkNum] ?? .init(remappedNumber: 0,
-                                                    numOutputs: 0,
-                                                    numSelfInputs: 0,
-                                                    numInputsFromSensorsOrOtherNeurons: 0)
-
       if case .neuron = connection.sourceType, connection.sourceNum == connection.sinkNum {
-        it.numSelfInputs += 1
+        nodeMap[connection.sinkNum, default: .empty].numSelfInputs += 1
       } else {
-        it.numInputsFromSensorsOrOtherNeurons += 1
+        nodeMap[connection.sinkNum, default: .empty].numInputsFromSensorsOrOtherNeurons += 1
       }
-
-      nodeMap[connection.sinkNum] = it
     }
 
     if case .neuron = connection.sourceType {
       assert(connection.sourceNum < maxNumberNeurons)
-      var it = nodeMap[connection.sourceNum] ?? .init(remappedNumber: 0,
-                                                      numOutputs: 0,
-                                                      numSelfInputs: 0,
-                                                      numInputsFromSensorsOrOtherNeurons: 0)
-
-
-      it.numOutputs += 1
-      nodeMap[connection.sourceNum] = it
+      nodeMap[connection.sourceNum, default: .empty].numOutputs += 1
     }
   }
   return nodeMap
