@@ -12,7 +12,7 @@ let NEURON_RANGE: Double = NEURON_MAX - NEURON_MIN
 // to provide fine resolution near zero.
 
 struct Gene: Equatable {
-  enum Source: CaseIterable {
+  enum Source: Int, CaseIterable {
     case sensor, neuron
 
     /// Results in a new value, different from the first
@@ -24,7 +24,7 @@ struct Gene: Equatable {
     }
   }
   
-  enum Sink: CaseIterable {
+  enum Sink: Int, CaseIterable {
     case action, neuron
 
     /// Results in a new value, different from the first
@@ -391,7 +391,7 @@ func generateChildGenome(parentGenomes: [Genome], with parameters: Params) -> Ge
 
     // If sum is not evenly divisible, add one half the time
     // so that the rounding error is accounted for over time
-    if sum % 2 == 1 && Bool.random() {
+    if !sum.isMultiple(of: 2) && Bool.random() {
       sum += 1
     }
 

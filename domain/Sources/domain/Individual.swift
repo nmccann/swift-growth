@@ -23,12 +23,13 @@ public struct Individual: Equatable {
 
   /// Modified when some task is accomplished in relation to the current challenge
   var challengeBits: Int
+
+  public let color: Color
   
   /// Returned sensor values range SENSOR_MIN...SENSOR_MAX
   func getSensor(_ sensor: Sensor, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
     sensor.get(for: self, simStep: simStep, on: grid, with: parameters).clamped(to: 0.0...1.0)
   }
-  
   
   /// This is called when any individual is spawned.
   /// The responsiveness parameter will be initialized here to maximum value
@@ -53,18 +54,52 @@ public struct Individual: Equatable {
     self.challengeBits = 0 // will be set true when some task gets accomplished
     self.genome = genome
     self.nnet = createWiringFromGenome(genome, maxNumberNeurons: maxNumberOfNeurons, actions: actions, sensors: sensors)
-  }
-  
-  func printNeuralNet() {
-    fatalError()
-  }
-  
-  func printIGraphEdgeList() {
-    fatalError()
-  }
-  
-  func printGenome() {
-    fatalError()
+    self.color = colorFrom(genome)
   }
 }
 
+public struct Color: Equatable {
+  public let red: Double
+  public let green: Double
+  public let blue: Double
+}
+
+private func colorFrom(_ genome: Genome) -> Color {
+  guard let first = genome.first, let last = genome.last  else {
+    return .init(red: 0, green: 0, blue: 0)
+  }
+
+  /// - Returns: 1 if even, 0 if odd
+  func isEven(_ value: Int) -> Int {
+    value.isMultiple(of: 2) ? 1 : 0
+  }
+
+  func lumaFrom(red: Int, green: Int, blue: Int) -> Int {
+    ((red * 3) + blue + (green * 4)) / 8
+  }
+
+  let raw: Int = isEven(genome.count) |
+  first.sourceType.rawValue << 1 |
+  last.sourceType.rawValue << 2 |
+  first.sinkType.rawValue << 3 |
+  last.sinkType.rawValue << 4 |
+  isEven(first.sourceNum) << 5 |
+  isEven(first.sinkNum) << 6 |
+  isEven(last.sourceNum) << 7
+
+  let maxColorValue = 0xb0
+  let maxLumaValue = 0xb0
+
+  var red = raw
+  var green = (raw & 0x1f) << 3
+  var blue = (raw & 7) << 5
+
+
+  if lumaFrom(red: red, green: green, blue: blue) > maxLumaValue {
+    red = red > maxColorValue ? red % maxColorValue : red
+    green = green > maxColorValue ? green % maxColorValue : green
+    blue = blue > maxColorValue ? blue % maxColorValue : blue
+  }
+
+  return .init(red: Double(red) / 255.0, green: Double(green) / 255.0, blue: Double(blue) / 255.0)
+}
