@@ -25,7 +25,7 @@ public enum GenomeComparison {
   /// returns 0.0..1.0
   /// Samples random pairs of individuals regardless if they are alive or not
   public func diversityFor(_ individuals: [Individual], initialPopulation: Int) -> Double {
-    guard initialPopulation >= 2 else {
+    guard individuals.count >= 2 else {
       return 0
     }
 
@@ -33,8 +33,8 @@ public enum GenomeComparison {
     let count = min(1000, initialPopulation) // todo: !!! p.analysisSampleSize;
 
     let similaritySum = (0..<count).reduce(into: 0.0) { partialResult, _ in
-      let individuals = individuals.randomSample(count: 2)
-      partialResult += similarity(individuals[0].genome, individuals[1].genome)
+      let sample = individuals.randomSample(count: 2)
+      partialResult += similarity(sample[0].genome, sample[1].genome)
     }
 
     return 1.0 - (similaritySum / Double(count))

@@ -5,7 +5,7 @@ import Foundation
 // the peeps container at random locations with random genomes.
 func initializeGeneration0(on grid: Grid, with parameters: Params) {
   // The grid has already been allocated, just clear and reuse it
-  grid.nilFill()
+  grid.reset()
   
   if let replaceBarrier = parameters.replaceBarrier, replaceBarrier.generation == 0 {
     grid.applyBarrier(replaceBarrier.type)
@@ -18,15 +18,14 @@ func initializeGeneration0(on grid: Grid, with parameters: Params) {
   
   // Spawn the population. The peeps container has already been allocated,
   // just clear and reuse it
-  let individuals: [Individual] = (0..<parameters.population).map { .init(index: $0,
-                                                                     loc: grid.findEmptyLocation(),
-                                                                     genome: makeRandomGenome(parameters.genomeInitialLength),
-                                                                     probeDistance: parameters.probeDistance,
-                                                                     maxNumberOfNeurons: parameters.maxNumberNeurons,
-                                                                     actions: parameters.actions.count,
-                                                                     sensors: parameters.sensors.count) }
-  
-  individuals.forEach { individual in
+  (0..<parameters.population).forEach {
+    let individual = Individual(index: $0,
+                                loc: grid.findEmptyLocation(),
+                                genome: makeRandomGenome(parameters.genomeInitialLength),
+                                probeDistance: parameters.probeDistance,
+                                maxNumberOfNeurons: parameters.maxNumberNeurons,
+                                actions: parameters.actions.count,
+                                sensors: parameters.sensors.count)
     grid[individual.loc] = .occupied(by: individual)
   }
 }
@@ -39,7 +38,7 @@ func initializeGeneration0(on grid: Grid, with parameters: Params) {
 func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: Grid, with parameters: Params) {
   // The grid, signals, and peeps containers have already been allocated, just
   // clear them if needed and reuse the elements
-  grid.nilFill()
+  grid.reset()
   
   if let replaceBarrier = parameters.replaceBarrier, generation > replaceBarrier.generation {
     grid.applyBarrier(replaceBarrier.type)
@@ -49,16 +48,15 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
   
   signals.zeroFill()
   
-  // Spawn the population. This overwrites all the elements of peeps[]
-  let individuals: [Individual] = (0..<parameters.population).map { .init(index: $0,
-                                                                     loc: grid.findEmptyLocation(),
-                                                                     genome: generateChildGenome(parentGenomes: parentGenomes, with: parameters),
-                                                                     probeDistance: parameters.probeDistance,
-                                                                     maxNumberOfNeurons: parameters.maxNumberNeurons,
-                                                                     actions: parameters.actions.count,
-                                                                     sensors: parameters.sensors.count) }
-  
-  individuals.forEach { individual in
+  // Spawn the population.
+  (0..<parameters.population).forEach {
+    let individual = Individual(index: $0,
+                                loc: grid.findEmptyLocation(),
+                                genome: generateChildGenome(parentGenomes: parentGenomes, with: parameters),
+                                probeDistance: parameters.probeDistance,
+                                maxNumberOfNeurons: parameters.maxNumberNeurons,
+                                actions: parameters.actions.count,
+                                sensors: parameters.sensors.count)
     grid[individual.loc] = .occupied(by: individual)
   }
 }
@@ -76,7 +74,7 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
 func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with parameters: Params) -> Int {
   // This container will hold the indexes and survival scores (0.0..1.0)
   // of all the survivors who will provide genomes for repopulation.
-//  var parents: [(Int, Double)] = [] // <indiv index, score>
+  //  var parents: [(Int, Double)] = [] // <indiv index, score>
   
   let challenge = parameters.challenge ?? NoChallenge()
   

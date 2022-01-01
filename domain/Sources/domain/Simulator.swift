@@ -62,8 +62,6 @@ public func advanceSimulator(with parameters: Params) async {
   }
 
   results.forEach { result in
-    grid[result.individual.loc] = .occupied(by: result.individual)
-
     if let layer = result.signalToLayer {
       signals.increment(layer: layer, loc: result.individual.loc)
     }

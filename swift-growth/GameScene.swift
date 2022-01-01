@@ -152,7 +152,8 @@ private extension GameScene {
   }
 
   func updateCell(_ cell: SKShapeNode, individual: Individual, size: CGSize) {
-    cell.fillColor = .green
+    let color = individual.color
+    cell.fillColor = .init(red: color.red, green: color.green, blue: color.blue, alpha: 1)
     cell.isHidden = !individual.alive
     cell.position = .init(x: Double(individual.loc.x - (parameters.size.x/2)) * size.width,
                           y: Double(individual.loc.y - (parameters.size.y/2)) * size.height)
@@ -173,8 +174,8 @@ private extension GameScene {
 
     switch (runMode, Int(keyChar)) {
     case (_, NSUpArrowFunctionKey) where !keyDown:
-      let living: [Individual] = grid.living + grid.dead
-      let diversity = parameters.genomeComparisonMethod.diversityFor(living, initialPopulation: parameters.population)
+      let all: [Individual] = grid.living + grid.dead
+      let diversity = parameters.genomeComparisonMethod.diversityFor(all, initialPopulation: parameters.population)
       #if DEBUG
       print("Genetic Diversity: \(diversity)")
       #endif

@@ -6,7 +6,7 @@ public class Grid {
     case barrier
   }
 
-  private var data: [Coord: Kind] = [:]
+  public private(set) var data: [Coord: Kind] = [:]
   public private(set) var dead: [Individual] = []
   private(set) var deathQueue: [Coord] = []
   private(set) var moveQueue: [(old: Coord, new: Coord)] = []
@@ -107,8 +107,9 @@ public class Grid {
     self.size = size
   }
 
-  func nilFill() {
+  func reset() {
     data.removeAll()
+    dead.removeAll()
   }
 
   public func isInBounds(loc: Coord) -> Bool {
