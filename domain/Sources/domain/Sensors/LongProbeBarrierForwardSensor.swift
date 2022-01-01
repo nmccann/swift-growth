@@ -6,7 +6,7 @@ import Foundation
 struct LongProbeBarrierForwardSensor: Sensor {
   func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
     let distance = individual.probeDistance.long
-    return barrierCount(from: individual.loc, in: individual.lastDirection, for: distance, on: grid) / Double(distance)
+    return (barrierCount(from: individual.loc, in: individual.lastDirection, for: distance, on: grid) / Double(distance)).clamped(to: 0...1)
   }
 }
 
@@ -22,7 +22,7 @@ private extension LongProbeBarrierForwardSensor {
     var count = 0
     loc = loc + direction
     var numLocsToTest = distance
-    while numLocsToTest > 0 && grid.isInBounds(loc: loc) && grid.isBarrierAt(loc: loc) {
+    while numLocsToTest > 0 && grid.isInBounds(loc: loc) && !grid.isBarrierAt(loc: loc) {
       count += 1
       loc = loc + direction
       numLocsToTest -= 1
