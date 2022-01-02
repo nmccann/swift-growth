@@ -123,8 +123,14 @@ private extension GameScene {
       generateGrid()
     }
 
-    zip(cellNodes, grid.living).forEach { cell, individual in
-      updateCell(cell, individual: individual, size: cellSize)
+    let living = grid.living
+    cellNodes.enumerated().forEach { index, cell in
+      guard index < living.count else {
+        cell.isHidden = true
+        return
+      }
+
+      updateCell(cell, individual: living[index], size: cellSize)
     }
 
     if lastBarrierLocations != barriers {
