@@ -1,40 +1,22 @@
 import Foundation
 
-// Maps current location along axis of 0...grid axis dimension-1 to sensor range 0.0..1.0
+/// Converts the number of locations (not including loc) to the next barrier location
+/// along opposite directions of the specified axis to the sensor range. If no barriers
+/// are found, the result is sensor mid-range. Ignores agents in the path.
 struct BarrierSensor: Sensor {
-  enum Kind {
-    /// Sense the nearest barrier along axis of last movement direction, mapped
-    /// to sensor range 0.0..1.0
-    case forward
-
-    /// Sense the nearest barrier along axis perpendicular to last movement direction, mapped
-    /// to sensor range 0.0..1.0
-    case leftRight
-  }
-
-  let kind: Kind
+  /// Sense the nearest barrier in positive and negative direction along axis, mapped
+  /// to sensor range 0.0..1.0
+  let direction: (Individual) -> Direction
 
   func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
-    switch kind {
-    case .forward:
-      return barrierDistance(around: individual.loc,
-                             direction: individual.lastDirection,
-                             distance: individual.probeDistance.short,
-                             on: grid)
-
-    case .leftRight:
-      return barrierDistance(around: individual.loc,
-                             direction: individual.lastDirection.rotate90DegreesClockwise(),
-                             distance: individual.probeDistance.short,
-                             on: grid)
-    }
+    barrierDistance(around: individual.loc,
+                    direction: direction(individual),
+                    distance: individual.probeDistance.short,
+                    on: grid).clamped(to: 0...1)
   }
 }
 
 private extension BarrierSensor {
-  /// Converts the number of locations (not including loc) to the next barrier location
-  /// along opposite directions of the specified axis to the sensor range. If no barriers
-  /// are found, the result is sensor mid-range. Ignores agents in the path.
   func barrierDistance(around loc0: Coord, direction: Direction, distance: Int, on grid: Grid) -> Double {
     var countForward = 0
     var countReverse = 0
