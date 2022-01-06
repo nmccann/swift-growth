@@ -3,7 +3,8 @@ import Foundation
 // Requires that the grid, signals, and peeps containers have been allocated.
 // This will erase the grid and signal layers, then create a new population in
 // the peeps container at random locations with random genomes.
-func initializeGeneration0(on grid: Grid, with parameters: Params) {
+func initializeGeneration0(on grid: Grid, with parameters: Params) -> Grid {
+  var grid = grid
   // The grid has already been allocated, just clear and reuse it
   grid.reset()
   
@@ -28,6 +29,7 @@ func initializeGeneration0(on grid: Grid, with parameters: Params) {
                                 sensors: parameters.sensors.count)
     grid[individual.loc] = .occupied(by: individual)
   }
+  return grid
 }
 
 // Requires a container with one or more parent genomes to choose from.
@@ -35,7 +37,8 @@ func initializeGeneration0(on grid: Grid, with parameters: Params) {
 // peeps containers have been allocated. This will erase the grid and signal
 // layers, then create a new population in the peeps container with random
 // locations and genomes derived from the container of parent genomes.
-func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: Grid, with parameters: Params) {
+func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: Grid, with parameters: Params) -> Grid {
+  var grid = grid
   // The grid, signals, and peeps containers have already been allocated, just
   // clear them if needed and reuse the elements
   grid.reset()
@@ -59,6 +62,7 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
                                 sensors: parameters.sensors.count)
     grid[individual.loc] = .occupied(by: individual)
   }
+  return grid
 }
 
 // At this point, the deferred death queue and move queue have been processed
@@ -71,7 +75,7 @@ func initializeNewGeneration(parentGenomes: [Genome], generation: Int, on grid: 
 // nets instead of rebuilding them.
 // Returns number of survivor-reproducers.
 // Must be called in single-thread mode between generations.
-func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with parameters: Params) -> Int {
+func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with parameters: Params) -> (parents: Int, grid: Grid) {
   // This container will hold the indexes and survival scores (0.0..1.0)
   // of all the survivors who will provide genomes for repopulation.
   //  var parents: [(Int, Double)] = [] // <indiv index, score>
@@ -106,14 +110,14 @@ func spawnNewGeneration(generation: Int, murderCount: Int, on grid: Grid, with p
   let parentGenomes = parents.map { $0.0 }
   
   // Now we have a container of zero or more parents' genomes
-  if !parentGenomes.isEmpty {
-    // Spawn a new generation
-    initializeNewGeneration(parentGenomes: parentGenomes, generation: generation + 1, on: grid, with: parameters);
-  } else {
+  guard !parentGenomes.isEmpty else {
     // Special case: there are no surviving parents: start the simulation over
     // from scratch with randomly-generated genomes
-    initializeGeneration0(on: grid, with: parameters)
+    return (parents: 0, grid: initializeGeneration0(on: grid, with: parameters))
   }
-  
-  return parentGenomes.count
+
+  // Spawn a new generation
+  let newGrid = initializeNewGeneration(parentGenomes: parentGenomes, generation: generation + 1, on: grid, with: parameters)
+
+  return (parents: parentGenomes.count, grid: newGrid)
 }

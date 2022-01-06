@@ -51,7 +51,7 @@ public func initializeSimulator(with parameters: Params) {
   signals = .init(layers: parameters.signalLayers, size: parameters.size)
   
   generation = 0
-  initializeGeneration0(on: grid, with: parameters); // starting population
+  grid = initializeGeneration0(on: grid, with: parameters); // starting population
 }
 
 public func advanceSimulator(with parameters: Params) async {
@@ -80,7 +80,7 @@ public func advanceSimulator(with parameters: Params) async {
   // In single-thread mode: this executes deferred, queued deaths and movements,
   // updates signal layers (pheromone), etc.
   murderCount += grid.deathQueue.count
-  endOfSimStep(simStep, generation: generation, on: grid, with: parameters)
+  grid = endOfSimStep(simStep, generation: generation, on: grid, with: parameters)
   
   simStep += 1
   
@@ -89,17 +89,19 @@ public func advanceSimulator(with parameters: Params) async {
   }
   
   endOfGeneration(generation)
-  let numberSurvivors = spawnNewGeneration(generation: generation, murderCount: murderCount, on: grid, with: parameters)
+  let newGeneration = spawnNewGeneration(generation: generation, murderCount: murderCount, on: grid, with: parameters)
   murderCount = 0
   simStep = 0
   
-  if numberSurvivors == 0 {
+  if newGeneration.parents == 0 {
     generation = 0 // start over
     survivalPercentage = 0
   } else {
     generation += 1
-    survivalPercentage = Double(numberSurvivors) / Double(parameters.population)
+    survivalPercentage = Double(newGeneration.parents) / Double(parameters.population)
   }
+
+  grid = newGeneration.grid
 }
 
 /**********************************************************************************************

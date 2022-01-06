@@ -13,12 +13,14 @@ import Foundation
  6. We save the resulting world condition as a single image frame (if
  p.saveVideo is true).
  */
-func endOfSimStep(_ simStep: Int, generation: Int, on grid: Grid, with parameters: Params) {
+func endOfSimStep(_ simStep: Int, generation: Int, on grid: Grid, with parameters: Params) -> Grid {
+  var grid = grid
   grid.drainDeathQueue()
   grid.drainMoveQueue()
   
   signals.layers.indices.forEach { index in
     signals.fade(layer: index, by: SIGNAL_DAMPING)
   }
-  //TODO: Support saving video?
+
+  return grid
 }

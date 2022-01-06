@@ -1,6 +1,6 @@
 import Foundation
 
-public class Grid {
+public struct Grid {
   public enum Kind: Equatable {
     case occupied(by: Individual)
     case barrier
@@ -55,13 +55,13 @@ public class Grid {
   /// drainDeathQueue() is called. It's ok if the same agent gets
   /// queued for death multiple times. It does not make sense to
   /// call this function for agents already dead.
-  public func queueForDeath(at location: Coord) {
+  public mutating func queueForDeath(at location: Coord) {
     deathQueue.append(location)
   }
 
   /// Called in single-thread mode at end of sim step. This executes all the
   /// queued deaths, removing the dead agents from the grid.
-  func drainDeathQueue() {
+  mutating func drainDeathQueue() {
     for location in deathQueue {
       guard case .occupied(by: let individual) = data.removeValue(forKey: location) else {
         continue
@@ -77,7 +77,7 @@ public class Grid {
   /// of sim step when drainMoveQueue() is called. Should only be called
   /// for living agents. It's ok if multiple agents are queued to move
   /// to the same location; only the first one will actually get moved.
-  func queueForMove(from location: Coord, to newLocation: Coord) {
+  mutating func queueForMove(from location: Coord, to newLocation: Coord) {
     moveQueue.append((location, newLocation))
   }
 
@@ -86,7 +86,7 @@ public class Grid {
   /// but this function can move an individual any arbitrary distance. It is
   // possible that an agent queued for movement was recently killed when the
   // death queue was drained, so we'll ignore already-dead agents.
-  func drainMoveQueue() {
+  mutating func drainMoveQueue() {
     for moveRecord in moveQueue {
       guard case .occupied(by: var individual) = data[moveRecord.old], individual.alive else {
         continue
@@ -107,7 +107,7 @@ public class Grid {
     self.size = size
   }
 
-  func reset() {
+  mutating func reset() {
     data.removeAll()
     dead.removeAll()
   }
@@ -154,7 +154,7 @@ public class Grid {
 
   /// Generates a series of barrier locations based on the provided barrier type.
   /// - Parameter type: Type of barrier to construct
-  func applyBarrier(_ type: BarrierType?) {
+  mutating func applyBarrier(_ type: BarrierType?) {
     guard let type = type else {
       return
     }

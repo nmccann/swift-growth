@@ -25,7 +25,7 @@ class ExecuteActionsTests: XCTestCase {
                                   levels: [(MoveAction(direction: .east), .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
-      applyResult(result, to: grid, signals: &signals)
+      grid = applyResult(result, to: grid, signals: &signals)
     }
     expect(self.grid.isOccupiedAt(loc: .init(x: 3, y: 2))) == true
   }
@@ -41,7 +41,7 @@ class ExecuteActionsTests: XCTestCase {
                                   levels: [(MoveAction(direction: .north), .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
-      applyResult(result, to: grid, signals: &signals)
+      grid = applyResult(result, to: grid, signals: &signals)
     }
     expect(self.grid.isOccupiedAt(loc: .init(x: 2, y: 3))) == true
   }
@@ -58,7 +58,7 @@ class ExecuteActionsTests: XCTestCase {
                                   levels: [(MoveAction { $0.individual.lastDirection }, .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
-      applyResult(result, to: grid, signals: &signals)
+      grid = applyResult(result, to: grid, signals: &signals)
     }
     expect(self.grid.isOccupiedAt(loc: .init(x: 3, y: 2))) == true
   }
@@ -75,7 +75,7 @@ class ExecuteActionsTests: XCTestCase {
                                   levels: [(MoveAction { $0.individual.lastDirection.rotate180Degrees() }, .greatestFiniteMagnitude)],
                          on: grid,
                          with: parameters)
-      applyResult(result, to: grid, signals: &signals)
+      grid = applyResult(result, to: grid, signals: &signals)
     }
     expect(self.grid.isOccupiedAt(loc: .init(x: 1, y: 2))) == true
   }
@@ -129,12 +129,13 @@ class ExecuteActionsTests: XCTestCase {
     expect(result.killed).to(haveCount(1))
     expect(result.killed.first?.index) == other.index
 
-    applyResult(result, to: grid, signals: &signals)
+    grid = applyResult(result, to: grid, signals: &signals)
     expect(self.grid[other.loc]).to(beNil())
   }
 }
 
-private func applyResult(_ result: ActionResult, to grid: Grid, signals: inout Signals) {
+private func applyResult(_ result: ActionResult, to grid: Grid, signals: inout Signals) -> Grid {
+  var grid = grid
   if let layer = result.signalToLayer {
     signals.increment(layer: layer, loc: result.individual.loc)
   }
@@ -149,4 +150,5 @@ private func applyResult(_ result: ActionResult, to grid: Grid, signals: inout S
 
   grid.drainDeathQueue()
   grid.drainMoveQueue()
+  return grid
 }
