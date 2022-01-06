@@ -15,6 +15,7 @@ class GameScene: SKScene {
   private let padding: Double = 40
   private let parameters = Params.defaults
   private var lastBarrierLocations: [Coord] = []
+  private var timeAllSteps: TimeInterval = 0
 
   override func sceneDidLoad() {
     super.sceneDidLoad()
@@ -72,7 +73,8 @@ class GameScene: SKScene {
     }
 
     statsNode.position = .init(x: -((scene?.size.width ?? 0)/2) + (statsNode.frame.width / 2), y: -((scene?.size.height ?? 0)/2) + (statsNode.frame.height / 2))
-    statsNode.text = "Step: \(simStep) Gen: \(generation) Survival: \(survivalPercentage) SPR: \(simulatorStepsPerRefresh)"
+    let average = timeAllSteps / (TimeInterval(simStep) + TimeInterval(generation * parameters.stepsPerGeneration) + 1)
+    statsNode.text = "Step: \(simStep) Gen: \(generation) Survival: \(survivalPercentage) SPR: \(simulatorStepsPerRefresh) Average Per Step: \(average)"
 
     previousTime = currentTime
 
@@ -149,11 +151,14 @@ private extension GameScene {
     didStartAdvancing()
 
     Task.detached(priority: .high) {
+      let before = Date().timeIntervalSince1970
       for _ in 0..<steps {
         await advanceSimulator(with: self.parameters)
       }
+      let after = Date().timeIntervalSince1970
 
       await self.didFinishAdvancing()
+      await self.incrementTimeForSteps(by: after - before)
     }
   }
 
@@ -202,6 +207,10 @@ private extension GameScene {
   func didFinishAdvancing() {
     updateNodes()
     isAdvancing = false
+  }
+
+  func incrementTimeForSteps(by time: TimeInterval) {
+    timeAllSteps += time
   }
 
   func adjustStepsPerRefresh(by amount: Int) {
