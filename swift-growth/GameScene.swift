@@ -72,9 +72,7 @@ class GameScene: SKScene {
       return
     }
 
-    statsNode.position = .init(x: -((scene?.size.width ?? 0)/2) + (statsNode.frame.width / 2), y: -((scene?.size.height ?? 0)/2) + (statsNode.frame.height / 2))
-    let average = timeAllSteps / (TimeInterval(simStep) + TimeInterval(generation * parameters.stepsPerGeneration) + 1)
-    statsNode.text = "Step: \(simStep) Gen: \(generation) Survival: \(survivalPercentage) SPR: \(simulatorStepsPerRefresh) Average Per Step: \(average)"
+    updateStats()
 
     previousTime = currentTime
 
@@ -117,6 +115,12 @@ private extension GameScene {
     gridNode.removeChildren(in: barrierNodes)
     barrierNodes = grid.barriers.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
     barrierNodes.forEach { gridNode.addChild($0) }
+  }
+
+  func updateStats() {
+    statsNode.position = .init(x: -((scene?.size.width ?? 0)/2) + (statsNode.frame.width / 2), y: -((scene?.size.height ?? 0)/2) + (statsNode.frame.height / 2))
+    let average = timeAllSteps / (TimeInterval(simStep) + TimeInterval(generation * parameters.stepsPerGeneration) + 1)
+    statsNode.text = "Step: \(simStep) Gen: \(generation) Survival: \(survivalPercentage) SPR: \(simulatorStepsPerRefresh) Average Per Step: \(average)"
   }
 
   func updateNodes() {
@@ -196,6 +200,7 @@ private extension GameScene {
     case (.run, NSRightArrowFunctionKey) where !keyDown:  adjustStepsPerRefresh(by: 1)
     case (.stop, NSRightArrowFunctionKey) where keyDown:  advanceBySteps(1)
     case (.run, NSLeftArrowFunctionKey) where !keyDown:   adjustStepsPerRefresh(by: -1)
+    case (.stop, NSLeftArrowFunctionKey) where simulatorStepsPerRefresh == 1: rewind()
     default: break
     }
   }
@@ -215,6 +220,26 @@ private extension GameScene {
 
   func adjustStepsPerRefresh(by amount: Int) {
     simulatorStepsPerRefresh = max(1, simulatorStepsPerRefresh + amount)
+  }
+
+  func rewind() {
+    switch (shortTermHistory.isEmpty, longTermHistory.isEmpty) {
+    case (true, true):
+      return
+
+    case (false, _):
+      grid = shortTermHistory.removeLast()
+      simStep -= 1
+
+    case (_, false):
+      grid = longTermHistory.removeLast()
+      simStep = 0
+      generation -= 1
+    }
+
+    timeAllSteps = 0
+    updateStats()
+    updateNodes()
   }
 
 

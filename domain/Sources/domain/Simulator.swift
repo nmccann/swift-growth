@@ -12,6 +12,8 @@ public var generation = 0
 public var murderCount = 0
 public var simStep = 0
 public var survivalPercentage = 0.0
+public var longTermHistory: [Grid] = []
+public var shortTermHistory: [Grid] = []
 
 /********************************************************************************
  Start of simulator
@@ -81,6 +83,7 @@ public func advanceSimulator(with parameters: Params) async {
   // updates signal layers (pheromone), etc.
   murderCount += grid.deathQueue.count
   grid = endOfSimStep(simStep, generation: generation, on: grid, with: parameters)
+  shortTermHistory.append(grid)
   
   simStep += 1
   
@@ -101,6 +104,8 @@ public func advanceSimulator(with parameters: Params) async {
     survivalPercentage = Double(newGeneration.parents) / Double(parameters.population)
   }
 
+  shortTermHistory.removeAll()
+  longTermHistory.append(grid)
   grid = newGeneration.grid
 }
 
