@@ -26,9 +26,9 @@ public struct Individual: Equatable {
 
   public let color: Color
   
-  /// Returned sensor values range SENSOR_MIN...SENSOR_MAX
-  func getSensor(_ sensor: Sensor, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
-    sensor.get(for: self, simStep: simStep, on: grid, with: parameters).clamped(to: 0.0...1.0)
+  /// Returned sensor values range 0.0...1.0
+  func getSensor(_ sensor: Sensor, on world: World) -> Double {
+    sensor.get(for: self, on: world).clamped(to: 0.0...1.0)
   }
   
   /// This is called when any individual is spawned.

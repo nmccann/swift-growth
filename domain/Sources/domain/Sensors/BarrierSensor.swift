@@ -8,11 +8,11 @@ struct BarrierSensor: Sensor {
   /// to sensor range 0.0..1.0
   let direction: (Individual) -> Direction
 
-  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, on world: World) -> Double {
     barrierDistance(around: individual.loc,
                     direction: direction(individual),
                     distance: individual.probeDistance.short,
-                    on: grid).clamped(to: 0...1)
+                    on: world.grid).clamped(to: 0...1)
   }
 }
 

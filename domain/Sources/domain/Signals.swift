@@ -29,7 +29,7 @@ public struct Signals {
     let centerIncreaseAmount = 2.0
     let neighborIncreaseAmount = 1.0
 
-    grid.visitNeighborhood(loc: loc, radius: radius) { neighborLoc in
+    visitNeighborhood(loc: loc, radius: radius) { neighborLoc in
       if layers[layer][neighborLoc.x, neighborLoc.y] < SIGNAL_MAX {
         layers[layer][neighborLoc.x, neighborLoc.y] = min(SIGNAL_MAX, layers[layer][neighborLoc.x, neighborLoc.y] + neighborIncreaseAmount)
       }
@@ -46,6 +46,21 @@ public struct Signals {
 
   mutating func fade(layer: Int, by damping: Double) {
     layers[layer].data = Surge.mul(damping, layers[layer].data)
+  }
+
+  //TODO: Avoid duplicating from Grid
+  func visitNeighborhood(loc: Coord, radius: Double, f: (Coord) -> Void) {
+    for dx in (-min(Int(radius), loc.x)...min(Int(radius), (size.x - loc.x) - 1)) {
+      let x = loc.x + dx
+      assert(x >= 0 && x < size.x)
+      let extentY = Int((pow(radius, 2) - pow(Double(dx), 2)).squareRoot())
+
+      for dy in (-min(extentY, loc.y)...min(extentY, (size.y - loc.y) - 1)) {
+        let y = loc.y + dy
+        assert(y >= 0 && y < size.y)
+        f(.init(x: x, y: y))
+      }
+    }
   }
 
   subscript(layer: Int) -> Layer {

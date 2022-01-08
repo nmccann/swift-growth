@@ -17,28 +17,30 @@ struct PopulationSensor: Sensor {
 
   let kind: Kind
   
-  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, on world: World) -> Double {
     switch kind {
     case .neighborhood:
-      return density(around: individual.loc, distance: parameters.populationSensorRadius)
+      return density(around: individual.loc,
+                     distance: world.parameters.populationSensorRadius,
+                     on: world.grid)
 
     case .forward:
       return densityAlongAxis(around: individual.loc,
                               direction: individual.lastDirection,
-                              distance: parameters.populationSensorRadius,
-                              on: grid)
+                              distance: world.parameters.populationSensorRadius,
+                              on: world.grid)
 
     case .leftRight:
       return densityAlongAxis(around: individual.loc,
                               direction: individual.lastDirection.rotate90DegreesClockwise(),
-                              distance: parameters.populationSensorRadius,
-                              on: grid)
+                              distance: world.parameters.populationSensorRadius,
+                              on: world.grid)
     }
   }
 }
 
 private extension PopulationSensor {
-  func density(around location: Coord, distance: Double) -> Double {
+  func density(around location: Coord, distance: Double, on grid: Grid) -> Double {
     var countLocs = 0
     var countOccupied = 0
     func checkOccupancy(tloc: Coord) {

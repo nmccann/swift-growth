@@ -4,9 +4,9 @@ import Foundation
 // forward direction. If none found, returns the maximum sensor value.
 // Maps the result to the sensor range 0.0..1.0.
 struct LongProbeBarrierForwardSensor: Sensor {
-  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, on world: World) -> Double {
     let distance = individual.probeDistance.long
-    return (barrierCount(from: individual.loc, in: individual.lastDirection, for: distance, on: grid) / Double(distance)).clamped(to: 0...1)
+    return (barrierCount(from: individual.loc, in: individual.lastDirection, for: distance, on: world.grid) / Double(distance)).clamped(to: 0...1)
   }
 }
 

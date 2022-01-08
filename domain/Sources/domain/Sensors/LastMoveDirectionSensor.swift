@@ -8,7 +8,7 @@ struct LastMoveDirectionSensor: Sensor {
 
   let axis: Axis
 
-  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, on world: World) -> Double {
     switch axis {
     case .x:
       // X component -1,0,1 maps to sensor values 0.0, 0.5, 1.0

@@ -13,14 +13,15 @@ class GameScene: SKScene {
   private var simulatorStepsPerRefresh = 1
   private var isAdvancing = false
   private let padding: Double = 40
-  private let parameters = Params.defaults
+  private var world = World.randomPopulation(with: .defaults)
+  private let simulator = Simulator(mode: .run)
   private var lastBarrierLocations: [Coord] = []
   private var timeAllSteps: TimeInterval = 0
 
   override func sceneDidLoad() {
     super.sceneDidLoad()
 
-    initializeSimulator(with: parameters)
+//    initializeSimulator(with: parameters)
     generateGrid()
 
     statsNode.fontSize = 16
@@ -35,7 +36,7 @@ class GameScene: SKScene {
       #if DEBUG
       print("Killing at: \(coord)")
       #endif
-      grid.queueForDeath(at: coord)
+      world.grid.queueForDeath(at: coord)
     }
   }
 
@@ -68,7 +69,7 @@ class GameScene: SKScene {
   override func update(_ currentTime: TimeInterval) {
     let delta = currentTime - previousTime
 
-    guard case .run = runMode, delta >= simulatorRefreshRate else {
+    guard case .run = simulator.mode, delta >= simulatorRefreshRate else {
       return
     }
 
@@ -86,10 +87,6 @@ class GameScene: SKScene {
 
 private extension GameScene {
   func generateGrid() {
-    guard grid != nil else {
-      return
-    }
-
     lastBarrierLocations = []
     gridNode.removeFromParent()
     gridNode.removeAllChildren()
@@ -98,12 +95,12 @@ private extension GameScene {
       return
     }
 
-    let exactFit = CGSize(width: (scene.size.width - padding) / Double(parameters.size.x),
-                          height: (scene.size.height - padding) / Double(parameters.size.y))
+    let exactFit = CGSize(width: (scene.size.width - padding) / Double(world.parameters.size.x),
+                          height: (scene.size.height - padding) / Double(world.parameters.size.y))
     let squareWidth = floor(min(exactFit.width, exactFit.height))
     cellSize = CGSize(width: squareWidth, height: squareWidth)
 
-    cellNodes = grid.living.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
+    cellNodes = world.grid.living.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
     cellNodes.forEach { gridNode.addChild($0) }
 
     generateBarriers()
@@ -113,23 +110,23 @@ private extension GameScene {
 
   func generateBarriers() {
     gridNode.removeChildren(in: barrierNodes)
-    barrierNodes = grid.barriers.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
+    barrierNodes = world.grid.barriers.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
     barrierNodes.forEach { gridNode.addChild($0) }
   }
 
   func updateStats() {
     statsNode.position = .init(x: -((scene?.size.width ?? 0)/2) + (statsNode.frame.width / 2), y: -((scene?.size.height ?? 0)/2) + (statsNode.frame.height / 2))
-    let average = timeAllSteps / (TimeInterval(simStep) + TimeInterval(generation * parameters.stepsPerGeneration) + 1)
-    statsNode.text = "Step: \(simStep) Gen: \(generation) Survival: \(survivalPercentage) SPR: \(simulatorStepsPerRefresh) Average Per Step: \(average)"
+    let average = timeAllSteps / (TimeInterval(world.simStep) + TimeInterval(world.generation * world.parameters.stepsPerGeneration) + 1)
+    statsNode.text = "Step: \(world.simStep) Gen: \(world.generation) Survival: \(world.survivalPercentage) SPR: \(simulatorStepsPerRefresh) Average Per Step: \(average)"
   }
 
   func updateNodes() {
-    let barriers = grid.barriers
+    let barriers = world.grid.barriers
     if barriers.count != barrierNodes.count {
       generateGrid()
     }
 
-    let living = grid.living
+    let living = world.grid.living
     cellNodes.enumerated().forEach { index, cell in
       guard index < living.count else {
         cell.isHidden = true
@@ -154,14 +151,15 @@ private extension GameScene {
 
     didStartAdvancing()
 
-    Task.detached(priority: .high) {
+    Task.detached(priority: .high) { [world, simulator] in
       let before = Date().timeIntervalSince1970
+      var nextWorld = world
       for _ in 0..<steps {
-        await advanceSimulator(with: self.parameters)
+        nextWorld = await simulator.advance(world: nextWorld)
       }
       let after = Date().timeIntervalSince1970
 
-      await self.didFinishAdvancing()
+      await self.didFinishAdvancing(to: nextWorld)
       await self.incrementTimeForSteps(by: after - before)
     }
   }
@@ -170,14 +168,14 @@ private extension GameScene {
     let color = individual.color
     cell.fillColor = .init(red: color.red, green: color.green, blue: color.blue, alpha: 1)
     cell.isHidden = !individual.alive
-    cell.position = .init(x: Double(individual.loc.x - (parameters.size.x/2)) * size.width,
-                          y: Double(individual.loc.y - (parameters.size.y/2)) * size.height)
+    cell.position = .init(x: Double(individual.loc.x - (world.parameters.size.x/2)) * size.width,
+                          y: Double(individual.loc.y - (world.parameters.size.y/2)) * size.height)
   }
 
   func updateBarrier(_ barrier: SKShapeNode, location: Coord, size: CGSize) {
     barrier.fillColor = .red
-    barrier.position = .init(x: Double(location.x - (parameters.size.x/2)) * size.width,
-                             y: Double(location.y - (parameters.size.y/2)) * size.height)
+    barrier.position = .init(x: Double(location.x - (world.parameters.size.x/2)) * size.width,
+                             y: Double(location.y - (world.parameters.size.y/2)) * size.height)
   }
 
   func handleKeyEvent(_ event: NSEvent, keyDown: Bool) {
@@ -187,16 +185,16 @@ private extension GameScene {
             return
           }
 
-    switch (runMode, Int(keyChar)) {
+    switch (simulator.mode, Int(keyChar)) {
     case (_, NSUpArrowFunctionKey) where !keyDown:
-      let all: [Individual] = grid.living + grid.dead
-      let diversity = parameters.genomeComparisonMethod.diversityFor(all, initialPopulation: parameters.population)
+      let all: [Individual] = world.grid.living + world.grid.dead
+      let diversity = world.parameters.genomeComparisonMethod.diversityFor(all, initialPopulation: world.parameters.population)
       #if DEBUG
       print("Genetic Diversity: \(diversity)")
       #endif
 
-    case (.run, NSDownArrowFunctionKey) where !keyDown:   runMode = .stop
-    case (.stop, NSDownArrowFunctionKey) where !keyDown:  runMode = .run
+    case (.run, NSDownArrowFunctionKey) where !keyDown:   simulator.mode = .stop
+    case (.stop, NSDownArrowFunctionKey) where !keyDown:  simulator.mode = .run
     case (.run, NSRightArrowFunctionKey) where !keyDown:  adjustStepsPerRefresh(by: 1)
     case (.stop, NSRightArrowFunctionKey) where keyDown:  advanceBySteps(1)
     case (.run, NSLeftArrowFunctionKey) where !keyDown:   adjustStepsPerRefresh(by: -1)
@@ -209,7 +207,8 @@ private extension GameScene {
     isAdvancing = true
   }
 
-  func didFinishAdvancing() {
+  func didFinishAdvancing(to world: World) {
+    self.world = world
     updateNodes()
     isAdvancing = false
   }
@@ -223,18 +222,12 @@ private extension GameScene {
   }
 
   func rewind() {
-    switch (shortTermHistory.isEmpty, longTermHistory.isEmpty) {
-    case (true, true):
-      return
+    switch (simulator.shortTermHistory.isEmpty, simulator.longTermHistory.isEmpty) {
+    case (true, true): return
 
-    case (false, _):
-      grid = shortTermHistory.removeLast()
-      simStep -= 1
+    case (false, _): world = simulator.shortTermHistory.removeLast()
 
-    case (_, false):
-      grid = longTermHistory.removeLast()
-      simStep = 0
-      generation -= 1
+    case (_, false): world = simulator.longTermHistory.removeLast()
     }
 
     timeAllSteps = 0
@@ -246,7 +239,7 @@ private extension GameScene {
   /// Converts a given screen position to a coordinate in the grid,
   /// or nil if resulting coordinate lies outside of the grid
   func positionToCoord(_ position: CGPoint) -> Coord? {
-    let result = Coord(x: Int(round(position.x / cellSize.width)) + (grid.size.x / 2), y: (Int(round(position.y / cellSize.height)) + (grid.size.y / 2)))
-    return grid.isInBounds(loc: result) ? result : nil
+    let result = Coord(x: Int(round(position.x / cellSize.width)) + (world.grid.size.x / 2), y: (Int(round(position.y / cellSize.height)) + (world.grid.size.y / 2)))
+    return world.grid.isInBounds(loc: result) ? result : nil
   }
 }

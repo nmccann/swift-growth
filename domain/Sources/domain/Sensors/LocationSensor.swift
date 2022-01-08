@@ -8,10 +8,10 @@ struct LocationSensor: Sensor {
 
   let axis: Axis
 
-  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, on world: World) -> Double {
     switch axis {
-    case .x: return Double(individual.loc.x) / Double(grid.size.x - 1)
-    case .y: return Double(individual.loc.y) / Double(grid.size.y - 1)
+    case .x: return Double(individual.loc.x) / Double(world.grid.size.x - 1)
+    case .y: return Double(individual.loc.y) / Double(world.grid.size.y - 1)
     }
   }
 }

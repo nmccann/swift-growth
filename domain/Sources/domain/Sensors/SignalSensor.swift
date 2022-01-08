@@ -17,22 +17,22 @@ struct SignalSensor: Sensor {
   let kind: Kind
   let layer: Int
 
-  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, on world: World) -> Double {
     switch kind {
     case .neighborhood:
-      return density(around: individual.loc, distance: Double(parameters.signalSensorRadius), on: grid)
+      return density(around: individual.loc, distance: Double(world.parameters.signalSensorRadius), on: world)
 
     case .forward:
       return densityAlongAxis(around: individual.loc,
                               direction: individual.lastDirection,
-                              distance: Double(parameters.signalSensorRadius),
-                              on: grid)
+                              distance: Double(world.parameters.signalSensorRadius),
+                              on: world)
 
     case .leftRight:
       return densityAlongAxis(around: individual.loc,
                               direction: individual.lastDirection.rotate90DegreesClockwise(),
-                              distance: Double(parameters.signalSensorRadius),
-                              on: grid)
+                              distance: Double(world.parameters.signalSensorRadius),
+                              on: world)
     }
   }
 }
@@ -40,16 +40,16 @@ struct SignalSensor: Sensor {
 private extension SignalSensor {
   /// returns magnitude of the specified signal layer in a neighborhood, with
   /// 0.0..maxSignalSum converted to the sensor range.
-  func density(around location: Coord, distance: Double, on grid: Grid) -> Double {
+  func density(around location: Coord, distance: Double, on world: World) -> Double {
     var countLocs = 0
     var sum = 0.0
 
     func signalCheck(tloc: Coord) {
       countLocs += 1
-      sum += Double(signals.getMagnitude(layer: layer, loc: tloc))
+      sum += Double(world.signals.getMagnitude(layer: layer, loc: tloc))
     }
 
-    grid.visitNeighborhood(loc: location, radius: distance, f: signalCheck(tloc:))
+    world.grid.visitNeighborhood(loc: location, radius: distance, f: signalCheck(tloc:))
     let maxSum = Double(countLocs) * SIGNAL_MAX
     return sum / maxSum // convert to 0.0...1.0
   }
@@ -61,7 +61,7 @@ private extension SignalSensor {
   /// about 2*radius*SIGNAL_MAX (?). We don't adjust for being close to a border,
   /// so signal densities along borders and in corners are commonly sparser than
   /// away from borders.
-  func densityAlongAxis(around location: Coord, direction: Direction, distance: Double, on grid: Grid) -> Double {
+  func densityAlongAxis(around location: Coord, direction: Direction, distance: Double, on world: World) -> Double {
     var sum = 0.0
     let directionVector = direction.asNormalizedCoord()
 
@@ -72,11 +72,11 @@ private extension SignalSensor {
 
       let offset = tloc - location
       let projectionOnDirection = directionVector.x * offset.x + directionVector.y * offset.y
-      let contribution = Double(projectionOnDirection * signals.getMagnitude(layer: layer, loc: location)) / Double(offset.x * offset.x + offset.y * offset.y)
+      let contribution = Double(projectionOnDirection * world.signals.getMagnitude(layer: layer, loc: location)) / Double(offset.x * offset.x + offset.y * offset.y)
       sum += contribution
     }
 
-    grid.visitNeighborhood(loc: location,
+    world.grid.visitNeighborhood(loc: location,
                            radius: distance,
                            f: signalCheck(tloc:))
 

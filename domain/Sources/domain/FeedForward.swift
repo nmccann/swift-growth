@@ -33,7 +33,7 @@ import Surge
  actionLevels[] which is returned to the caller by value (thanks RVO).
  ********************************************************************************/
 extension Individual {
-  mutating func feedForward(simStep: Int, on grid: Grid, with parameters: Params) -> [(action: Action, level: Double)] {
+  mutating func feedForward(on world: World) -> [(action: Action, level: Double)] {
     // This container is used to return values for all the action outputs. This array
     // contains one value per action neuron, which is the sum of all its weighted
     // input connections. The sum has an arbitrary range. Return by value assumes compiler
@@ -71,9 +71,9 @@ extension Individual {
       var inputVal: Double = 0.0
 
       if case .sensor = conn.sourceType {
-        if parameters.sensors.count > conn.sourceNum {
-          let sensor = parameters.sensors[conn.sourceNum]
-          inputVal = sensor.get(for: self, simStep: simStep, on: grid, with: parameters)
+        if world.parameters.sensors.count > conn.sourceNum {
+          let sensor = world.parameters.sensors[conn.sourceNum]
+          inputVal = sensor.get(for: self, on: world)
         }
       } else {
         inputVal = nnet.neurons[conn.sourceNum].output;
@@ -89,6 +89,6 @@ extension Individual {
       }
     }
 
-    return parameters.actions.lazy.enumerated().map { (action: $1, level: levels[$0, default: 0.0]) }
+    return world.parameters.actions.lazy.enumerated().map { (action: $1, level: levels[$0, default: 0.0]) }
   }
 }
