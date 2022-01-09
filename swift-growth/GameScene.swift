@@ -100,7 +100,10 @@ private extension GameScene {
     let squareWidth = floor(min(exactFit.width, exactFit.height))
     cellSize = CGSize(width: squareWidth, height: squareWidth)
 
-    cellNodes = world.grid.living.map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
+    //TODO: Find a better solution for issue where living cells can exceed the remaining cell nodes,
+    //which can happen if we generate the grid and then the population changes (ex. due to death/or going into history).
+    //Currently resolve this by generating more cells then we need and hiding the rest - resulting in a pool of available cells.
+    cellNodes = (0...world.grid.living.count * 4).map { _ in .init(rect: .init(origin: .zero, size: cellSize)) }
     cellNodes.forEach { gridNode.addChild($0) }
 
     generateBarriers()
