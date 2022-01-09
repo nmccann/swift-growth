@@ -69,11 +69,11 @@ class GameScene: SKScene {
   override func update(_ currentTime: TimeInterval) {
     let delta = currentTime - previousTime
 
+    updateStats()
+
     guard case .run = simulator.mode, delta >= simulatorRefreshRate else {
       return
     }
-
-    updateStats()
 
     previousTime = currentTime
 
@@ -155,7 +155,7 @@ private extension GameScene {
       let before = Date().timeIntervalSince1970
       var nextWorld = world
       for _ in 0..<steps {
-        nextWorld = await simulator.advance(world: nextWorld)
+        nextWorld = await simulator.stepForward(world: nextWorld)
       }
       let after = Date().timeIntervalSince1970
 
@@ -222,14 +222,7 @@ private extension GameScene {
   }
 
   func rewind() {
-    switch (simulator.shortTermHistory.isEmpty, simulator.longTermHistory.isEmpty) {
-    case (true, true): return
-
-    case (false, _): world = simulator.shortTermHistory.removeLast()
-
-    case (_, false): world = simulator.longTermHistory.removeLast()
-    }
-
+    world = simulator.stepBackward(world: world)
     timeAllSteps = 0
     updateStats()
     updateNodes()
