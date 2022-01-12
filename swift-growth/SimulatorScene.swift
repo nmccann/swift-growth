@@ -1,8 +1,7 @@
 import SpriteKit
-import GameplayKit
 import domain
 
-class GameScene: SKScene {
+class SimulatorScene: SKScene {
   private var gridNode = SKNode()
   private var statsNode = SKLabelNode()
   private var cellNodes: [SKShapeNode] = []
@@ -21,7 +20,6 @@ class GameScene: SKScene {
   override func sceneDidLoad() {
     super.sceneDidLoad()
 
-//    initializeSimulator(with: parameters)
     generateGrid()
 
     statsNode.fontSize = 16
@@ -82,10 +80,11 @@ class GameScene: SKScene {
 
   override func didChangeSize(_ oldSize: CGSize) {
     generateGrid()
+    updateNodes()
   }
 }
 
-private extension GameScene {
+private extension SimulatorScene {
   func generateGrid() {
     lastBarrierLocations = []
     gridNode.removeFromParent()

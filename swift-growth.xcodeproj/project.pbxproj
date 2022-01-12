@@ -8,13 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		4F6282102775855E00F31936 /* domain in Frameworks */ = {isa = PBXBuildFile; productRef = 4F62820F2775855E00F31936 /* domain */; };
-		4FD39BB92759BFCF006D5ED5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */; };
-		4FD39BBB2759BFCF006D5ED5 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */; };
-		4FD39BBD2759BFCF006D5ED5 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BBC2759BFCF006D5ED5 /* Actions.sks */; };
-		4FD39BBF2759BFCF006D5ED5 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BBE2759BFCF006D5ED5 /* GameScene.swift */; };
-		4FD39BC12759BFCF006D5ED5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BC02759BFCF006D5ED5 /* ViewController.swift */; };
+		4F7CE520278E828F0056D4E5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7CE51F278E828F0056D4E5 /* App.swift */; };
+		4F7CE53D278E843C0056D4E5 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7CE53C278E843C0056D4E5 /* AppContainer.swift */; };
+		4FD39BBF2759BFCF006D5ED5 /* SimulatorScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BBE2759BFCF006D5ED5 /* SimulatorScene.swift */; };
 		4FD39BC32759BFD0006D5ED5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BC22759BFD0006D5ED5 /* Assets.xcassets */; };
-		4FD39BC62759BFD0006D5ED5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BC42759BFD0006D5ED5 /* Main.storyboard */; };
 		4FD39BDB2759BFD0006D5ED5 /* swift_growth_swiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BDA2759BFD0006D5ED5 /* swift_growth_swiftUITests.swift */; };
 		4FD39BDD2759BFD0006D5ED5 /* swift_growth_swiftUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BDC2759BFD0006D5ED5 /* swift_growth_swiftUITestsLaunchTests.swift */; };
 /* End PBXBuildFile section */
@@ -38,14 +35,11 @@
 
 /* Begin PBXFileReference section */
 		4F62820927757AA500F31936 /* domain */ = {isa = PBXFileReference; lastKnownFileType = text; path = domain; sourceTree = SOURCE_ROOT; };
+		4F7CE51F278E828F0056D4E5 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		4F7CE53C278E843C0056D4E5 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
 		4FD39BB52759BFCF006D5ED5 /* swift-growth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swift-growth.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
-		4FD39BBC2759BFCF006D5ED5 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
-		4FD39BBE2759BFCF006D5ED5 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
-		4FD39BC02759BFCF006D5ED5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4FD39BBE2759BFCF006D5ED5 /* SimulatorScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorScene.swift; sourceTree = "<group>"; };
 		4FD39BC22759BFD0006D5ED5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4FD39BC52759BFD0006D5ED5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4FD39BC72759BFD0006D5ED5 /* swift-growth.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "swift-growth.entitlements"; sourceTree = "<group>"; };
 		4FD39BCC2759BFD0006D5ED5 /* swift-growthTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "swift-growthTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD39BD62759BFD0006D5ED5 /* swift-growthUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "swift-growthUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,13 +105,10 @@
 			isa = PBXGroup;
 			children = (
 				4F62820927757AA500F31936 /* domain */,
-				4FD39BB82759BFCF006D5ED5 /* AppDelegate.swift */,
-				4FD39BBA2759BFCF006D5ED5 /* GameScene.sks */,
-				4FD39BBC2759BFCF006D5ED5 /* Actions.sks */,
-				4FD39BBE2759BFCF006D5ED5 /* GameScene.swift */,
-				4FD39BC02759BFCF006D5ED5 /* ViewController.swift */,
+				4F7CE51F278E828F0056D4E5 /* App.swift */,
+				4F7CE53C278E843C0056D4E5 /* AppContainer.swift */,
+				4FD39BBE2759BFCF006D5ED5 /* SimulatorScene.swift */,
 				4FD39BC22759BFD0006D5ED5 /* Assets.xcassets */,
-				4FD39BC42759BFD0006D5ED5 /* Main.storyboard */,
 				4FD39BC72759BFD0006D5ED5 /* swift-growth.entitlements */,
 			);
 			path = "swift-growth";
@@ -248,10 +239,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FD39BBB2759BFCF006D5ED5 /* GameScene.sks in Resources */,
 				4FD39BC32759BFD0006D5ED5 /* Assets.xcassets in Resources */,
-				4FD39BBD2759BFCF006D5ED5 /* Actions.sks in Resources */,
-				4FD39BC62759BFD0006D5ED5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,9 +264,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FD39BC12759BFCF006D5ED5 /* ViewController.swift in Sources */,
-				4FD39BBF2759BFCF006D5ED5 /* GameScene.swift in Sources */,
-				4FD39BB92759BFCF006D5ED5 /* AppDelegate.swift in Sources */,
+				4F7CE53D278E843C0056D4E5 /* AppContainer.swift in Sources */,
+				4F7CE520278E828F0056D4E5 /* App.swift in Sources */,
+				4FD39BBF2759BFCF006D5ED5 /* SimulatorScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,17 +300,6 @@
 			targetProxy = 4FD39BD72759BFD0006D5ED5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		4FD39BC42759BFD0006D5ED5 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4FD39BC52759BFD0006D5ED5 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		4FD39BDE2759BFD0006D5ED5 /* Debug */ = {
@@ -453,8 +430,6 @@
 				DEVELOPMENT_TEAM = P94YNTCBH3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMainStoryboardFile = Main;
-				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -480,8 +455,6 @@
 				DEVELOPMENT_TEAM = P94YNTCBH3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMainStoryboardFile = Main;
-				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
