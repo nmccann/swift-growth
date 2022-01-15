@@ -283,13 +283,14 @@ func createWiringFromGenome(_ genome: Genome, maxNumberNeurons: Int, actions: In
   assert(nodeMap.count <= maxNumberNeurons)
   var newNumber = 0;
 
-  nodeMap = nodeMap.mapValues { node in
+  //TODO: Consider using an OrderedDictionary to make the need to maintain the order for consistency more obvious
+  nodeMap = NodeMap(uniqueKeysWithValues: nodeMap.sorted { $0.key < $1.key }.map { key, node in
     var node = node
     assert(node.numOutputs != 0)
     node.remappedNumber = newNumber
     newNumber += 1
-    return node
-  }
+    return (key, node)
+  })
 
   // Create the individual's connection list in two passes:
   // First the connections to neurons, then the connections to actions.
