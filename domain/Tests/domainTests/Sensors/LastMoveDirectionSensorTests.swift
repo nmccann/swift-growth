@@ -4,29 +4,26 @@ import Nimble
 
 class LastMoveDirectionSensorTests: XCTestCase {
   var individual: Individual!
-  var grid: Grid!
-  var parameters: Params!
+  var world: World!
 
   override func setUp() {
-    grid = .init(size: (x: 4, y: 4))
+    world = .init(parameters: .stub())
     individual = .stub()
-    grid[individual.loc] = .occupied(by: individual)
-    parameters = .stub(stepsPerGeneration: 20)
   }
 
   func testXAxis() {
     let sut = LastMoveDirectionSensor(axis: .x)
 
     individual.lastDirection = .east
-    var result = sut.get(for: individual, simStep: 0, on: grid, with: parameters)
+    var result = sut.get(for: individual, on: world)
     expect(result) == 1.0
 
     individual.lastDirection = .west
-    result = sut.get(for: individual, simStep: 0, on: grid, with: parameters)
+    result = sut.get(for: individual, on: world)
     expect(result) == 0
 
     individual.lastDirection = .north
-    result = sut.get(for: individual, simStep: 0, on: grid, with: parameters)
+    result = sut.get(for: individual, on: world)
     expect(result) == 0.5
   }
 
@@ -34,15 +31,15 @@ class LastMoveDirectionSensorTests: XCTestCase {
     let sut = LastMoveDirectionSensor(axis: .y)
 
     individual.lastDirection = .north
-    var result = sut.get(for: individual, simStep: 0, on: grid, with: parameters)
+    var result = sut.get(for: individual, on: world)
     expect(result) == 1.0
 
     individual.lastDirection = .south
-    result = sut.get(for: individual, simStep: 0, on: grid, with: parameters)
+    result = sut.get(for: individual, on: world)
     expect(result) == 0
 
     individual.lastDirection = .east
-    result = sut.get(for: individual, simStep: 0, on: grid, with: parameters)
+    result = sut.get(for: individual, on: world)
     expect(result) == 0.5
   }
 }

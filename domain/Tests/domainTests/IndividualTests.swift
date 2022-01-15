@@ -3,19 +3,11 @@ import Nimble
 @testable import domain
 
 class IndividualTests: XCTestCase {
-  var grid: Grid!
-  var parameters: Params!
-
-  override func setUp() {
-    grid = .init(size: (x: 4, y: 4))
-
-  }
-
   func testFeedForwardSimple() {
-    parameters = .stub(maxNumberNeurons: 3,
-                       probeDistance: (short: 3, long: 16),
-                       sensors: [ConstantSensor(value: 1), ConstantSensor(value: 5)],
-                       actions: [MoveXAction(), MoveYAction()])
+    var world = World(parameters: .stub(maxNumberNeurons: 3,
+                                        probeDistance: (short: 3, long: 16),
+                                        sensors: [ConstantSensor(value: 1), ConstantSensor(value: 5)],
+                                        actions: [MoveXAction(), MoveYAction()]))
 
     let genome: Genome = [.init(sourceType: .sensor, sourceNum: 0, sinkType: .neuron, sinkNum: 0, weight: Gene.weightDivisor),
                           .init(sourceType: .neuron, sourceNum: 0, sinkType: .action, sinkNum: 0, weight: Gene.weightDivisor),
@@ -25,8 +17,8 @@ class IndividualTests: XCTestCase {
     var individual = Individual(index: 0,
                                 loc: .init(x: 2, y: 2),
                                 genome: genome,
-                                probeDistance: parameters.probeDistance,
-                                maxNumberOfNeurons: parameters.maxNumberNeurons,
+                                probeDistance: world.parameters.probeDistance,
+                                maxNumberOfNeurons: world.parameters.maxNumberNeurons,
                                 actions: 2,
                                 sensors: 2)
 
@@ -36,8 +28,8 @@ class IndividualTests: XCTestCase {
     expect(individual.nnet.neurons[1].driven) == true
     expect(individual.nnet.neurons[1].output) == 0.5
 
-    grid[individual.loc] = .occupied(by: individual)
-    let levels = individual.feedForward(simStep: 0, on: grid, with: parameters)
+    world.grid[individual.loc] = .occupied(by: individual)
+    let levels = individual.feedForward(on: world)
 
     expect(individual.nnet.neurons[0].driven) == true
     expect(individual.nnet.neurons[0].output) ≈ 0.7615
@@ -54,10 +46,10 @@ class IndividualTests: XCTestCase {
   }
 
   func testFeedForwardManyToOne() {
-    parameters = .stub(maxNumberNeurons: 1,
-                       probeDistance: (short: 3, long: 16),
-                       sensors: [ConstantSensor(value: 1), ConstantSensor(value: 2)],
-                       actions: [MoveXAction(), MoveYAction()])
+    var world = World(parameters: .stub(maxNumberNeurons: 1,
+                                        probeDistance: (short: 3, long: 16),
+                                        sensors: [ConstantSensor(value: 1), ConstantSensor(value: 2)],
+                                        actions: [MoveXAction(), MoveYAction()]))
 
     let genome: Genome = [.init(sourceType: .sensor, sourceNum: 0, sinkType: .neuron, sinkNum: 0, weight: Gene.weightDivisor),
                           .init(sourceType: .sensor, sourceNum: 1, sinkType: .neuron, sinkNum: 0, weight: Gene.weightDivisor),
@@ -66,15 +58,15 @@ class IndividualTests: XCTestCase {
     var individual = Individual(index: 0,
                                 loc: .init(x: 2, y: 2),
                                 genome: genome,
-                                probeDistance: parameters.probeDistance,
-                                maxNumberOfNeurons: parameters.maxNumberNeurons,
+                                probeDistance: world.parameters.probeDistance,
+                                maxNumberOfNeurons: world.parameters.maxNumberNeurons,
                                 actions: 2,
                                 sensors: 2)
 
     expect(individual.nnet.neurons[0].output) == 0.5
 
-    grid[individual.loc] = .occupied(by: individual)
-    let levels = individual.feedForward(simStep: 0, on: grid, with: parameters)
+    world.grid[individual.loc] = .occupied(by: individual)
+    let levels = individual.feedForward(on: world)
 
     expect(individual.nnet.neurons[0].output) ≈ 0.9951
 
@@ -87,10 +79,10 @@ class IndividualTests: XCTestCase {
   }
 
   func testFeedForwardOneToMany() {
-    parameters = .stub(maxNumberNeurons: 2,
-                       probeDistance: (short: 3, long: 16),
-                       sensors: [ConstantSensor(value: 1), ConstantSensor(value: 2)],
-                       actions: [MoveXAction(), MoveYAction()])
+    var world = World(parameters: .stub(maxNumberNeurons: 2,
+                                        probeDistance: (short: 3, long: 16),
+                                        sensors: [ConstantSensor(value: 1), ConstantSensor(value: 2)],
+                                        actions: [MoveXAction(), MoveYAction()]))
 
     let genome: Genome = [.init(sourceType: .sensor, sourceNum: 0, sinkType: .neuron, sinkNum: 0, weight: Gene.weightDivisor),
                           .init(sourceType: .neuron, sourceNum: 0, sinkType: .action, sinkNum: 0, weight: Gene.weightDivisor),
@@ -99,15 +91,15 @@ class IndividualTests: XCTestCase {
     var individual = Individual(index: 0,
                                 loc: .init(x: 2, y: 2),
                                 genome: genome,
-                                probeDistance: parameters.probeDistance,
-                                maxNumberOfNeurons: parameters.maxNumberNeurons,
+                                probeDistance: world.parameters.probeDistance,
+                                maxNumberOfNeurons: world.parameters.maxNumberNeurons,
                                 actions: 2,
                                 sensors: 2)
 
     expect(individual.nnet.neurons[0].output) == 0.5
 
-    grid[individual.loc] = .occupied(by: individual)
-    let levels = individual.feedForward(simStep: 0, on: grid, with: parameters)
+    world.grid[individual.loc] = .occupied(by: individual)
+    let levels = individual.feedForward(on: world)
 
     expect(individual.nnet.neurons[0].driven) == true
     expect(individual.nnet.neurons[0].output) ≈ 0.7615
@@ -121,7 +113,7 @@ class IndividualTests: XCTestCase {
 struct ConstantSensor: Sensor {
   let value: Double
 
-  func get(for individual: Individual, simStep: Int, on grid: Grid, with parameters: Params) -> Double {
+  func get(for individual: Individual, on world: World) -> Double {
     value
   }
 }
