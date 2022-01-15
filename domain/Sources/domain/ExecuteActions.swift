@@ -50,7 +50,11 @@ func responseCurve(_ r: Double, factor: Int) -> Double {
  simulator step by endOfSimStep() in a single thread after all individuals have been
  evaluated multithreadedly.
  **********************************************************************************/
-func executeActions(for individual: Individual, levels: [(Action, Double)], on grid: Grid, with parameters: Params) -> ActionResult {
+func executeActions(for individual: Individual,
+                    levels: [(Action, Double)],
+                    on grid: Grid,
+                    with parameters: Params,
+                    probabilityCurve: (Double) -> Bool) -> ActionResult {
   let curve: (Double) -> Double = { [kFactor=parameters.responsiveness.kFactor] value in responseCurve(value, factor: kFactor) }
 
   var result = levels.reduce(into: ActionResult(individual: individual, killed: [], responseCurve: curve)) { partialResult, actionAndLevel in
@@ -65,8 +69,8 @@ func executeActions(for individual: Individual, levels: [(Action, Double)], on g
   moveY *= result.adjustedResponsiveness
 
   // The probability of movement along each axis is the absolute value
-  let probX = prob2bool(abs(moveX)) ? 1 : 0 // convert abs(level) to 0 or 1
-  let probY = prob2bool(abs(moveY)) ? 1 : 0 // convert abs(level) to 0 or 1
+  let probX = probabilityCurve(abs(moveX)) ? 1 : 0 // convert abs(level) to 0 or 1
+  let probY = probabilityCurve(abs(moveY)) ? 1 : 0 // convert abs(level) to 0 or 1
 
   // The direction of movement (if any) along each axis is the sign
   let signumX = moveX < 0.0 ? -1 : 1

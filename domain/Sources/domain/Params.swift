@@ -15,8 +15,11 @@ public struct Params {
   public let populationSensorRadius: Double // > 0.0
   public let signalSensorRadius: Int // > 0
 
-  /// Value >= 0.0, kFactor of 1, 2, 3, or 4
+  /// Value >= 0.0, kFactor of 1, 2, 3, or 4 - used to derive the response cuve
   public let responsiveness: (value: Double, kFactor: Int) // >= 0.0
+
+  /// Initial responsiveness of all individuals
+  public let initialResponsiveness: Double
 
   public let probeDistance: (short: Int, long: Int) // > 0
   public let genomeComparisonMethod: GenomeComparison
@@ -51,6 +54,7 @@ public struct Params {
                                       populationSensorRadius: 2.0,
                                       signalSensorRadius: 1,
                                       responsiveness: (value: 0.5, kFactor: 2),
+                                      initialResponsiveness: 0.5,
                                       probeDistance: (short: 3, long: 16),
                                       genomeComparisonMethod: .jaroWinkler,
                                       challenge: .rightQuarter(),

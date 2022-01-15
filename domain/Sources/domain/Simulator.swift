@@ -114,7 +114,7 @@ private extension Simulator {
     var individual = individual
     individual.age += 1 // for this implementation, tracks simStep
     let actionLevels = individual.feedForward(on: world)
-    return executeActions(for: individual, levels: actionLevels, on: world.grid, with: world.parameters)
+    return executeActions(for: individual, levels: actionLevels, on: world.grid, with: world.parameters, probabilityCurve: prob2bool(_:))
   }
   
   /*

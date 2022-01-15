@@ -39,6 +39,7 @@ public struct Individual: Equatable {
        loc: Coord,
        genome: Genome,
        probeDistance: (short: Int, long: Int),
+       responsiveness: Double,
        maxNumberOfNeurons: Int,
        actions: Int,
        sensors: Int) {
@@ -49,7 +50,7 @@ public struct Individual: Equatable {
     self.oscPeriod = 34 //TODO: Define a constant
     self.alive = true
     self.lastDirection = .random()
-    self.responsiveness = 0.5 // range 0.0..1.0
+    self.responsiveness = responsiveness // range 0.0..1.0
     self.probeDistance = .init(short: probeDistance.short, long: probeDistance.long)
     self.challengeBits = 0 // will be set true when some task gets accomplished
     self.genome = genome

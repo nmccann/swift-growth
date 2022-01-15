@@ -16,76 +16,79 @@ class ExecuteActionsTests: XCTestCase {
 
   func testMoveEast() {
     let initial = Coord(x: 2, y: 2)
-    let individual = Individual.stub(index: 0, loc: initial)
+    let individual = Individual.stub(index: 0, loc: initial, responsiveness: 1)
     grid[individual.loc] = .occupied(by: individual)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
-    while grid.isOccupiedAt(loc: initial) {
-      let result = executeActions(for: individual,
-                                  levels: [(MoveAction(direction: .east), .greatestFiniteMagnitude)],
-                         on: grid,
-                         with: parameters)
-      grid = applyResult(result, to: grid, signals: &signals)
-    }
+
+    let result = executeActions(for: individual,
+                                   levels: [(MoveAction(direction: .east), .greatestFiniteMagnitude)],
+                                   on: grid,
+                                   with: parameters,
+                                   probabilityCurve: { $0 > 0.5 })
+    grid = applyResult(result, to: grid, signals: &signals)
+
     expect(self.grid.isOccupiedAt(loc: .init(x: 3, y: 2))) == true
   }
 
   func testMoveNorth() {
     let initial = Coord(x: 2, y: 2)
-    let individual = Individual.stub(index: 0, loc: initial)
+    let individual = Individual.stub(index: 0, loc: initial, responsiveness: 1)
     grid[individual.loc] = .occupied(by: individual)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
-    while grid.isOccupiedAt(loc: initial) {
-      let result = executeActions(for: individual,
-                                  levels: [(MoveAction(direction: .north), .greatestFiniteMagnitude)],
-                         on: grid,
-                         with: parameters)
-      grid = applyResult(result, to: grid, signals: &signals)
-    }
+
+    let result = executeActions(for: individual,
+                                   levels: [(MoveAction(direction: .north), .greatestFiniteMagnitude)],
+                                   on: grid,
+                                   with: parameters,
+                                   probabilityCurve: { $0 > 0.5 })
+    grid = applyResult(result, to: grid, signals: &signals)
+
     expect(self.grid.isOccupiedAt(loc: .init(x: 2, y: 3))) == true
   }
 
   func testMoveForward() {
     let initial = Coord(x: 2, y: 2)
-    var individual = Individual.stub(index: 0, loc: initial)
+    var individual = Individual.stub(index: 0, loc: initial, responsiveness: 1)
     individual.lastDirection = .east
     grid[individual.loc] = .occupied(by: individual)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
-    while grid.isOccupiedAt(loc: initial) {
-      let result = executeActions(for: individual,
-                                  levels: [(MoveAction { $0.individual.lastDirection }, .greatestFiniteMagnitude)],
-                         on: grid,
-                         with: parameters)
-      grid = applyResult(result, to: grid, signals: &signals)
-    }
+
+    let result = executeActions(for: individual,
+                                   levels: [(MoveAction { $0.individual.lastDirection }, .greatestFiniteMagnitude)],
+                                   on: grid,
+                                   with: parameters,
+                                   probabilityCurve: { $0 > 0.5 })
+    grid = applyResult(result, to: grid, signals: &signals)
+
     expect(self.grid.isOccupiedAt(loc: .init(x: 3, y: 2))) == true
   }
 
   func testMoveReverse() {
     let initial = Coord(x: 2, y: 2)
-    var individual = Individual.stub(index: 0, loc: initial)
+    var individual = Individual.stub(index: 0, loc: initial, responsiveness: 1)
     individual.lastDirection = .east
     grid[individual.loc] = .occupied(by: individual)
 
     expect(self.grid.isOccupiedAt(loc: initial)) == true
-    while grid.isOccupiedAt(loc: initial) {
-      let result = executeActions(for: individual,
-                                  levels: [(MoveAction { $0.individual.lastDirection.rotate180Degrees() }, .greatestFiniteMagnitude)],
-                         on: grid,
-                         with: parameters)
-      grid = applyResult(result, to: grid, signals: &signals)
-    }
+
+    let result = executeActions(for: individual,
+                                   levels: [(MoveAction { $0.individual.lastDirection.rotate180Degrees() }, .greatestFiniteMagnitude)],
+                                   on: grid,
+                                   with: parameters,
+                                   probabilityCurve: { $0 > 0.5 })
+    grid = applyResult(result, to: grid, signals: &signals)
+
     expect(self.grid.isOccupiedAt(loc: .init(x: 1, y: 2))) == true
   }
 
   func testSetResponsiveness() {
-    var individual = Individual.stub(index: 0)
-    individual.responsiveness = 1.0
+    let individual = Individual.stub(index: 0, responsiveness: 1)
     grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(for: individual, levels: [(ResponsivenessAction(), 10)], on: grid, with: parameters)
+    let result = executeActions(for: individual, levels: [(ResponsivenessAction(), 10)], on: grid, with: parameters, probabilityCurve: { _ in true })
     expect(result.individual.responsiveness) ≈ 0.9999
   }
 
@@ -94,7 +97,7 @@ class ExecuteActionsTests: XCTestCase {
     individual.oscPeriod = 1
     grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(for: individual, levels: [(OscillatorPeriodAction(), 5)], on: grid, with: parameters)
+    let result = executeActions(for: individual, levels: [(OscillatorPeriodAction(), 5)], on: grid, with: parameters, probabilityCurve: { _ in true })
     expect(result.individual.oscPeriod) == 400
   }
 
@@ -103,20 +106,25 @@ class ExecuteActionsTests: XCTestCase {
     individual.probeDistance.long = 1
     grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(for: individual, levels: [(LongProbeDistanceAction(), 20)], on: grid, with: parameters)
+    let result = executeActions(for: individual, levels: [(LongProbeDistanceAction(), 20)], on: grid, with: parameters, probabilityCurve: { _ in true })
     expect(result.individual.probeDistance.long) == 33
   }
 
   func testEmitSignalOverThreshold() {
+    let action = EmitSignalAction(layer: 0,
+                                  threshold: 0.5,
+                                  probabilityCurve: { $0 > 0.5 })
     var individual = Individual.stub(index: 0, loc: .init(x: 2, y: 2))
     individual.responsiveness = 1
     grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(for: individual, levels: [(EmitSignalAction(layer: 0), 2)], on: grid, with: parameters)
+    let result = executeActions(for: individual, levels: [(action, 2)], on: grid, with: parameters, probabilityCurve: { _ in true })
     expect(result.signalToLayer) == 0
   }
 
   func testKillForward() {
+    let action = KillAction(threshold: 0.5, probabilityCurve: { $0 > 0.5 })
+
     var individual = Individual.stub(index: 0, loc: .init(x: 2, y: 2))
     individual.lastDirection = .east
     individual.responsiveness = 1
@@ -125,7 +133,7 @@ class ExecuteActionsTests: XCTestCase {
     let other = Individual.stub(index: 0, loc: .init(x: 3, y: 2))
     grid[other.loc] = .occupied(by: other)
 
-    let result = executeActions(for: individual, levels: [(KillAction(), 2)], on: grid, with: parameters)
+    let result = executeActions(for: individual, levels: [(action, 2)], on: grid, with: parameters, probabilityCurve: { _ in true })
     expect(result.killed).to(haveCount(1))
     expect(result.killed.first?.index) == other.index
 

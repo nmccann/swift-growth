@@ -18,6 +18,7 @@ class IndividualTests: XCTestCase {
                                 loc: .init(x: 2, y: 2),
                                 genome: genome,
                                 probeDistance: world.parameters.probeDistance,
+                                responsiveness: world.parameters.initialResponsiveness,
                                 maxNumberOfNeurons: world.parameters.maxNumberNeurons,
                                 actions: 2,
                                 sensors: 2)
@@ -59,6 +60,7 @@ class IndividualTests: XCTestCase {
                                 loc: .init(x: 2, y: 2),
                                 genome: genome,
                                 probeDistance: world.parameters.probeDistance,
+                                responsiveness: world.parameters.initialResponsiveness,
                                 maxNumberOfNeurons: world.parameters.maxNumberNeurons,
                                 actions: 2,
                                 sensors: 2)
@@ -92,6 +94,7 @@ class IndividualTests: XCTestCase {
                                 loc: .init(x: 2, y: 2),
                                 genome: genome,
                                 probeDistance: world.parameters.probeDistance,
+                                responsiveness: world.parameters.initialResponsiveness,
                                 maxNumberOfNeurons: world.parameters.maxNumberNeurons,
                                 actions: 2,
                                 sensors: 2)

@@ -96,6 +96,7 @@ public struct World {
                                     loc: grid.findEmptyLocation(),
                                     genome: generateChildGenome(parentGenomes: parentGenomes, with: parameters),
                                     probeDistance: parameters.probeDistance,
+                                    responsiveness: parameters.initialResponsiveness,
                                     maxNumberOfNeurons: parameters.maxNumberNeurons,
                                     actions: parameters.actions.count,
                                     sensors: parameters.sensors.count)
@@ -120,6 +121,7 @@ public struct World {
                                     loc: grid.findEmptyLocation(),
                                     genome: makeRandomGenome(parameters.genomeInitialLength),
                                     probeDistance: parameters.probeDistance,
+                                    responsiveness: parameters.initialResponsiveness,
                                     maxNumberOfNeurons: parameters.maxNumberNeurons,
                                     actions: parameters.actions.count,
                                     sensors: parameters.sensors.count)
