@@ -16,6 +16,16 @@ class SimulatorScene: SKScene {
   private let simulator = Simulator(mode: .run)
   private var lastBarrierLocations: [Coord] = []
   private var timeAllSteps: TimeInterval = 0
+  private var state: State
+
+  init(state: State, size: CGSize) {
+    self.state = state
+    super.init(size: size)
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 
   override func sceneDidLoad() {
     super.sceneDidLoad()
@@ -30,15 +40,19 @@ class SimulatorScene: SKScene {
   }
 
   func touchDown(atPoint position: CGPoint) {
-    if let coord = positionToCoord(position) {
-      #if DEBUG
-      print("Killing at: \(coord)")
-      #endif
-      world.grid.queueForDeath(at: coord)
+    guard let coord = positionToCoord(position) else {
+      return
     }
+
+    handleInteraction(at: coord)
   }
 
   func touchMoved(toPoint position: CGPoint) {
+    guard let coord = positionToCoord(position) else {
+      return
+    }
+
+    handleInteraction(at: coord)
   }
 
   func touchUp(atPoint position: CGPoint) {
@@ -172,12 +186,31 @@ private extension SimulatorScene {
     cell.isHidden = !individual.alive
     cell.position = .init(x: Double(individual.loc.x - (world.parameters.size.x/2)) * size.width,
                           y: Double(individual.loc.y - (world.parameters.size.y/2)) * size.height)
+
+    //TODO: More obvious selection state (ex. glow/pulse)
+    cell.lineWidth = state.selected == individual ? 3 : 1
   }
 
   func updateBarrier(_ barrier: SKShapeNode, location: Coord, size: CGSize) {
     barrier.fillColor = .red
     barrier.position = .init(x: Double(location.x - (world.parameters.size.x/2)) * size.width,
                              y: Double(location.y - (world.parameters.size.y/2)) * size.height)
+  }
+
+  func handleInteraction(at coord: Coord) {
+    guard case .pause = simulator.mode else {
+      return
+    }
+
+    switch (state.mode, world.grid[coord]) {
+    case (.placeBarrier, _): world.grid[coord] = .barrier
+    case (.kill, .occupied(by: _)): world.grid[coord] = nil
+    case (.kill, _): return
+    case (.select, .occupied(by: let individual)): state.selected = individual
+    case (.select, _): state.selected = nil
+    }
+
+    updateNodes()
   }
 
   func handleKeyEvent(_ event: NSEvent, keyDown: Bool) {
@@ -195,12 +228,12 @@ private extension SimulatorScene {
       print("Genetic Diversity: \(diversity)")
       #endif
 
-    case (.run, NSDownArrowFunctionKey) where !keyDown:   simulator.mode = .stop
-    case (.stop, NSDownArrowFunctionKey) where !keyDown:  simulator.mode = .run
+    case (.run, NSDownArrowFunctionKey) where !keyDown:   simulator.mode = .pause
+    case (.pause, NSDownArrowFunctionKey) where !keyDown:  simulator.mode = .run
     case (.run, NSRightArrowFunctionKey) where !keyDown:  adjustStepsPerRefresh(by: 1)
-    case (.stop, NSRightArrowFunctionKey) where keyDown:  advanceBySteps(1)
+    case (.pause, NSRightArrowFunctionKey) where keyDown:  advanceBySteps(1)
     case (.run, NSLeftArrowFunctionKey) where !keyDown:   adjustStepsPerRefresh(by: -1)
-    case (.stop, NSLeftArrowFunctionKey) where simulatorStepsPerRefresh == 1: rewind()
+    case (.pause, NSLeftArrowFunctionKey) where simulatorStepsPerRefresh == 1: rewind()
     default: break
     }
   }
@@ -229,7 +262,6 @@ private extension SimulatorScene {
     updateStats()
     updateNodes()
   }
-
 
   /// Converts a given screen position to a coordinate in the grid,
   /// or nil if resulting coordinate lies outside of the grid

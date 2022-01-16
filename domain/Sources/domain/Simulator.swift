@@ -3,7 +3,7 @@ import CollectionConcurrencyKit
 
 public class Simulator {
   public enum Mode {
-    case stop, run, pause, abort
+    case run, pause
   }
   
   /// The preferred number of steps to keep in history, oldest steps are removed first.
