@@ -8,7 +8,9 @@ class State: ObservableObject {
   }
 
   var mode: Mode = .select
-  var selected: Individual?
+  var world = World.randomPopulation(with: .defaults)
+  let simulator = Simulator(mode: .run)
+  @Published var selected: Individual?
 }
 
 struct AppContainer: View {
