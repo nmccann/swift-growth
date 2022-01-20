@@ -7,7 +7,7 @@ class GridTests: XCTestCase {
   var sut: Grid!
 
   override func setUp() {
-    sut = .init(size: (x: 4, y: 4))
+    sut = .init(size: .init(width: 4, height: 4))
   }
 
   func testQueueForMove() {

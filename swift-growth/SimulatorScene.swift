@@ -106,8 +106,8 @@ private extension SimulatorScene {
       return
     }
 
-    let exactFit = CGSize(width: (scene.size.width - padding) / Double(state.world.parameters.size.x),
-                          height: (scene.size.height - padding) / Double(state.world.parameters.size.y))
+    let exactFit = CGSize(width: (scene.size.width - padding) / Double(state.world.parameters.size.width),
+                          height: (scene.size.height - padding) / Double(state.world.parameters.size.height))
     let squareWidth = floor(min(exactFit.width, exactFit.height))
     cellSize = CGSize(width: squareWidth, height: squareWidth)
 
@@ -182,8 +182,8 @@ private extension SimulatorScene {
     let color = individual.color
     cell.fillColor = .init(red: color.red, green: color.green, blue: color.blue, alpha: 1)
     cell.isHidden = !individual.alive
-    cell.position = .init(x: Double(individual.loc.x - (state.world.parameters.size.x/2)) * size.width,
-                          y: Double(individual.loc.y - (state.world.parameters.size.y/2)) * size.height)
+    cell.position = .init(x: Double(individual.loc.x - (state.world.parameters.size.width/2)) * size.width,
+                          y: Double(individual.loc.y - (state.world.parameters.size.height/2)) * size.height)
 
     //TODO: More obvious selection state (ex. glow/pulse)
     cell.lineWidth = state.selected == individual ? 3 : 1
@@ -191,8 +191,8 @@ private extension SimulatorScene {
 
   func updateBarrier(_ barrier: SKShapeNode, location: Coord, size: CGSize) {
     barrier.fillColor = .red
-    barrier.position = .init(x: Double(location.x - (state.world.parameters.size.x/2)) * size.width,
-                             y: Double(location.y - (state.world.parameters.size.y/2)) * size.height)
+    barrier.position = .init(x: Double(location.x - (state.world.parameters.size.width/2)) * size.width,
+                             y: Double(location.y - (state.world.parameters.size.height/2)) * size.height)
   }
 
   func handleInteraction(at coord: Coord) {
@@ -264,7 +264,8 @@ private extension SimulatorScene {
   /// Converts a given screen position to a coordinate in the grid,
   /// or nil if resulting coordinate lies outside of the grid
   func positionToCoord(_ position: CGPoint) -> Coord? {
-    let result = Coord(x: Int(round(position.x / cellSize.width)) + (state.world.grid.size.x / 2), y: (Int(round(position.y / cellSize.height)) + (state.world.grid.size.y / 2)))
+    let result = Coord(x: Int(round(position.x / cellSize.width)) + (state.world.grid.size.width / 2),
+                       y: (Int(round(position.y / cellSize.height)) + (state.world.grid.size.height / 2)))
     return state.world.grid.isInBounds(loc: result) ? result : nil
   }
 }

@@ -5,8 +5,8 @@ import Foundation
 /// The score is not weighted by distance from the center.
 struct CenterSparseChallenge: Challenge {
   func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
-    let safeCenter = Coord(x: Int(Double(grid.size.x) / 2.0), y: Int(Double(grid.size.y) / 2.0))
-    let outerRadius = Double(grid.size.x) / 4.0
+    let safeCenter = Coord(x: Int(Double(grid.size.width) / 2.0), y: Int(Double(grid.size.height) / 2.0))
+    let outerRadius = Double(grid.size.height) / 4.0
     let innerRadius = 1.5
     let minNeighbors = 5 // includes self
     let maxNeighbors = 8

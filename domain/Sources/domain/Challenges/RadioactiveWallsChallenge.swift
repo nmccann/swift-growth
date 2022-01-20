@@ -11,10 +11,10 @@ struct RadioactiveWallsChallenge: Challenge {
     // where X == 0. In the last half of the generation, the east wall is
     // radioactive, where X = the area width - 1. There's an exponential
     // falloff of the danger, falling off to zero at the arena half line.
-    let radioactiveX = step < flipAtStep ? 0 : grid.size.x - 1
+    let radioactiveX = step < flipAtStep ? 0 : grid.size.width - 1
     let distanceFromRadioactiveWall = Double(abs(result.individual.loc.x - radioactiveX))
 
-    guard distanceFromRadioactiveWall < Double(grid.size.x / 2) else {
+    guard distanceFromRadioactiveWall < Double(grid.size.width / 2) else {
       return result
     }
 

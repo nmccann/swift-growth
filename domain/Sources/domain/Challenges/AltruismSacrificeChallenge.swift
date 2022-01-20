@@ -3,7 +3,7 @@ import Foundation
 /// Survivors are all those within the specified radius of the NE corner
 struct AltruismSacrificeChallenge: Challenge {
   func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
-    let size = CGSize(width: grid.size.x, height: grid.size.y)
+    let size = CGSize(grid.size)
     let radius = size.width / 4.0 // in 128^2 world, holds 804 agents
 
     let distance = Double((Coord(x: Int(size.width - size.width / 4.0),

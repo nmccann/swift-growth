@@ -8,7 +8,7 @@ class LongProbeBarrierForwardSensorTests: XCTestCase {
   var world: World!
 
   override func setUp() {
-    world = .init(parameters: .stub(probeDistance: (short: 3, long: 6), size: (x: 20, y: 20)))
+    world = .init(parameters: .stub(probeDistance: (short: 3, long: 6), size: .init(width: 20, height: 20)))
   }
 
   func testNearBarrier() {

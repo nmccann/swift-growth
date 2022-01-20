@@ -41,7 +41,7 @@ extension Params {
                    challenge: Challenge? = Params.defaults.challenge,
                    barrierType: BarrierType? = Params.defaults.barrierType,
                    replaceBarrier: (BarrierType, Int)? = Params.defaults.replaceBarrier,
-                   size: (x: Int, y: Int) = Params.defaults.size,
+                   size: Size = Params.defaults.size,
                    genomeInitialLength: ClosedRange<Int> = Params.defaults.genomeInitialLength,
                    sensors: [Sensor] = Params.defaults.sensors,
                    actions: [Action] = Params.defaults.actions) -> Self {

@@ -6,12 +6,12 @@ let SIGNAL_MIN = 0.0
 let SIGNAL_MAX = 255.0 // Equivalent to UInt8.max
 let SIGNAL_DAMPING = 1.0 - (1.0 / SIGNAL_MAX)
 
-public struct Signals {
+public struct Signals: Equatable {
   var layers: [Layer]
-  let size: (x: Int, y: Int)
+  let size: Size
 
-  init(layers: Int, size: (x: Int, y: Int)) {
-    self.layers = .init(repeating: .init(numCols: size.x, numRows: size.y), count: layers)
+  init(layers: Int, size: Size) {
+    self.layers = .init(repeating: .init(numCols: size.width, numRows: size.height), count: layers)
     self.size = size
   }
 
@@ -41,7 +41,7 @@ public struct Signals {
   }
 
   mutating func zeroFill() {
-    layers = .init(repeating: .init(numCols: size.x, numRows: size.y), count: layers.count)
+    layers = .init(repeating: .init(numCols: size.width, numRows: size.height), count: layers.count)
   }
 
   mutating func fade(layer: Int, by damping: Double) {
@@ -50,14 +50,14 @@ public struct Signals {
 
   //TODO: Avoid duplicating from Grid
   func visitNeighborhood(loc: Coord, radius: Double, f: (Coord) -> Void) {
-    for dx in (-min(Int(radius), loc.x)...min(Int(radius), (size.x - loc.x) - 1)) {
+    for dx in (-min(Int(radius), loc.x)...min(Int(radius), (size.width - loc.x) - 1)) {
       let x = loc.x + dx
-      assert(x >= 0 && x < size.x)
+      assert(x >= 0 && x < size.width)
       let extentY = Int((pow(radius, 2) - pow(Double(dx), 2)).squareRoot())
 
-      for dy in (-min(extentY, loc.y)...min(extentY, (size.y - loc.y) - 1)) {
+      for dy in (-min(extentY, loc.y)...min(extentY, (size.height - loc.y) - 1)) {
         let y = loc.y + dy
-        assert(y >= 0 && y < size.y)
+        assert(y >= 0 && y < size.height)
         f(.init(x: x, y: y))
       }
     }
@@ -73,7 +73,7 @@ public struct Signals {
     }
   }
 
-  struct Layer {
+  struct Layer: Equatable {
     var data: Matrix<Double>
 
     init(numCols: Int, numRows: Int) {

@@ -7,8 +7,8 @@ class CornerChallengePerformanceTests: XCTestCase {
   var grid: Grid!
 
   override func setUp() {
-    grid = .init(size: (x: 100, y: 100))
-    individuals = (1...10).map { .stub(index: $0, loc: .init(x: (grid.size.x - 1) / $0, y: (grid.size.y - 1) / $0)) }
+    grid = .init(size: .init(width: 100, height: 100))
+    individuals = (1...10).map { .stub(index: $0, loc: .init(x: (grid.size.width - 1) / $0, y: (grid.size.height - 1) / $0)) }
     individuals.forEach { grid[$0.loc] = .occupied(by: $0) }
   }
 

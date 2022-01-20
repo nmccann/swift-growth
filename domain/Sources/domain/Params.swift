@@ -29,7 +29,7 @@ public struct Params {
 
   // These must not change after initialization
 
-  public var size: (x: Int, y: Int)
+  public var size: Size
 
   /// Minimum > 0
   public let genomeInitialLength: ClosedRange<Int> // > 0 and < genomeInitialLengthMax
@@ -58,9 +58,9 @@ public struct Params {
                                       probeDistance: (short: 3, long: 16),
                                       genomeComparisonMethod: .jaroWinkler,
                                       challenge: .rightQuarter(),
-                                      barrierType: nil,
+                                      barrierType: .verticalBarRandom,
                                       replaceBarrier: nil,
-                                      size: (x: 120, y: 120),
+                                      size: .init(width: 120, height: 120),
                                       genomeInitialLength: 16...16,
                                       sensors: [AgeSensor(),
                                                 BoundaryDistanceSensor(axis: .both),

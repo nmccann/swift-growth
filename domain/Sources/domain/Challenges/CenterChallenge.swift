@@ -10,8 +10,8 @@ struct CenterChallenge: Challenge {
   let scoring: Scoring
 
   func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
-    let radius = Double(grid.size.x) / 3.0
-    let safeCenter = Coord(x: Int(Double(grid.size.x) / 2.0), y: Int(Double(grid.size.y) / 2.0))
+    let radius = Double(grid.size.width) / 3.0
+    let safeCenter = Coord(x: Int(Double(grid.size.width) / 2.0), y: Int(Double(grid.size.height) / 2.0))
     let circle = CircleChallenge(radius: radius,
                                  location: safeCenter,
                                  scoring: circleScoring)

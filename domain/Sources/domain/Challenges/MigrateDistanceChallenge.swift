@@ -5,7 +5,7 @@ import Foundation
 struct MigrateDistanceChallenge: Challenge {
   func test(_ individual: Individual, on grid: Grid) -> ChallengeResult {
     let distance = Double((individual.loc - individual.birthLoc).length)
-    return .pass(distance / Double(max(grid.size.x, grid.size.y)))
+    return .pass(distance / Double(max(grid.size.width, grid.size.height)))
   }
 }
 

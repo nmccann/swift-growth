@@ -10,7 +10,7 @@ public struct Grid {
   public private(set) var dead: [Individual] = []
   private(set) var deathQueue: [Coord] = []
   private(set) var moveQueue: [(old: Coord, new: Coord)] = []
-  public let size: (x: Int, y: Int)
+  public let size: Size
 
   public subscript(location: Coord) -> Kind? {
     get {
@@ -103,7 +103,7 @@ public struct Grid {
     moveQueue.removeAll()
   }
 
-  init(size: (x: Int, y: Int)) {
+  init(size: Size) {
     self.size = size
   }
 
@@ -113,7 +113,7 @@ public struct Grid {
   }
 
   public func isInBounds(loc: Coord) -> Bool {
-    loc.x >= 0 && loc.x < size.x && loc.y >= 0 && loc.y < size.y
+    loc.x >= 0 && loc.x < size.width && loc.y >= 0 && loc.y < size.height
   }
 
   func isEmptyAt(loc: Coord) -> Bool {
@@ -138,13 +138,13 @@ public struct Grid {
   }
 
   func isBorder(loc: Coord) -> Bool {
-    loc.x == 0 || loc.x == size.x - 1 || loc.y == 0 || loc.y == size.y - 1
+    loc.x == 0 || loc.x == size.width - 1 || loc.y == 0 || loc.y == size.height - 1
   }
 
   func findEmptyLocation() -> Coord {
     while true {
-      let location = Coord(x: .random(in: 0..<size.x),
-                           y: .random(in: 0..<size.y))
+      let location = Coord(x: .random(in: 0..<size.width),
+                           y: .random(in: 0..<size.height))
 
       if isEmptyAt(loc: location) {
         return location
@@ -169,13 +169,13 @@ public struct Grid {
 
     switch type {
     case .verticalBarConstant:
-      let min = (x: size.x / 2, y: size.y / 4)
-      let max = (x: min.x + 1, y: min.y + size.y / 2)
+      let min = (x: size.width / 2, y: size.height / 4)
+      let max = (x: min.x + 1, y: min.y + size.height / 2)
       drawBox(min: min, max: max)
     case .verticalBarRandom:
       //TODO: Make less sensitive to grid size (fails if height / 2 - 20 is less than 20)
-      let min = (x: Int.random(in: 20...(size.x - 20)), y: Int.random(in: 20...(size.y / 2 - 20)))
-      let max = (x: min.x + 1, y: min.y + size.y / 2)
+      let min = (x: Int.random(in: 20...(size.width - 20)), y: Int.random(in: 20...(size.height / 2 - 20)))
+      let max = (x: min.x + 1, y: min.y + size.height / 2)
       drawBox(min: min, max: max)
     case .fiveBlocks: return //TODO
     case .horizontalBarConstant: return //TODO
@@ -185,7 +185,7 @@ public struct Grid {
       let radius = 5.0
 
       for _ in 0..<numberOfLocations {
-        let loc = Coord(x: .random(in: 0..<size.x), y: .random(in: 0..<size.y))
+        let loc = Coord(x: .random(in: 0..<size.width), y: .random(in: 0..<size.height))
         visitNeighborhood(loc: loc, radius: radius) {
           data[$0] = .barrier
         }
@@ -194,14 +194,14 @@ public struct Grid {
   }
 
   func visitNeighborhood(loc: Coord, radius: Double, f: (Coord) -> Void) {
-    for dx in (-min(Int(radius), loc.x)...min(Int(radius), (size.x - loc.x) - 1)) {
+    for dx in (-min(Int(radius), loc.x)...min(Int(radius), (size.width - loc.x) - 1)) {
       let x = loc.x + dx
-      assert(x >= 0 && x < size.x)
+      assert(x >= 0 && x < size.width)
       let extentY = Int((pow(radius, 2) - pow(Double(dx), 2)).squareRoot())
 
-      for dy in (-min(extentY, loc.y)...min(extentY, (size.y - loc.y) - 1)) {
+      for dy in (-min(extentY, loc.y)...min(extentY, (size.height - loc.y) - 1)) {
         let y = loc.y + dy
-        assert(y >= 0 && y < size.y)
+        assert(y >= 0 && y < size.height)
         f(.init(x: x, y: y))
       }
     }

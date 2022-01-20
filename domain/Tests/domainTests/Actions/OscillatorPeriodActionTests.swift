@@ -10,7 +10,7 @@ class OscillatorPeriodActionTests: XCTestCase {
 
   override func setUp() {
     parameters = .stub(stepsPerGeneration: 100)
-    grid = .init(size: (x: 4, y: 4))
+    grid = .init(size: .init(width: 4, height: 4))
     individual = .stub()
     grid[individual.loc] = .occupied(by: individual)
   }

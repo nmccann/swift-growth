@@ -9,7 +9,7 @@ class ResponsivenessActionTests: XCTestCase {
   var parameters: Params = .defaults
 
   override func setUp() {
-    grid = .init(size: (x: 4, y: 4))
+    grid = .init(size: .init(width: 4, height: 4))
     individual = .stub()
     grid[individual.loc] = .occupied(by: individual)
   }
