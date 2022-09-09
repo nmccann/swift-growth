@@ -6,7 +6,7 @@ class OscillatorPeriodActionTests: XCTestCase {
   let sut = OscillatorPeriodAction()
   var individual: Individual!
   var grid: Grid!
-  var parameters: Params!
+  var parameters: Parameters!
 
   override func setUp() {
     parameters = .stub(stepsPerGeneration: 100)

@@ -31,7 +31,7 @@ struct MoveAction: Action {
     self.direction = { _ in direction }
   }
 
-  func apply(to result: inout ActionResult, level: Double, on grid: Grid, with parameters: Params) {
+  func apply(to result: inout ActionResult, level: Double, on grid: Grid, with parameters: Parameters) {
     let offset = direction(result).asNormalizedCoord()
     result.movePotential = .init(x: result.movePotential.x + (Double(offset.x) * level),
                                  y: result.movePotential.y + (Double(offset.y) * level))

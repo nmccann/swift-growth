@@ -337,7 +337,7 @@ func createWiringFromGenome(_ genome: Genome, maxNumberNeurons: Int, actions: In
 // If the parameter p.sexualReproduction is true, two parents contribute
 // genes to the offspring. The new genome may undergo mutation.
 // Must be called in single-thread mode between generations
-func generateChildGenome(parentGenomes: [Genome], with parameters: Params) -> Genome {
+func generateChildGenome(parentGenomes: [Genome], with parameters: Parameters) -> Genome {
   // random parent (or parents if sexual reproduction) with random
   // mutations
   var genome: Genome
@@ -457,7 +457,7 @@ func cropLength(genome: inout Genome, length: Int) {
 // Inserts or removes a single gene from the genome. This is
 // used only when the simulator is configured to allow genomes of
 // unequal lengths during a simulation.
-func randomInsertDeletion(genome: Genome, with parameters: Params) -> Genome {
+func randomInsertDeletion(genome: Genome, with parameters: Parameters) -> Genome {
   guard Double.random(in: 0...1) < parameters.geneInsertionDeletionRate else {
     return genome
   }

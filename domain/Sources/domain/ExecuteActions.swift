@@ -53,7 +53,7 @@ func responseCurve(_ r: Double, factor: Int) -> Double {
 func executeActions(for individual: Individual,
                     levels: [(Action, Double)],
                     on grid: Grid,
-                    with parameters: Params,
+                    with parameters: Parameters,
                     probabilityCurve: (Double) -> Bool) -> ActionResult {
   let curve: (Double) -> Double = { [kFactor=parameters.responsiveness.kFactor] value in responseCurve(value, factor: kFactor) }
 

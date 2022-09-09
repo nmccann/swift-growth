@@ -3,12 +3,12 @@ import Foundation
 public struct World {
   public var grid: Grid
   public var signals: Signals
-  public var parameters: Params
+  public var parameters: Parameters
   public var generation = 0
   public var simStep = 0
   public var survivalPercentage: Double
 
-  public init(parameters: Params, survivalPercentage: Double = 0.0, fill: (inout Grid, Params) -> Void = { _, _ in }) {
+  public init(parameters: Parameters, survivalPercentage: Double = 0.0, fill: (inout Grid, Parameters) -> Void = { _, _ in }) {
     /********************************************************************************
      Start of simulator
 
@@ -127,7 +127,7 @@ public struct World {
     return world
   }
 
-  public static func randomPopulation(with parameters: Params) -> World {
+  public static func randomPopulation(with parameters: Parameters) -> World {
     .init(parameters: parameters) { grid, parameters in
       if let replaceBarrier = parameters.replaceBarrier, replaceBarrier.generation == 0 {
         grid.applyBarrier(replaceBarrier.type)

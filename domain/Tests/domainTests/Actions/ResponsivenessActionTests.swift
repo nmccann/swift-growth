@@ -6,7 +6,7 @@ class ResponsivenessActionTests: XCTestCase {
   let sut = ResponsivenessAction()
   var individual: Individual!
   var grid: Grid!
-  var parameters: Params = .defaults
+  var parameters: Parameters = .defaults
 
   override func setUp() {
     grid = .init(size: .init(width: 4, height: 4))

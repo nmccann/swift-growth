@@ -4,7 +4,7 @@ import Nimble
 @testable import domain
 
 class ExecuteActionsTests: XCTestCase {
-  var parameters: Params!
+  var parameters: Parameters!
   var signals: Signals!
   var grid: Grid!
 

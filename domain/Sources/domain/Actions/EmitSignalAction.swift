@@ -19,7 +19,7 @@ struct EmitSignalAction: Action {
     self.probabilityCurve = probabilityCurve
   }
 
-  func apply(to result: inout ActionResult, level: Double, on grid: Grid, with parameters: Params) {
+  func apply(to result: inout ActionResult, level: Double, on grid: Grid, with parameters: Parameters) {
     var level = (tanh(level) + 1.0) / 2.0 // convert to 0.0..1.0
     level *= result.adjustedResponsiveness
 

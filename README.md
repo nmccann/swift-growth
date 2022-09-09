@@ -11,9 +11,13 @@ I originally considered calling this `biosim4-swift` to make the connection more
 **Left Arrow**/**Right Arrow** - Decrement/Increment Steps per Refresh
 **Left Arrow** (when paused, and steps per refresh is 1) - Step backwards in history
 
-**"Barrier"** UI Button - Enable placement of barriers via mouse press
+**"Barrier"** UI Button - Enable placement of barriers via mouse press. By default these barriers are persisted across generations
 **"Kill"** UI Button - Enable deletion of individuals via mouse press
 **"Select"** UI Button - Enable selection of individuals via mouse press (selection does nothing at present)
+
+# Parameters
+
+Many values can be tweaked, and these can be found within [Parameters.swift](domain/Sources/domain/Parameters.swift)
 
 # Limitations
 
