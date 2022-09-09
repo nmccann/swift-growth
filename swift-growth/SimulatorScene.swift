@@ -12,7 +12,7 @@ class SimulatorScene: SKScene {
   private var simulatorStepsPerRefresh = 1
   private var isAdvancing = false
   private let padding: Double = 40
-  private var lastBarrierLocations: [Coord] = []
+  private var lastBarriers: [Barrier] = []
   private var timeAllSteps: TimeInterval = 0
   private var state: State
 
@@ -98,7 +98,7 @@ class SimulatorScene: SKScene {
 
 private extension SimulatorScene {
   func generateGrid() {
-    lastBarrierLocations = []
+    lastBarriers = []
     gridNode.removeFromParent()
     gridNode.removeAllChildren()
 
@@ -150,11 +150,11 @@ private extension SimulatorScene {
       updateCell(cell, individual: living[index], size: cellSize)
     }
 
-    if lastBarrierLocations != barriers {
-      zip(barrierNodes, barriers).forEach { barrier, location in
-        updateBarrier(barrier, location: location, size: cellSize)
+    if lastBarriers != barriers {
+      zip(barrierNodes, barriers).forEach { node, barrier in
+        updateBarrier(node, barrier: barrier, size: cellSize)
       }
-      lastBarrierLocations = barriers
+      lastBarriers = barriers
     }
   }
 
@@ -189,10 +189,10 @@ private extension SimulatorScene {
     cell.lineWidth = state.selected == individual ? 3 : 1
   }
 
-  func updateBarrier(_ barrier: SKShapeNode, location: Coord, size: CGSize) {
-    barrier.fillColor = .red
-    barrier.position = .init(x: Double(location.x - (state.world.parameters.size.width/2)) * size.width,
-                             y: Double(location.y - (state.world.parameters.size.height/2)) * size.height)
+  func updateBarrier(_ node: SKShapeNode, barrier: Barrier, size: CGSize) {
+    node.fillColor = barrier.isManual ? .orange : .red
+    node.position = .init(x: Double(barrier.coord.x - (state.world.parameters.size.width/2)) * size.width,
+                          y: Double(barrier.coord.y - (state.world.parameters.size.height/2)) * size.height)
   }
 
   func handleInteraction(at coord: Coord) {
@@ -201,7 +201,7 @@ private extension SimulatorScene {
     }
 
     switch (state.mode, state.world.grid[coord]) {
-    case (.placeBarrier, _): state.world.grid[coord] = .barrier
+    case (.placeBarrier, _): state.world.grid[coord] = .barrier(manual: true)
     case (.kill, .occupied(by: _)): state.world.grid[coord] = nil
     case (.kill, _): return
     case (.select, .occupied(by: let individual)): state.selected = individual

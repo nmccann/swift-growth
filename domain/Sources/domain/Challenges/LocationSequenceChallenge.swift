@@ -17,13 +17,13 @@ struct LocationSequenceChallenge: Challenge {
     //on subsequent iterations
     //TODO: Restore the sequential nature of this challenge, cannot currently do this as
     //the barriers have no specific order. Perhaps introduce a new kind like "Flag" or "Objective"
-    let sorted = grid.barriers.sorted { $0.x < $1.x }
+    let sorted = grid.barriers.sorted { $0.coord.x < $1.coord.x }
 
     for (n, center) in sorted.enumerated() {
       let bit = 1 << n
 
       if result.individual.challengeBits & bit == 0 {
-        if Double((result.individual.loc - center).length) <= radius {
+        if Double((result.individual.loc - center.coord).length) <= radius {
           result.individual.challengeBits |= bit
         }
 

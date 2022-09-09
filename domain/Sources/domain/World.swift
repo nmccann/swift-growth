@@ -84,11 +84,30 @@ public struct World {
       return .randomPopulation(with: parameters)
     }
 
+    let previousGrid = grid
+
     var world = World(parameters: parameters, survivalPercentage: Double(parentGenomes.count) / Double(parameters.population)) { grid, parameters in
       if let replaceBarrier = parameters.replaceBarrier, generation > replaceBarrier.generation {
         grid.applyBarrier(replaceBarrier.type)
       } else {
-        grid.applyBarrier(parameters.barrierType)
+        grid.applyBarrier(parameters.generatedBarrier)
+      }
+
+      if parameters.shouldPersistManualBarriers {
+        let manualBarriers = previousGrid.data.compactMap { coord, kind -> Coord? in
+          switch kind {
+          case .barrier(manual: true): return coord
+          case .barrier, .occupied: return nil
+          }
+        }
+
+        manualBarriers.forEach {
+          if case .occupied = grid[$0] {
+            return
+          }
+
+          grid[$0] = .barrier(manual: true)
+        }
       }
 
       (0..<parameters.population).forEach {
@@ -113,7 +132,7 @@ public struct World {
       if let replaceBarrier = parameters.replaceBarrier, replaceBarrier.generation == 0 {
         grid.applyBarrier(replaceBarrier.type)
       } else {
-        grid.applyBarrier(parameters.barrierType)
+        grid.applyBarrier(parameters.generatedBarrier)
       }
 
       (0..<parameters.population).forEach {

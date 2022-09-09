@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Params {
+public struct Parameters {
   public let population: Int // >= 0
   public let stepsPerGeneration: Int // > 0
   public let maxGenerations: Int // >= 0
@@ -24,8 +24,9 @@ public struct Params {
   public let probeDistance: (short: Int, long: Int) // > 0
   public let genomeComparisonMethod: GenomeComparison
   public let challenge: Challenge?
-  public let barrierType: BarrierType?
-  public let replaceBarrier: (type: BarrierType, generation: Int)?
+  public let generatedBarrier: GeneratedBarrier?
+  public let shouldPersistManualBarriers: Bool
+  public let replaceBarrier: (type: GeneratedBarrier, generation: Int)?
 
   // These must not change after initialization
 
@@ -40,7 +41,7 @@ public struct Params {
   /// Applied in order from first to last.
   public let actions: [Action]
   
-  public static let defaults = Params(population: 200,
+  public static let defaults = Parameters(population: 200,
                                       stepsPerGeneration: 100,
                                       maxGenerations: 100,
                                       signalLayers: 1,
@@ -58,7 +59,8 @@ public struct Params {
                                       probeDistance: (short: 3, long: 16),
                                       genomeComparisonMethod: .jaroWinkler,
                                       challenge: .rightQuarter(),
-                                      barrierType: .verticalBarRandom,
+                                      generatedBarrier: .verticalBarRandom,
+                                      shouldPersistManualBarriers: true,
                                       replaceBarrier: nil,
                                       size: .init(width: 120, height: 120),
                                       genomeInitialLength: 16...16,

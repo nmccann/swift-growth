@@ -4,6 +4,17 @@ This began as a Swift port of the wonderful project [biosim4](https://github.com
 
 I originally considered calling this `biosim4-swift` to make the connection more obvious, but as I work on it more I've realized I don't want this to be a 1-to-1 port, and would like to have it "grow" in it's own direction.
 
+# Controls
+
+**Up Arrow** - Output current genetic diversity
+**Down Arrow** - Toggle pause
+**Left Arrow**/**Right Arrow** - Decrement/Increment Steps per Refresh
+**Left Arrow** (when paused, and steps per refresh is 1) - Step backwards in history
+
+**"Barrier"** UI Button - Enable placement of barriers via mouse press
+**"Kill"** UI Button - Enable deletion of individuals via mouse press
+**"Select"** UI Button - Enable selection of individuals via mouse press (selection does nothing at present)
+
 # Limitations
 
 Currently this only works on MacOS, but given that it uses SpriteKit, it should be fairly easy to port to other Apple OSes. Performance is an active area of development, and eventually I might move to something more low level than SpriteKit (ex. Metal)

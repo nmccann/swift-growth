@@ -3,7 +3,9 @@ import Foundation
 public struct Grid {
   public enum Kind: Equatable {
     case occupied(by: Individual)
-    case barrier
+    case barrier(manual: Bool)
+
+    public static let barrier: Kind = .barrier(manual: false)
   }
 
   public private(set) var data: [Coord: Kind] = [:]
@@ -41,11 +43,11 @@ public struct Grid {
     }
   }
 
-  public var barriers: [Coord] {
+  public var barriers: [Barrier] {
     data.compactMap { coord, kind in
       switch kind {
       case .occupied(by: _): return nil
-      case .barrier: return coord
+      case let .barrier(isManual): return .init(coord: coord, isManual: isManual)
       }
     }
   }
@@ -154,7 +156,7 @@ public struct Grid {
 
   /// Generates a series of barrier locations based on the provided barrier type.
   /// - Parameter type: Type of barrier to construct
-  mutating func applyBarrier(_ type: BarrierType?) {
+  mutating func applyBarrier(_ type: GeneratedBarrier?) {
     guard let type = type else {
       return
     }

@@ -7,7 +7,7 @@ struct NearBarrierChallenge: Challenge {
 
     let distance =
     grid.barriers.lazy
-      .map { individual.loc - $0 }
+      .map { individual.loc - $0.coord }
       .map(\.length)
       .map(Double.init)
       .min()
