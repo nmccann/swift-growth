@@ -11,11 +11,11 @@ let package = Package(
              targets: ["domain"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-algorithms.git", .exact("1.0.0")),
+    .package(url: "https://github.com/apple/swift-algorithms", .exact("1.0.0")),
     .package(url: "https://github.com/johnsundell/collectionconcurrencykit", .exact("0.2.0")),
     .package(url: "https://github.com/Jounce/Surge", .exact("2.3.2")),
-    .package(url: "https://github.com/Quick/Nimble", .exact("9.2.1")),
-    .package(url: "https://github.com/pointfreeco/swift-custom-dump", .exact("0.3.0"))
+    .package(url: "https://github.com/Quick/Nimble", .exact("10.0.0")),
+    .package(url: "https://github.com/pointfreeco/swift-custom-dump", .exact("0.5.2"))
   ],
   targets: [
     .target(name: "domain",
