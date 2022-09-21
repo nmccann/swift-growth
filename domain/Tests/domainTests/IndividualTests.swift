@@ -7,7 +7,7 @@ class IndividualTests: XCTestCase {
     var world = World(parameters: .stub(maxNumberNeurons: 3,
                                         probeDistance: (short: 3, long: 16),
                                         sensors: [ConstantSensor(value: 1), ConstantSensor(value: 5)],
-                                        actions: [MoveXAction(), MoveYAction()]))
+                                        actions: [MoveAxisAction(\.x), MoveAxisAction(\.y)]))
 
     let genome: Genome = [.init(sourceType: .sensor, sourceNum: 0, sinkType: .neuron, sinkNum: 0, weight: Gene.weightDivisor),
                           .init(sourceType: .neuron, sourceNum: 0, sinkType: .action, sinkNum: 0, weight: Gene.weightDivisor),
@@ -39,10 +39,14 @@ class IndividualTests: XCTestCase {
     expect(individual.nnet.neurons[1].output) ≈ 0.9999
 
     expect(levels).to(haveCount(2))
-    expect(levels[0].action is MoveXAction) == true
+    let xAxisAction = levels[0].action as? MoveAxisAction
+    expect(xAxisAction).toNot(beNil())
+    expect(xAxisAction?.axis) == \CGPoint.x
     expect(levels[0].level) ≈ 0.7615
 
-    expect(levels[1].action is MoveYAction) == true
+    let yAxisAction = levels[1].action as? MoveAxisAction
+    expect(yAxisAction).toNot(beNil())
+    expect(yAxisAction?.axis) == \CGPoint.y
     expect(levels[1].level) ≈ 0.9999
   }
 
@@ -50,7 +54,7 @@ class IndividualTests: XCTestCase {
     var world = World(parameters: .stub(maxNumberNeurons: 1,
                                         probeDistance: (short: 3, long: 16),
                                         sensors: [ConstantSensor(value: 1), ConstantSensor(value: 2)],
-                                        actions: [MoveXAction(), MoveYAction()]))
+                                        actions: [MoveAxisAction(\.x), MoveAxisAction(\.y)]))
 
     let genome: Genome = [.init(sourceType: .sensor, sourceNum: 0, sinkType: .neuron, sinkNum: 0, weight: Gene.weightDivisor),
                           .init(sourceType: .sensor, sourceNum: 1, sinkType: .neuron, sinkNum: 0, weight: Gene.weightDivisor),
@@ -73,10 +77,14 @@ class IndividualTests: XCTestCase {
     expect(individual.nnet.neurons[0].output) ≈ 0.9951
 
     expect(levels).to(haveCount(2))
-    expect(levels[0].action is MoveXAction) == true
+    let xAxisAction = levels[0].action as? MoveAxisAction
+    expect(xAxisAction).toNot(beNil())
+    expect(xAxisAction?.axis) == \CGPoint.x
     expect(levels[0].level) ≈ 0.9951
 
-    expect(levels[1].action is MoveYAction) == true
+    let yAxisAction = levels[1].action as? MoveAxisAction
+    expect(yAxisAction).toNot(beNil())
+    expect(yAxisAction?.axis) == \CGPoint.y
     expect(levels[1].level) ≈ 0.0
   }
 
@@ -84,7 +92,7 @@ class IndividualTests: XCTestCase {
     var world = World(parameters: .stub(maxNumberNeurons: 2,
                                         probeDistance: (short: 3, long: 16),
                                         sensors: [ConstantSensor(value: 1), ConstantSensor(value: 2)],
-                                        actions: [MoveXAction(), MoveYAction()]))
+                                        actions: [MoveAxisAction(\.x), MoveAxisAction(\.y)]))
 
     let genome: Genome = [.init(sourceType: .sensor, sourceNum: 0, sinkType: .neuron, sinkNum: 0, weight: Gene.weightDivisor),
                           .init(sourceType: .neuron, sourceNum: 0, sinkType: .action, sinkNum: 0, weight: Gene.weightDivisor),
@@ -108,7 +116,9 @@ class IndividualTests: XCTestCase {
     expect(individual.nnet.neurons[0].output) ≈ 0.7615
 
     expect(levels).to(haveCount(2))
-    expect(levels[0].action is MoveXAction) == true
+    let xAxisAction = levels[0].action as? MoveAxisAction
+    expect(xAxisAction).toNot(beNil())
+    expect(xAxisAction?.axis) == \CGPoint.x
     expect(levels[0].level) ≈ levels[1].1
   }
 }

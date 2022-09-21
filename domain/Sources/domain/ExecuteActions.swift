@@ -89,7 +89,16 @@ func executeActions(for individual: Individual,
   return result
 }
 
-public struct ActionResult {
+public struct ActionResult: Equatable {
+  public static func == (lhs: ActionResult, rhs: ActionResult) -> Bool {
+    lhs.individual == rhs.individual &&
+    lhs.newLocation == rhs.newLocation &&
+    lhs.signalToLayer == rhs.signalToLayer &&
+    lhs.killed == rhs.killed &&
+    lhs.movePotential == rhs.movePotential &&
+    lhs.adjustedResponsiveness == rhs.adjustedResponsiveness
+  }
+
   var individual: Individual
   var newLocation: Coord?
   var signalToLayer: Int?

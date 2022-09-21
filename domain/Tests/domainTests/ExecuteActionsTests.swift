@@ -106,8 +106,8 @@ class ExecuteActionsTests: XCTestCase {
     individual.probeDistance.long = 1
     grid[individual.loc] = .occupied(by: individual)
 
-    let result = executeActions(for: individual, levels: [(LongProbeDistanceAction(), 20)], on: grid, with: parameters, probabilityCurve: { _ in true })
-    expect(result.individual.probeDistance.long) == 33
+    let result = executeActions(for: individual, levels: [(LongProbeDistanceAction(max: 32), 20)], on: grid, with: parameters, probabilityCurve: { _ in true })
+    expect(result.individual.probeDistance.long) == 32
   }
 
   func testEmitSignalOverThreshold() {

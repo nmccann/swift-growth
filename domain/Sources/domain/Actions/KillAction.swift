@@ -2,7 +2,6 @@ import Foundation
 
 /// Kill forward -- if this action value is > threshold, value is converted to probability
 /// of an attempted murder. Probabilities under the threshold are considered 0.0.
-/// If this action neuron is enabled but not driven, the neighbors are safe.
 struct KillAction: Action {
   /// A value between 0.0 and 1.0; 0.5 is midlevel
   let threshold: Double
