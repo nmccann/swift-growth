@@ -14,11 +14,13 @@ struct TextFieldStepper<T: Strideable & LosslessStringConvertible>: View {
   var body: some View {
     HStack {
       TextField(title, text: $value.asString)
-      if let step = step {
-        Stepper(title, value: $value, step: step)
-      } else {
-        Stepper(title, value: $value).labelsHidden()
-      }
+      Group {
+        if let step = step {
+          Stepper(title, value: $value, step: step)
+        } else {
+          Stepper(title, value: $value)
+        }
+      }.labelsHidden()
     }
   }
 }
