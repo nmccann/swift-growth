@@ -10,6 +10,9 @@
 		4F6282102775855E00F31936 /* domain in Frameworks */ = {isa = PBXBuildFile; productRef = 4F62820F2775855E00F31936 /* domain */; };
 		4F7CE520278E828F0056D4E5 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7CE51F278E828F0056D4E5 /* App.swift */; };
 		4F7CE53D278E843C0056D4E5 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7CE53C278E843C0056D4E5 /* AppContainer.swift */; };
+		4F870F4C28DC9F5F00E02A59 /* BindingExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F870F4B28DC9F5F00E02A59 /* BindingExtensions.swift */; };
+		4F951D3F28DC77C300DD84C2 /* ParameterFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F951D3E28DC77C300DD84C2 /* ParameterFormView.swift */; };
+		4FBB958C28E1B89E00823D6C /* TextFieldStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBB958B28E1B89E00823D6C /* TextFieldStepper.swift */; };
 		4FD39BBF2759BFCF006D5ED5 /* SimulatorScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BBE2759BFCF006D5ED5 /* SimulatorScene.swift */; };
 		4FD39BC32759BFD0006D5ED5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4FD39BC22759BFD0006D5ED5 /* Assets.xcassets */; };
 		4FD39BDB2759BFD0006D5ED5 /* swift_growth_swiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD39BDA2759BFD0006D5ED5 /* swift_growth_swiftUITests.swift */; };
@@ -37,6 +40,9 @@
 		4F62820927757AA500F31936 /* domain */ = {isa = PBXFileReference; lastKnownFileType = text; path = domain; sourceTree = SOURCE_ROOT; };
 		4F7CE51F278E828F0056D4E5 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		4F7CE53C278E843C0056D4E5 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		4F870F4B28DC9F5F00E02A59 /* BindingExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingExtensions.swift; sourceTree = "<group>"; };
+		4F951D3E28DC77C300DD84C2 /* ParameterFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterFormView.swift; sourceTree = "<group>"; };
+		4FBB958B28E1B89E00823D6C /* TextFieldStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldStepper.swift; sourceTree = "<group>"; };
 		4FD39BB52759BFCF006D5ED5 /* swift-growth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swift-growth.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD39BBE2759BFCF006D5ED5 /* SimulatorScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorScene.swift; sourceTree = "<group>"; };
 		4FD39BC22759BFD0006D5ED5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -80,6 +86,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		4F870F4A28DC9F5400E02A59 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4F870F4B28DC9F5F00E02A59 /* BindingExtensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		4FBB958A28E1B88600823D6C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4FBB958B28E1B89E00823D6C /* TextFieldStepper.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		4FD39BAC2759BFCF006D5ED5 = {
 			isa = PBXGroup;
 			children = (
@@ -104,9 +126,12 @@
 		4FD39BB72759BFCF006D5ED5 /* swift-growth */ = {
 			isa = PBXGroup;
 			children = (
+				4FBB958A28E1B88600823D6C /* Components */,
+				4F870F4A28DC9F5400E02A59 /* Extensions */,
 				4F62820927757AA500F31936 /* domain */,
 				4F7CE51F278E828F0056D4E5 /* App.swift */,
 				4F7CE53C278E843C0056D4E5 /* AppContainer.swift */,
+				4F951D3E28DC77C300DD84C2 /* ParameterFormView.swift */,
 				4FD39BBE2759BFCF006D5ED5 /* SimulatorScene.swift */,
 				4FD39BC22759BFD0006D5ED5 /* Assets.xcassets */,
 				4FD39BC72759BFD0006D5ED5 /* swift-growth.entitlements */,
@@ -267,6 +292,9 @@
 				4F7CE53D278E843C0056D4E5 /* AppContainer.swift in Sources */,
 				4F7CE520278E828F0056D4E5 /* App.swift in Sources */,
 				4FD39BBF2759BFCF006D5ED5 /* SimulatorScene.swift in Sources */,
+				4FBB958C28E1B89E00823D6C /* TextFieldStepper.swift in Sources */,
+				4F951D3F28DC77C300DD84C2 /* ParameterFormView.swift in Sources */,
+				4F870F4C28DC9F5F00E02A59 /* BindingExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,6 +462,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.noah.swift-growth";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -459,6 +488,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.noah.swift-growth";
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -7,14 +7,33 @@ class State: ObservableObject {
     case select, placeBarrier, kill
   }
 
-  var mode: Mode = .select
-  var world = World.randomPopulation(with: .defaults)
-  let simulator = Simulator(mode: .run)
+  var mode: Mode
+  var world: World
+  var simulator: Simulator
+  let initialParameters: Parameters = .defaults
+  @Published var editableParameters: Parameters
   @Published var selected: Individual?
+
+  init() {
+    mode = .select
+    editableParameters = initialParameters
+    world = .randomPopulation(with: initialParameters)
+    simulator = .init(mode: .run)
+  }
+
+  func resetParameters() {
+    editableParameters = initialParameters
+    applyParameters()
+  }
+
+  func applyParameters() {
+    world = .randomPopulation(with: editableParameters)
+    simulator = .init(mode: .run)
+  }
 }
 
 struct AppContainer: View {
-  let minSize = CGSize(width: 400, height: 400)
+  let minSize = CGSize(width: 800, height: 600)
   @StateObject var state = State()
 
   var scene: SKScene {
@@ -26,6 +45,19 @@ struct AppContainer: View {
 
   var body: some View {
     HStack {
+      VStack {
+        ParameterFormView(parameters: $state.editableParameters)
+        HStack {
+          Button("Reset") {
+            state.resetParameters()
+          }
+
+          Button("Apply") {
+            state.applyParameters()
+          }
+        }
+      }
+
       SpriteView(scene: scene, options: .ignoresSiblingOrder)
         .frame(minWidth: minSize.width,
                maxWidth: .infinity,

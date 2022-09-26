@@ -1,45 +1,45 @@
 import Foundation
 
 public struct Parameters {
-  public let population: Int // >= 0
-  public let stepsPerGeneration: Int // > 0
-  public let maxGenerations: Int // >= 0
-  public let signalLayers: Int // >= 0
-  public let genomeMaxLength: Int // > 0
-  public let maxNumberNeurons: Int // > 0
-  public let pointMutationRate: Double // 0.0..1.0
-  public let geneInsertionDeletionRate: Double // 0.0..1.0
-  public let deletionRatio: Double // 0.0..1.0
-  public let sexualReproduction: Bool
-  public let chooseParentsByFitness: Bool
-  public let populationSensorRadius: Double // > 0.0
-  public let signalSensorRadius: Int // > 0
+  public var population: Int // >= 0
+  public var stepsPerGeneration: Int // > 0
+  public var maxGenerations: Int // >= 0
+  public var signalLayers: Int // >= 0
+  public var genomeMaxLength: Int // > 0
+  public var maxNumberNeurons: Int // > 0
+  public var pointMutationRate: Double // 0.0..1.0
+  public var geneInsertionDeletionRate: Double // 0.0..1.0
+  public var deletionRatio: Double // 0.0..1.0
+  public var sexualReproduction: Bool
+  public var chooseParentsByFitness: Bool
+  public var populationSensorRadius: Double // > 0.0
+  public var signalSensorRadius: Int // > 0
 
   /// Value >= 0.0, kFactor of 1, 2, 3, or 4 - used to derive the response cuve
-  public let responsiveness: (value: Double, kFactor: Int) // >= 0.0
+  public var responsiveness: (value: Double, kFactor: Int) // >= 0.0
 
   /// Initial responsiveness of all individuals
-  public let initialResponsiveness: Double
+  public var initialResponsiveness: Double
 
-  public let probeDistance: (short: Int, long: Int) // > 0
-  public let genomeComparisonMethod: GenomeComparison
-  public let challenge: Challenge?
-  public let generatedBarrier: GeneratedBarrier?
-  public let shouldPersistManualBarriers: Bool
-  public let replaceBarrier: (type: GeneratedBarrier, generation: Int)?
+  public var probeDistance: (short: Int, long: Int) // > 0
+  public var genomeComparisonMethod: GenomeComparison
+  public var challenge: Challenge?
+  public var generatedBarrier: GeneratedBarrier?
+  public var shouldPersistManualBarriers: Bool
+  public var replaceBarrier: (type: GeneratedBarrier, generation: Int)?
 
   // These must not change after initialization
 
   public var size: Size
 
   /// Minimum > 0
-  public let genomeInitialLength: ClosedRange<Int> // > 0 and < genomeInitialLengthMax
+  public var genomeInitialLength: ClosedRange<Int> // > 0 and < genomeMaxLength
 
-  public let sensors: [Sensor]
+  public var sensors: [Sensor]
 
   /// Actions that are available for neurons to use as outputs.
   /// Applied in order from first to last.
-  public let actions: [Action]
+  public var actions: [Action]
   
   public static let defaults = Parameters(population: 200,
                                           stepsPerGeneration: 100,
