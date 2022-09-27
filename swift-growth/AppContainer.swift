@@ -33,11 +33,11 @@ class State: ObservableObject {
 }
 
 struct AppContainer: View {
-  let minSize = CGSize(width: 800, height: 600)
+  let minSceneSize = CGSize(width: 600, height: 400)
   @StateObject var state = State()
 
   var scene: SKScene {
-    let scene = SimulatorScene(state: state, size: minSize)
+    let scene = SimulatorScene(state: state, size: minSceneSize)
     scene.scaleMode = .resizeFill
     scene.anchorPoint = .init(x: 0.5, y: 0.5)
     return scene
@@ -45,37 +45,48 @@ struct AppContainer: View {
 
   var body: some View {
     HStack {
-      VStack {
-        ParameterFormView(parameters: $state.editableParameters)
-        HStack {
-          Button("Reset") {
-            state.resetParameters()
-          }
+        ParameterFormView(parameters: $state.editableParameters) {
+          VStack {
+            HStack {
+              Text("Parameters")
 
-          Button("Apply") {
-            state.applyParameters()
+              Button("Reset") {
+                state.resetParameters()
+              }
+
+              Button("Apply") {
+                state.applyParameters()
+              }
+            }
+
+            Divider()
+
+            HStack  {
+              Text("On Tap")
+
+              Button("Barrier") {
+                state.mode = .placeBarrier
+              }
+
+              Button("Kill") {
+                state.mode = .kill
+              }
+
+              Button("Select") {
+                state.mode = .select
+              }
+            }.fixedSize(horizontal: true, vertical: false)
           }
-        }.padding()
-      }
+          .padding()
+        }
+        .fixedSize(horizontal: true, vertical: false)
 
       SpriteView(scene: scene, options: .ignoresSiblingOrder)
-        .frame(minWidth: minSize.width,
+        .frame(minWidth: minSceneSize.width,
                maxWidth: .infinity,
-               minHeight: minSize.height,
+               minHeight: minSceneSize.height,
                maxHeight: .infinity)
-      VStack {
-        Button("Barrier") {
-          state.mode = .placeBarrier
-        }
-
-        Button("Kill") {
-          state.mode = .kill
-        }
-
-        Button("Select") {
-          state.mode = .select
-        }
-      }
+        .layoutPriority(1)
     }
   }
 }
