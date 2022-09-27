@@ -55,7 +55,7 @@ struct AppContainer: View {
           Button("Apply") {
             state.applyParameters()
           }
-        }
+        }.padding()
       }
 
       SpriteView(scene: scene, options: .ignoresSiblingOrder)
